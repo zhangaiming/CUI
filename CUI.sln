@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUIEngine", "CUIEngine\CUIEngine.csproj", "{E5521681-D21C-40ED-BABC-2BE2F3E84ABC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevToolSet", "DevToolSet\DevToolSet.csproj", "{90BCCA7C-3807-4947-9B81-B6278ACAF05D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject", "TestProject\TestProject.csproj", "{2F980E89-37AD-40D9-8D66-646A18101B73}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{E5521681-D21C-40ED-BABC-2BE2F3E84ABC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5521681-D21C-40ED-BABC-2BE2F3E84ABC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5521681-D21C-40ED-BABC-2BE2F3E84ABC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90BCCA7C-3807-4947-9B81-B6278ACAF05D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90BCCA7C-3807-4947-9B81-B6278ACAF05D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90BCCA7C-3807-4947-9B81-B6278ACAF05D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90BCCA7C-3807-4947-9B81-B6278ACAF05D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F980E89-37AD-40D9-8D66-646A18101B73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F980E89-37AD-40D9-8D66-646A18101B73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F980E89-37AD-40D9-8D66-646A18101B73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F980E89-37AD-40D9-8D66-646A18101B73}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

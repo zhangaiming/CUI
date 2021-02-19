@@ -8,6 +8,7 @@ namespace CUIEngine
         char content;
         uint weight;
         Vector2Int coord;
+        bool isEmpty;
 
         /// <summary>
         /// 单位的颜色
@@ -41,17 +42,32 @@ namespace CUIEngine
             get => coord;
             set => coord = value;
         }
+        /// <summary>
+        /// 单位是否为空
+        /// </summary>
+        public bool IsEmpty
+        {
+            get => isEmpty;
+            set => isEmpty = value;
+        }
 
-        
-        public RenderUnit(Vector2Int coord, char content, uint weight = 10000) 
+        public RenderUnit(char content = ' ', uint weight = 10000) 
+            : this(Vector2Int.Zero, RenderUnitColor.DefaultColor, content, weight){}
+        public RenderUnit(RenderUnitColor color, char content = ' ', uint weight = 10000)
+            : this(false, Vector2Int.Zero, color, content, weight){}
+        public RenderUnit(Vector2Int coord, char content = ' ', uint weight = 10000) 
             : this(coord, RenderUnitColor.DefaultColor, content, weight){}
-
         public RenderUnit(Vector2Int coord, RenderUnitColor color, char content = ' ', uint weight = 10000)
+            : this(false, coord, color, content, weight){}
+        public RenderUnit(bool isEmpty, Vector2Int coord, char content = ' ', uint weight = 10000) 
+            : this(isEmpty, coord, RenderUnitColor.DefaultColor, content, weight){}
+        public RenderUnit(bool isEmpty, Vector2Int coord, RenderUnitColor color, char content = ' ', uint weight = 10000)
         {
             this.weight = weight;
             this.content = content;
             this.color = color;
             this.coord = coord;
+            this.isEmpty = isEmpty;
         }
     }
 }

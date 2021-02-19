@@ -2,18 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using CUIEngine.Mathf;
+using Loggers;
 
 namespace CUIEngine
 {
     public class RenderClip
     {
-        RenderUnit[,] units;
+        List<RenderUnit> units;
+        Vector2Int size;
         Vector2Int coord;
 
         /// <summary>
         /// 渲染片段的大小
         /// </summary>
-        public Vector2Int Size => new Vector2Int(units.GetLength(0), units.GetLength(1));
+        public Vector2Int Size
+        {
+            get => size;
+            set => size = value;
+        }
         /// <summary>
         /// 渲染片段的坐标
         /// </summary>
@@ -30,8 +36,14 @@ namespace CUIEngine
         /// <param name="y">片段高度</param>
         public RenderClip(int x, int y, Vector2Int coord)
         {
+            size.X = x;
+            size.Y = y;
             this.coord = coord;
-            units = new RenderUnit[Math.Max(0, x), Math.Max(0, y)];
+            units = new List<RenderUnit>(size.X * size.Y);
+            for (int i = 0; i < x * y; i++)
+            {
+                units.Add(new RenderUnit(true, new Vector2Int(x, y)));
+            }
         }
         
         /// <summary>
@@ -44,18 +56,12 @@ namespace CUIEngine
         /// 对源片段进行复制
         /// </summary>
         /// <param name="src"></param>
-        public RenderClip(RenderClip src)
+        public RenderClip(RenderClip src) : this(src.size.X, src.size.Y, src.coord)
         {
-            coord = src.coord;
-            int x = src.Size.X, y = src.Size.Y;
-            units = new RenderUnit[x, y];
-            for (x--; x >= 0; x--)
+            src.units.AsParallel().ForAll((unit) =>
             {
-                for (y--; y >= 0; y--)
-                {
-                    units[x, y] = src.units[x, y];
-                }
-            }
+                SetUnit(unit.Coord, unit);
+            });
         }
 
         /// <summary>
@@ -68,16 +74,53 @@ namespace CUIEngine
             int x = newSize.X, y = newSize.Y;
             if (x >= 0 && y >= 0)
             {
-                RenderClip nClip = new RenderClip(newSize, coord + offset);
-                x = Math.Min(x, Math.Max(0, Size.X + offset.X));
-                y = Math.Max(y, Math.Max(0, Size.Y + offset.Y));
+                List<RenderUnit> newUnits = new List<RenderUnit>(newSize.X * newSize.Y);
                 int nx, ny;
-
-                List<int> a = new List<int>();
-                
+                for (int j = 0; j < y; j++)
+                {
+                    for(int i = 0; i < x; i++)
+                    {
+                        nx = i + offset.X;
+                        ny = j + offset.Y;
+                        if (nx >= 0 && nx < size.X && ny >= 0 && ny < size.Y)
+                        {
+                            RenderUnit unit = GetUnit(nx, ny);
+                            unit.Coord = new Vector2Int(nx, ny);
+                            newUnits.Add(unit);
+                        }
+                        else
+                        {
+                            newUnits.Add(new RenderUnit(true, new Vector2Int(i, j)));
+                        }
+                    }
+                }
+                size = newSize;
+                coord += offset;
+                units = newUnits;
             }
         }
-        
+
+        /// <summary>
+        /// 设置目标单元是否为空
+        /// </summary>
+        /// <param name="coord"></param>
+        /// <param name="isEmpty"></param>
+        public void SetEmpty(Vector2Int coord, bool isEmpty)
+        {
+            SetEmpty(coord.X, coord.Y, isEmpty);
+        }
+        /// <summary>
+        /// 设置目标单元是否为空
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="isEmpty"></param>
+        public void SetEmpty(int x, int y, bool isEmpty)
+        {
+            RenderUnit unit = GetUnit(x, y);
+            unit.IsEmpty = true;
+            SetUnit(x, y, unit);
+        }
         /// <summary>
         /// 直接设置对应位置的单元, 只要在范围内就一定会对原单元进行覆盖
         /// </summary>
@@ -86,12 +129,22 @@ namespace CUIEngine
         /// <param name="unit"></param>
         public void SetUnit(Vector2Int coord, RenderUnit unit)
         {
-            if (coord.X < units.GetLength(0) && coord.Y < units.GetLength(1))
+            SetUnit(coord.X, coord.Y, unit);
+        }
+        /// <summary>
+        /// 直接设置对应位置的单元, 只要在范围内就一定会对原单元进行覆盖
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="unit"></param>
+        public void SetUnit(int x, int y, RenderUnit unit)
+        {
+            if (coord.X < size.X && coord.Y < size.Y)
             {
-                units[coord.X, coord.Y] = unit;
+                unit.Coord = new Vector2Int(x, y);
+                units[y * size.X + x] = unit;
             }
         }
-
         /// <summary>
         /// 根据单元的权重判断是否对原单元进行覆盖
         /// </summary>
@@ -99,14 +152,22 @@ namespace CUIEngine
         /// <param name="unit"></param>
         public void PutUnit(Vector2Int coord, RenderUnit unit)
         {
-            int x = coord.X, y = coord.Y;
-            if (x < units.GetLength(0) && y < units.GetLength(1))
+            PutUnit(coord.X, coord.Y, unit);
+        }
+        /// <summary>
+        /// 根据单元的权重判断是否对原单元进行覆盖
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="unit"></param>
+        public void PutUnit(int x, int y, RenderUnit unit)
+        {
+            RenderUnit target = GetUnit(x, y);
+            if (target.Weight <= unit.Weight)
             {
-                if(units[x,y].Weight <= unit.Weight)
-                    units[x, y] = unit;
+                SetUnit(x, y, unit);
             }
         }
-
         /// <summary>
         /// 获得一个单元
         /// </summary>
@@ -116,7 +177,6 @@ namespace CUIEngine
         {
             return GetUnit(coord.X, coord.Y);
         }
-
         /// <summary>
         /// 获得一个单元
         /// </summary>
@@ -127,12 +187,12 @@ namespace CUIEngine
         {
             if (x >= 0 && x < Size.X && y >= 0 && y < Size.Y)
             {
-                return units[x, y];
+                Logger.Log(x + "," + y);
+                return units[y * size.X + x];
             }
 
-            return null;
+            return new RenderUnit(true, Vector2Int.Zero);
         }
-
         /// <summary>
         /// 根据所给参数合并两个渲染片段
         /// </summary>
@@ -165,13 +225,12 @@ namespace CUIEngine
                 for (int j = 0; j < by; j++)
                 {
                     //res.units[i + ox, j + oy] = b.units[i, j];
-                    res.PutUnit(new Vector2Int(i + ox, j + oy), b.units[i, j]);
+                    res.PutUnit(new Vector2Int(i + ox, j + oy), b.units[j * b.size.X + i]);
                 }
             }
 
             return res;
         }
-        
         /// <summary>
         /// 根据所给参数合并两个渲染片段
         /// </summary>
