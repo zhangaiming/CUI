@@ -1,4 +1,5 @@
-﻿using Loggers;
+﻿using System;
+using Loggers;
 
 namespace CUIEngine
 {
@@ -6,7 +7,12 @@ namespace CUIEngine
     {
         public static void Initialize()
         {
-            Logger.LogFileDir = @"C:\Users\legion\Documents\CUI\";
+            Logger.Initialize(@"C:\Users\legion\Documents\CUI\");
+        }
+
+        public static void Shutdown()
+        {
+            Logger.Shutdown();
         }
     }
 }

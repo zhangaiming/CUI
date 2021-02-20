@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Text;
+using System.Threading;
 
 namespace Loggers
 {
@@ -14,10 +16,41 @@ namespace Loggers
     public static class Logger
     {
         public static string LogFileDir = "";
+        public static int FlushTimeSpanByMs = 10;
         static FileStream fs;
         static bool fileCreated = false;
         static string curFilePath = "";
+        static Thread messageSolveThread;
+        static bool shouldSolveMessage = true;
 
+        static ConcurrentQueue<string> messageQueue = new ConcurrentQueue<string>();
+
+        public static void Initialize(string logFileDir)
+        {
+            LogFileDir = logFileDir;
+            messageSolveThread = new Thread(() =>
+            {
+                while (shouldSolveMessage)
+                {
+                    if (!messageQueue.IsEmpty)
+                    {
+                        string str;
+                        if (messageQueue.TryDequeue(out str))
+                        {
+                            Print(str);
+                        }
+                        Thread.Sleep(FlushTimeSpanByMs);
+                    }
+                }
+            });
+        }
+
+        public static void Shutdown()
+        {
+            shouldSolveMessage = false;
+            messageSolveThread.Join();
+        }
+        
         static void CreateLogFile()
         {
             if (LogFileDir != "")
@@ -35,14 +68,7 @@ namespace Loggers
 
         public static void Log(bool message, LogType logType = LogType.Normal)
         {
-            if (message)
-            {
-                Log("true", logType);
-            }
-            else
-            {
-                Log("false", logType);
-            }
+            Log(message ? "true" : "false", logType);
         }
         
         /// <summary>
@@ -50,6 +76,11 @@ namespace Loggers
         /// </summary>
         /// <param name="message"></param>
         public static void Log(string message, LogType logType = LogType.Normal)
+        {
+            messageQueue.Enqueue(FormatLogMessage(message, logType));
+        }
+
+        static void Print(string message)
         {
             if (!fileCreated)
             {
@@ -61,7 +92,7 @@ namespace Loggers
                 {
                     fs.Position = fs.Length;
                     Encoding encoder = Encoding.UTF8;
-                    byte[] messageBytes = encoder.GetBytes(FormatLogMessage(message, logType));
+                    byte[] messageBytes = encoder.GetBytes(message);
                     fs.Write(messageBytes, 0, messageBytes.Length);
                 }
             }
