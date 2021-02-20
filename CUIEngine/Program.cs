@@ -8,23 +8,6 @@ namespace CUIEngine
         public static void Main(string[] args)
         {
             CUIEngine.Initialize();
-
-            /*RenderClip clip1 = CreateFilledRenderClip(new Vector2Int(0, 0), 
-                new Vector2Int(10, 10), ConsoleColor.Cyan);
-            PaintRenderClip(clip1);
-            RenderClip clip2 = CreateFilledRenderClip(new Vector2Int(1, 1), 
-                new Vector2Int(10, 10), ConsoleColor.DarkBlue, 999);
-
-            clip1.Resize(new Vector2Int(5, 5), new Vector2Int(-3, 6));
-            //clip1.Resize(new Vector2Int(14,10),new Vector2Int(0,-5));
-            RenderClip clip3 = RenderClip.Merge(clip1, clip2, false);
-            RenderClip clip4 = RenderClip.Merge(clip1, clip2, true);
-            
-            PaintRenderClip(clip1);
-            PaintRenderClip(clip2);
-            PaintRenderClip(clip3);
-            PaintRenderClip(clip4);*/
-
             Console.ReadKey();
         }
 
