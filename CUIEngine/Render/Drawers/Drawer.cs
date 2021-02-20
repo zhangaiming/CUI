@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Threading;
 using CUIEngine.Mathf;
+using DevToolSet;
 
-namespace CUIEngine.Render
+namespace CUIEngine
 {
-    public class Drawer
+    public abstract class Drawer
     {
-        ConcurrentQueue<RenderInfo> renderQueue = new ConcurrentQueue<RenderInfo>();
-        Thread drawingThread;
-        bool shouldDraw = true;
-        
         struct RenderInfo
         {
             internal int x, y;
@@ -23,12 +19,32 @@ namespace CUIEngine.Render
                 Unit = unit;
             }
         }
+        
+        ConcurrentQueue<RenderInfo> renderQueue = new ConcurrentQueue<RenderInfo>();
+        Thread drawingThread;
+        bool shouldDraw = true;
+        bool isPaused = false;
+        
+        /// <summary>
+        /// 设置新的屏幕大小
+        /// </summary>
+        /// <param name="size"></param>
+        public abstract void SetScreenSize(Vector2Int size);
 
         /// <summary>
-        /// 初始化Renderer
+        /// 在控制台中绘制一个像素
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="unit"></param>
+        protected abstract void DrawUnit(int x, int y, RenderUnit unit);
+        
+        /// <summary>
+        /// 初始化绘画器
         /// </summary>
         internal void Initialize()
         {
+            Logger.Log("正在初始化控制台绘画器...");
             shouldDraw = true;
             
             //启动绘画线程
@@ -36,7 +52,7 @@ namespace CUIEngine.Render
             {
                 while (shouldDraw)
                 {
-                    if (!renderQueue.IsEmpty)
+                    if (!isPaused && !renderQueue.IsEmpty)
                     {
                         RenderInfo info;
                         if (renderQueue.TryDequeue(out info))
@@ -48,16 +64,19 @@ namespace CUIEngine.Render
                 }
             });
             drawingThread.Start();
+            
+            Logger.Log("控制台绘画器初始化完毕!");
         }
         /// <summary>
         /// 终止Renderer
         /// </summary>
         internal void Shutdown()
         {
+            Logger.Log("正在卸载控制台绘画器...");
             shouldDraw = false;
             drawingThread.Join();
+            Logger.Log("控制台绘画器卸载完毕!");
         }
-        
         /// <summary>
         /// 将一个片段加入绘制队列
         /// </summary>
@@ -100,20 +119,12 @@ namespace CUIEngine.Render
             Draw(x, y, new RenderUnit(RenderUnitColor.DefaultColor, ' '));
         }
         /// <summary>
-        /// 在控制台中绘制一个像素
+        /// 控制暂停绘制
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="unit"></param>
-        void DrawUnit(int x, int y, RenderUnit unit)
+        /// <param name="s"></param>
+        public void SetPause(bool s)
         {
-            if (!unit.IsEmpty)
-            {
-                Console.SetCursorPosition(x + 1, y + 1);
-                Console.ForegroundColor = unit.Color.ForegroundColor;
-                Console.BackgroundColor = unit.Color.BackgroundColor;
-                Console.Write(unit.Content);
-            }
+            isPaused = s;
         }
     }
 }

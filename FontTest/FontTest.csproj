@@ -4,11 +4,11 @@
     <PropertyGroup>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-        <ProjectGuid>{E5521681-D21C-40ED-BABC-2BE2F3E84ABC}</ProjectGuid>
+        <ProjectGuid>{AF599007-0DD7-4B90-962D-9F4A6001B331}</ProjectGuid>
         <OutputType>Exe</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>CUIEngine</RootNamespace>
-        <AssemblyName>CUIEngine</AssemblyName>
+        <RootNamespace>FontTest</RootNamespace>
+        <AssemblyName>FontTest</AssemblyName>
         <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -39,30 +39,8 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Console\ConsoleMouseManager.cs" />
-        <Compile Include="Console\FontManager.cs" />
-        <Compile Include="CUIEngine.cs" />
-        <Compile Include="Mathf\Vector2Int.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="Render\Drawers\ConsoleDrawer.cs" />
-        <Compile Include="Render\Drawers\Drawer.cs" />
-        <Compile Include="Render\ICanvas.cs" />
-        <Compile Include="Render\Renderer.cs" />
-        <Compile Include="Render\RenderUnits\RenderClip.cs" />
-        <Compile Include="Render\RenderUnits\RenderUnit.cs" />
-        <Compile Include="Render\RenderUnits\RenderUnitColor.cs" />
-        <Compile Include="Settings.cs" />
-        <Compile Include="Widgets\Widget.cs" />
-    </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\DevToolSet\DevToolSet.csproj">
-        <Project>{90bcca7c-3807-4947-9b81-b6278acaf05d}</Project>
-        <Name>DevToolSet</Name>
-      </ProjectReference>
-    </ItemGroup>
-    <ItemGroup>
-      <Content Include="TODO.txt" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

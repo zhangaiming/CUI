@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using CUIEngine.Render;
-using Loggers;
+using DevToolSet;
 
 namespace CUIEngine
 {
@@ -15,18 +15,28 @@ namespace CUIEngine
         /// </summary>
         public static void Initialize()
         {
+            Logger.Log("CUI启动中...");
             //控制台初始化
-            ResetConsoleSize();
-            
+            InitializeConsole();
+
             //日志初始化
             Logger.Initialize(@"C:\Users\legion\Documents\CUI\");
-            
+
             //渲染器初始化
             renderer = new Renderer();
             renderer.Initialize();
             //因为如果立即开始渲染会导致出现奇怪的错误,所以在这里等5毫秒
             Thread.Sleep(5);
             renderer.StartRender();
+            Logger.Log("CUI启动成功!");
+        }
+
+        static void InitializeConsole()
+        {
+            Console.CancelKeyPress += (obj, e) => e.Cancel = true;
+            FontManager.SetConsoleFontSize(Settings.ConsoleFontSize);
+            Console.CursorVisible = Settings.ShowCursor;
+            ConsoleMouseManager.SetConsoleQuickEditMode(false);
         }
         
         /// <summary>
@@ -34,29 +44,13 @@ namespace CUIEngine
         /// </summary>
         public static void Shutdown()
         {
-            Logger.Shutdown();
+            Logger.Log("正在关闭CUI...");
             renderer?.Shutdown();
-        }
-
-        /// <summary>
-        /// 根据Settings重新设置控制台大小
-        /// </summary>
-        static void ResetConsoleSize()
-        {
-            if(renderer != null)
-                renderer?.PauseRender();
+            Logger.Log("CUI关闭成功!");
             
-            Console.Clear();
-            int x = Settings.ScreenSize.X, y = Settings.ScreenSize.Y;
-            Console.SetWindowSize(x, y);
-            Console.SetBufferSize(x, y);
             
-            //等待控制台窗口设置
-            if(renderer != null)
-            {
-                Thread.Sleep(5);
-                renderer.StartRender();
-            }
+            Logger.Shutdown();
+            
         }
     }
 }

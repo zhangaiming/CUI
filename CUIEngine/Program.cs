@@ -35,6 +35,9 @@ namespace CUIEngine
 
             Canvas c = new Canvas();
             CUIEngine.Renderer.Canvas = c;
+            
+            Console.ReadKey();
+            Settings.ScreenSize = new Vector2Int(30, 20);
 
             Console.ReadKey();
         }

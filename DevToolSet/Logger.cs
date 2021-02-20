@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 
-namespace Loggers
+namespace DevToolSet
 {
     public enum LogType
     {
@@ -43,6 +43,7 @@ namespace Loggers
                     }
                 }
             });
+            messageSolveThread.Start();
         }
 
         public static void Shutdown()

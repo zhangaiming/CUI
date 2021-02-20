@@ -1,6 +1,8 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Threading;
 using CUIEngine.Mathf;
+using DevToolSet;
 
 namespace CUIEngine.Render
 {
@@ -21,10 +23,6 @@ namespace CUIEngine.Render
         /// 控制台绘画者
         /// </summary>
         Drawer drawer;
-        /// <summary>
-        /// 帧渲染时间间隔
-        /// </summary>
-        int renderTimespan = 10;
         /// <summary>
         /// 屏幕缓冲片段
         /// </summary>
@@ -62,10 +60,10 @@ namespace CUIEngine.Render
         /// <summary>
         /// 帧间隔(毫秒)
         /// </summary>
-        public int RenderTimespan
+        public short RenderTimespan
         {
-            get => renderTimespan;
-            set => renderTimespan = value;
+            get => Settings.RenderTimespan;
+            set => Settings.RenderTimespan = value;
         }
 
         /// <summary>
@@ -73,12 +71,21 @@ namespace CUIEngine.Render
         /// </summary>
         internal void Initialize()
         {
-            drawer = new Drawer();
-            drawer.Initialize();
-            
+            Logger.Log("正在初始化渲染器...");
+
             //清空屏幕缓冲
             screenBufferClip = new RenderClip(Settings.ScreenSize, Vector2Int.Zero);
+
+            //添加屏幕大小更新事件
+            Settings.OnScreenSizeChanged += OnScreenSizeChanged;
             
+            //初始化绘制器
+            drawer = new ConsoleDrawer();
+            drawer.Initialize();
+            
+            //设置控制台大小
+            drawer.SetScreenSize(Settings.ScreenSize);
+
             //启动渲染线程
             renderThread = new Thread(() =>
             {
@@ -88,20 +95,25 @@ namespace CUIEngine.Render
                     {
                         RenderOneFrame();
                     }
-                    Thread.Sleep(renderTimespan);
+                    Thread.Sleep(RenderTimespan);
                 }
             });
             renderThread.Start();
             
             isInitialized = true;
+            
+            Logger.Log("渲染器加载完毕!");
         }
         /// <summary>
         /// 终止渲染器
         /// </summary>
         internal void Shutdown()
         {
+            Logger.Log("正在卸载渲染器...");
+            Settings.OnScreenSizeChanged -= OnScreenSizeChanged;
             drawer.Shutdown();
             isInitialized = false;
+            Logger.Log("渲染器卸载完毕!");
         }
         /// <summary>
         /// 渲染新的一帧
@@ -119,11 +131,6 @@ namespace CUIEngine.Render
             }
         }
 
-        void MergeCallback(int x, int y, RenderUnit unit)
-        {
-            drawer.Draw(x, y, unit);
-        }
-            
         /// <summary>
         /// 暂停渲染
         /// </summary>
@@ -137,6 +144,20 @@ namespace CUIEngine.Render
         internal void StartRender()
         {
             isPaused = false;
+        }
+        void MergeCallback(int x, int y, RenderUnit unit)
+        {
+            drawer.Draw(x, y, unit);
+        }
+        void OnScreenSizeChanged(Vector2Int newSize)
+        {
+            PauseRender();
+            drawer.SetPause(true);
+            screenBufferClip.Resize(newSize, Vector2Int.Zero);
+            drawer.SetScreenSize(newSize);
+            drawer.Draw(screenBufferClip);
+            drawer.SetPause(false);
+            StartRender();
         }
     }
 }
