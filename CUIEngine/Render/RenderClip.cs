@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using CUIEngine.Mathf;
 using Loggers;
@@ -69,13 +71,12 @@ namespace CUIEngine
             int x = size.X, y = size.Y;
 
             units = new RenderUnit[x * y];
-            RenderUnit emptyUnit = new RenderUnit(true);
-            Parallel.For(0, x * y, k =>
+            for (int k = 0; k < x * y; k++)
             {
                 int i = k % x;
                 int j = k / x;
                 SetUnit(i, j, src.GetUnit(i, j));
-            });
+            }
         }
 
         /// <summary>
@@ -92,24 +93,47 @@ namespace CUIEngine
                 RenderUnit[] newUnits = new RenderUnit[newSize.X * newSize.Y];
                 RenderUnit emptyUnit = new RenderUnit(true);
                 
+                //根据片段大小选择处理流程
+                if(x * y > 100)
                 //并行处理
-                Parallel.For(0, x * y, (int k) =>
                 {
-                    int i = k % x;
-                    int j = k / x;
-                    int nx = i + offset.X;
-                    int ny = j + offset.Y;
-                    if (nx >= 0 && nx < size.X && ny >= 0 && ny < size.Y)
+                    Parallel.For(0, x * y, (int k) =>
                     {
-                        RenderUnit unit = GetUnit(nx, ny);
-                        newUnits[j * newSize.X + i] = unit;
-                    }
-                    else
+                        int i = k % x;
+                        int j = k / x;
+                        int nx = i + offset.X;
+                        int ny = j + offset.Y;
+                        if (nx >= 0 && nx < size.X && ny >= 0 && ny < size.Y)
+                        {
+                            RenderUnit unit = GetUnit(nx, ny);
+                            newUnits[j * newSize.X + i] = unit;
+                        }
+                        else
+                        {
+                            newUnits[j * newSize.X + i] = emptyUnit;
+                        }
+                    });
+                }
+                else
+                //串行处理
+                {
+                    for (int k = 0; k < x * y; k++)
                     {
-                        newUnits[j * newSize.X + i] = emptyUnit;
+                        int i = k % x;
+                        int j = k / x;
+                        int nx = i + offset.X;
+                        int ny = j + offset.Y;
+                        if (nx >= 0 && nx < size.X && ny >= 0 && ny < size.Y)
+                        {
+                            RenderUnit unit = GetUnit(nx, ny);
+                            newUnits[j * newSize.X + i] = unit;
+                        }
+                        else
+                        {
+                            newUnits[j * newSize.X + i] = emptyUnit;
+                        }
                     }
-                });
-                
+                }
                 size = newSize;
                 coord += offset;
                 units = newUnits;
@@ -155,7 +179,7 @@ namespace CUIEngine
         /// <param name="unit"></param>
         public void SetUnit(int x, int y, RenderUnit unit)
         {
-            if (coord.X < size.X && coord.Y < size.Y)
+            if (x < size.X && y < size.Y)
             {
                 units[y * size.X + x] = unit;
             }
@@ -178,7 +202,7 @@ namespace CUIEngine
         public void PutUnit(int x, int y, RenderUnit unit)
         {
             RenderUnit target = GetUnit(x, y);
-            if (target.Weight <= unit.Weight)
+            if (!unit.IsEmpty && (target.IsEmpty || target.Weight <= unit.Weight))
             {
                 SetUnit(x, y, unit);
             }
@@ -202,7 +226,6 @@ namespace CUIEngine
         {
             if (x >= 0 && x < Size.X && y >= 0 && y < Size.Y)
             {
-                //Logger.Log(x + "," + y);
                 return units[y * size.X + x];
             }
 
@@ -216,20 +239,18 @@ namespace CUIEngine
         /// <param name="offset">副片段相对于主片段的位移</param>
         /// <param name="shouldClip">是否对副片段进行裁剪, 裁剪后合并所得片段大小与主片段一致</param>
         /// <returns>合并所得片段</returns>
-        public static RenderClip Merge(RenderClip a, RenderClip b, Vector2Int offset, bool shouldClip = true)
+        public static RenderClip Merge(RenderClip a, RenderClip b, bool shouldClip = true)
         {
             RenderClip res = new RenderClip(a);
+            Vector2Int offset = b.coord - a.coord;
             int x, y;
-            if (shouldClip)
-            {
-                x = a.Size.X;
-                y = a.Size.Y;
-            }
-            else
+            if(!shouldClip)
             {
                 x = GetMergeResultEdgeLength(a.Size.X, b.Size.X, offset.X);
                 y = GetMergeResultEdgeLength(a.Size.Y, b.Size.Y, offset.Y);
-                res.Resize(new Vector2Int(x,y), -offset);
+                int i = Math.Min(offset.X, 0);
+                int j = Math.Min(offset.Y, 0);
+                res.Resize(new Vector2Int(x,y), new Vector2Int(i, j));
             }
 
             int ox = Math.Max(offset.X, 0);
@@ -239,23 +260,11 @@ namespace CUIEngine
             {
                 for (int j = 0; j < by; j++)
                 {
-                    //res.units[i + ox, j + oy] = b.units[i, j];
-                    res.PutUnit(new Vector2Int(i + ox, j + oy), b.units[j * b.size.X + i]);
+                    res.PutUnit(i + ox, j + oy, b.units[j * b.size.X + i]);
                 }
             }
 
             return res;
-        }
-        /// <summary>
-        /// 根据所给参数合并两个渲染片段
-        /// </summary>
-        /// <param name="a">主片段</param>
-        /// <param name="b">副片段</param>
-        /// <param name="shouldClip">是否对副片段进行裁剪, 裁剪后合并所得片段大小与主片段一致</param>
-        /// <returns>合并所得片段</returns>
-        public static RenderClip Merge(RenderClip a, RenderClip b, bool shouldClip = true)
-        {
-            return Merge(a, b, Vector2Int.Zero, shouldClip);
         }
 
         static int GetMergeResultEdgeLength(int a, int b, int offset)

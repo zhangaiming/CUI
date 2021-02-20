@@ -1,4 +1,6 @@
-﻿namespace CUIEngine.Mathf
+﻿using System.Text;
+
+namespace CUIEngine.Mathf
 {
     public struct Vector2Int
     {
@@ -67,6 +69,13 @@
         public static Vector2Int Dot(Vector2Int a, Vector2Int b)
         {
             return new Vector2Int(a.x * b.x, a.y * b.y);
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("(").Append(x).Append(",").Append(y).Append(")");
+            return sb.ToString();
         }
     }
 }
