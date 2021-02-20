@@ -42,7 +42,7 @@ namespace CUIEngine
             set => isEmpty = value;
         }
 
-        public RenderUnit(char content = ' ', uint weight = 10000) 
+        public RenderUnit(char content, uint weight = 10000) 
             : this(RenderUnitColor.DefaultColor, content, weight){}
         public RenderUnit(RenderUnitColor color, char content = ' ', uint weight = 10000)
             : this(false, color, content, weight){}

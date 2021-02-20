@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using CUIEngine.Mathf;
 using Loggers;
@@ -189,9 +190,10 @@ namespace CUIEngine
         /// </summary>
         /// <param name="coord"></param>
         /// <param name="unit"></param>
-        public void PutUnit(Vector2Int coord, RenderUnit unit)
+        /// <returns>当原单元被覆盖则返回true</returns>
+        public bool PutUnit(Vector2Int coord, RenderUnit unit)
         {
-            PutUnit(coord.X, coord.Y, unit);
+            return PutUnit(coord.X, coord.Y, unit);
         }
         /// <summary>
         /// 根据单元的权重判断是否对原单元进行覆盖
@@ -199,13 +201,16 @@ namespace CUIEngine
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="unit"></param>
-        public void PutUnit(int x, int y, RenderUnit unit)
+        /// <returns>当原单元被覆盖则返回true</returns>
+        public bool PutUnit(int x, int y, RenderUnit unit)
         {
             RenderUnit target = GetUnit(x, y);
             if (!unit.IsEmpty && (target.IsEmpty || target.Weight <= unit.Weight))
             {
                 SetUnit(x, y, unit);
+                return true;
             }
+            return false;
         }
         /// <summary>
         /// 获得一个单元
@@ -236,35 +241,51 @@ namespace CUIEngine
         /// </summary>
         /// <param name="a">主片段</param>
         /// <param name="b">副片段</param>
-        /// <param name="offset">副片段相对于主片段的位移</param>
+        /// <param name="unitCoveredHandler">用于处理单元覆盖事件的回调函数</param>
         /// <param name="shouldClip">是否对副片段进行裁剪, 裁剪后合并所得片段大小与主片段一致</param>
         /// <returns>合并所得片段</returns>
-        public static RenderClip Merge(RenderClip a, RenderClip b, bool shouldClip = true)
+        public static RenderClip Merge(RenderClip a, RenderClip b, 
+            Action<int, int, RenderUnit> unitCoveredHandler, bool shouldClip = true)
         {
             RenderClip res = new RenderClip(a);
-            Vector2Int offset = b.coord - a.coord;
+            res.MergeWith(b, unitCoveredHandler, shouldClip);
+            return res;
+        }
+        /// <summary>
+        /// 将片段与另一片段进行合并, 会改变原片段
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="unitCoveredHandler"></param>
+        /// <param name="shouldClip"></param>
+        public void MergeWith(RenderClip other, Action<int, int, RenderUnit> unitCoveredHandler, bool shouldClip)
+        {
+            Vector2Int offset = other.coord - this.coord;
             int x, y;
             if(!shouldClip)
             {
-                x = GetMergeResultEdgeLength(a.Size.X, b.Size.X, offset.X);
-                y = GetMergeResultEdgeLength(a.Size.Y, b.Size.Y, offset.Y);
+                x = GetMergeResultEdgeLength(this.Size.X, other.Size.X, offset.X);
+                y = GetMergeResultEdgeLength(this.Size.Y, other.Size.Y, offset.Y);
                 int i = Math.Min(offset.X, 0);
                 int j = Math.Min(offset.Y, 0);
-                res.Resize(new Vector2Int(x,y), new Vector2Int(i, j));
+                this.Resize(new Vector2Int(x,y), new Vector2Int(i, j));
             }
 
             int ox = Math.Max(offset.X, 0);
             int oy = Math.Max(offset.Y, 0);
-            int bx = b.Size.X, by = b.Size.Y;
+            int bx = other.Size.X, by = other.Size.Y;
             for (int i = 0; i < bx; i++)
             {
                 for (int j = 0; j < by; j++)
                 {
-                    res.PutUnit(i + ox, j + oy, b.units[j * b.size.X + i]);
+                    RenderUnit unit = other.units[j * other.size.X + i];
+                    bool covered = this.PutUnit(i + ox, j + oy, unit);
+                    if (covered)
+                    {
+                        //ThreadPool.QueueUserWorkItem(obj => unitCoveredHandler(i, j, unit));
+                        unitCoveredHandler.BeginInvoke(i, j, unit, null, null);
+                    }
                 }
             }
-
-            return res;
         }
 
         static int GetMergeResultEdgeLength(int a, int b, int offset)
