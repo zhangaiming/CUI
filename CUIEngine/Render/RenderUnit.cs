@@ -7,7 +7,6 @@ namespace CUIEngine
         RenderUnitColor color;
         char content;
         uint weight;
-        Vector2Int coord;
         bool isEmpty;
 
         /// <summary>
@@ -35,14 +34,6 @@ namespace CUIEngine
             set => weight = value;
         }
         /// <summary>
-        /// 单位的坐标, 方便进行并行处理
-        /// </summary>
-        public Vector2Int Coord
-        {
-            get => coord;
-            set => coord = value;
-        }
-        /// <summary>
         /// 单位是否为空
         /// </summary>
         public bool IsEmpty
@@ -52,21 +43,16 @@ namespace CUIEngine
         }
 
         public RenderUnit(char content = ' ', uint weight = 10000) 
-            : this(Vector2Int.Zero, RenderUnitColor.DefaultColor, content, weight){}
+            : this(RenderUnitColor.DefaultColor, content, weight){}
         public RenderUnit(RenderUnitColor color, char content = ' ', uint weight = 10000)
-            : this(false, Vector2Int.Zero, color, content, weight){}
-        public RenderUnit(Vector2Int coord, char content = ' ', uint weight = 10000) 
-            : this(coord, RenderUnitColor.DefaultColor, content, weight){}
-        public RenderUnit(Vector2Int coord, RenderUnitColor color, char content = ' ', uint weight = 10000)
-            : this(false, coord, color, content, weight){}
-        public RenderUnit(bool isEmpty, Vector2Int coord, char content = ' ', uint weight = 10000) 
-            : this(isEmpty, coord, RenderUnitColor.DefaultColor, content, weight){}
-        public RenderUnit(bool isEmpty, Vector2Int coord, RenderUnitColor color, char content = ' ', uint weight = 10000)
+            : this(false, color, content, weight){}
+        public RenderUnit(bool isEmpty, char content = ' ', uint weight = 10000) 
+            : this(isEmpty, RenderUnitColor.DefaultColor, content, weight){}
+        public RenderUnit(bool isEmpty, RenderUnitColor color, char content = ' ', uint weight = 10000)
         {
             this.weight = weight;
             this.content = content;
             this.color = color;
-            this.coord = coord;
             this.isEmpty = isEmpty;
         }
     }

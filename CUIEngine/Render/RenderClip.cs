@@ -9,7 +9,8 @@ namespace CUIEngine
 {
     public class RenderClip
     {
-        List<RenderUnit> units;
+        //List<RenderUnit> units;
+        RenderUnit[] units;
         Vector2Int size;
         Vector2Int coord;
 
@@ -40,10 +41,13 @@ namespace CUIEngine
             size.X = x;
             size.Y = y;
             this.coord = coord;
-            units = new List<RenderUnit>(size.X * size.Y);
-            for (int i = 0; i < x * y; i++)
+            units = new RenderUnit[x * y];
+            RenderUnit emptyUnit = new RenderUnit(true);
+            for (int k = 0; k < x * y; k++)
             {
-                units.Add(new RenderUnit(true, new Vector2Int(x, y)));
+                int i = k % x;
+                int j = k / x;
+                SetUnit(i, j, emptyUnit);
             }
         }
         
@@ -57,11 +61,20 @@ namespace CUIEngine
         /// 对源片段进行复制
         /// </summary>
         /// <param name="src"></param>
-        public RenderClip(RenderClip src) : this(src.size.X, src.size.Y, src.coord)
+        public RenderClip(RenderClip src)
         {
-            src.units.AsParallel().ForAll((unit) =>
+            size = src.size;
+            coord = src.coord;
+
+            int x = size.X, y = size.Y;
+
+            units = new RenderUnit[x * y];
+            RenderUnit emptyUnit = new RenderUnit(true);
+            Parallel.For(0, x * y, k =>
             {
-                SetUnit(unit.Coord, unit);
+                int i = k % x;
+                int j = k / x;
+                SetUnit(i, j, src.GetUnit(i, j));
             });
         }
 
@@ -75,10 +88,12 @@ namespace CUIEngine
             int x = newSize.X, y = newSize.Y;
             if (x >= 0 && y >= 0)
             {
-                List<RenderUnit> newUnits = new List<RenderUnit>(newSize.X * newSize.Y);
-
+                //List<RenderUnit> newUnits = new List<RenderUnit>(newSize.X * newSize.Y);
+                RenderUnit[] newUnits = new RenderUnit[newSize.X * newSize.Y];
+                RenderUnit emptyUnit = new RenderUnit(true);
+                
                 //并行处理
-                Parallel.For(0, x * y, k =>
+                Parallel.For(0, x * y, (int k) =>
                 {
                     int i = k % x;
                     int j = k / x;
@@ -87,12 +102,11 @@ namespace CUIEngine
                     if (nx >= 0 && nx < size.X && ny >= 0 && ny < size.Y)
                     {
                         RenderUnit unit = GetUnit(nx, ny);
-                        unit.Coord = new Vector2Int(nx, ny);
-                        newUnits.Add(unit);
+                        newUnits[j * newSize.X + i] = unit;
                     }
                     else
                     {
-                        newUnits.Add(new RenderUnit(true, new Vector2Int(i, j)));
+                        newUnits[j * newSize.X + i] = emptyUnit;
                     }
                 });
                 
@@ -143,7 +157,6 @@ namespace CUIEngine
         {
             if (coord.X < size.X && coord.Y < size.Y)
             {
-                unit.Coord = new Vector2Int(x, y);
                 units[y * size.X + x] = unit;
             }
         }
@@ -193,7 +206,7 @@ namespace CUIEngine
                 return units[y * size.X + x];
             }
 
-            return new RenderUnit(true, Vector2Int.Zero);
+            return new RenderUnit(true);
         }
         /// <summary>
         /// 根据所给参数合并两个渲染片段
