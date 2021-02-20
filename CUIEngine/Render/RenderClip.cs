@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using CUIEngine.Mathf;
 using Loggers;
 
@@ -75,25 +76,26 @@ namespace CUIEngine
             if (x >= 0 && y >= 0)
             {
                 List<RenderUnit> newUnits = new List<RenderUnit>(newSize.X * newSize.Y);
-                int nx, ny;
-                for (int j = 0; j < y; j++)
+
+                //并行处理
+                Parallel.For(0, x * y, k =>
                 {
-                    for(int i = 0; i < x; i++)
+                    int i = k % x;
+                    int j = k / x;
+                    int nx = i + offset.X;
+                    int ny = j + offset.Y;
+                    if (nx >= 0 && nx < size.X && ny >= 0 && ny < size.Y)
                     {
-                        nx = i + offset.X;
-                        ny = j + offset.Y;
-                        if (nx >= 0 && nx < size.X && ny >= 0 && ny < size.Y)
-                        {
-                            RenderUnit unit = GetUnit(nx, ny);
-                            unit.Coord = new Vector2Int(nx, ny);
-                            newUnits.Add(unit);
-                        }
-                        else
-                        {
-                            newUnits.Add(new RenderUnit(true, new Vector2Int(i, j)));
-                        }
+                        RenderUnit unit = GetUnit(nx, ny);
+                        unit.Coord = new Vector2Int(nx, ny);
+                        newUnits.Add(unit);
                     }
-                }
+                    else
+                    {
+                        newUnits.Add(new RenderUnit(true, new Vector2Int(i, j)));
+                    }
+                });
+                
                 size = newSize;
                 coord += offset;
                 units = newUnits;
@@ -187,7 +189,7 @@ namespace CUIEngine
         {
             if (x >= 0 && x < Size.X && y >= 0 && y < Size.Y)
             {
-                Logger.Log(x + "," + y);
+                //Logger.Log(x + "," + y);
                 return units[y * size.X + x];
             }
 
