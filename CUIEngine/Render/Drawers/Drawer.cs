@@ -40,13 +40,23 @@ namespace CUIEngine
         protected abstract void DrawUnit(int x, int y, RenderUnit unit);
         
         /// <summary>
+        /// 当初始化时调用
+        /// </summary>
+        protected virtual void OnInitialize(){}
+        /// <summary>
+        /// 当终止时调用
+        /// </summary>
+        protected virtual void OnShutdown(){}
+        
+        /// <summary>
         /// 初始化绘画器
         /// </summary>
         internal void Initialize()
         {
             Logger.Log("正在初始化控制台绘画器...");
+            OnInitialize();
             shouldDraw = true;
-            
+
             //启动绘画线程
             drawingThread = new Thread(() =>
             {
@@ -73,6 +83,7 @@ namespace CUIEngine
         internal void Shutdown()
         {
             Logger.Log("正在卸载控制台绘画器...");
+            OnShutdown();
             shouldDraw = false;
             drawingThread.Join();
             Logger.Log("控制台绘画器卸载完毕!");

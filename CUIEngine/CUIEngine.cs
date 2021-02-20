@@ -16,8 +16,6 @@ namespace CUIEngine
         public static void Initialize()
         {
             Logger.Log("CUI启动中...");
-            //控制台初始化
-            InitializeConsole();
 
             //日志初始化
             Logger.Initialize(@"C:\Users\legion\Documents\CUI\");
@@ -31,14 +29,6 @@ namespace CUIEngine
             Logger.Log("CUI启动成功!");
         }
 
-        static void InitializeConsole()
-        {
-            Console.CancelKeyPress += (obj, e) => e.Cancel = true;
-            FontManager.SetConsoleFontSize(Settings.ConsoleFontSize);
-            Console.CursorVisible = Settings.ShowCursor;
-            ConsoleMouseManager.SetConsoleQuickEditMode(false);
-        }
-        
         /// <summary>
         /// 关闭CUI引擎
         /// </summary>

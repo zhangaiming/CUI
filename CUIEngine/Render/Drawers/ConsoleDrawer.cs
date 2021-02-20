@@ -8,6 +8,14 @@ namespace CUIEngine.Render
 {
     public class ConsoleDrawer : Drawer
     {
+        protected override void OnInitialize()
+        {
+            Console.CancelKeyPress += (obj, e) => e.Cancel = true;
+            FontManager.SetConsoleFontSize(Settings.ConsoleFontSize);
+            Console.CursorVisible = Settings.ShowCursor;
+            ConsoleMouseManager.SetConsoleQuickEditMode(false);
+        }
+        
         public override void SetScreenSize(Vector2Int size)
         {
             Console.ResetColor();
