@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using CUIEngine.Mathf;
-using CUIEngine.Render;
+using CUIEngine_Framework.Mathf;
+using CUIEngine_Framework.Render;
 
-namespace CUIEngine.Widgets
+namespace CUIEngine_Framework.Widgets
 {
     public abstract class Widget : ICanvas
     {

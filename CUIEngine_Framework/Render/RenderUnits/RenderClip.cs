@@ -2,9 +2,9 @@
 
 using System;
 using System.Threading.Tasks;
-using CUIEngine.Mathf;
+using CUIEngine_Framework.Mathf;
 
-namespace CUIEngine.Render
+namespace CUIEngine_Framework.Render
 {
     public class RenderClip
     {
