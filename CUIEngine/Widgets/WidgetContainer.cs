@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using DevToolSet;
 
 namespace CUIEngine.Widgets
 {
@@ -19,12 +18,12 @@ namespace CUIEngine.Widgets
 
         protected override void MakeRenderClip()
         {
-            CurrentClip.Clear();
+            CurrentClip?.Clear();
             Widget[] temp = new Widget[children.Count];
             children.CopyTo(temp);
             foreach (Widget widget in temp)
             {
-                CurrentClip.MergeWith(widget.GetRenderClip(), null, false);
+                CurrentClip?.MergeWith(widget.GetRenderClip(), null, false);
             }
         }
         /// <summary>

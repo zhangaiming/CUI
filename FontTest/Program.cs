@@ -20,9 +20,9 @@
          bool maximumWindow,
          ref CONSOLE_FONT_INFO_EX consoleCurrentFontEx);
 
-      private const int STD_OUTPUT_HANDLE = -11;
-      private const int TMPF_TRUETYPE = 4;
-      private const int LF_FACESIZE = 32;
+      private const int StdOutputHandle = -11;
+      private const int TmpfTruetype = 4;
+      private const int LfFacesize = 32;
       private static IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
 
       public static unsafe void Main()
@@ -68,7 +68,7 @@
          newInfo.FontWeight = info.FontWeight;
          SetCurrentConsoleFontEx(hnd, false, newInfo);*/
          string fontName = "Lucida Console";
-         IntPtr hnd = GetStdHandle(STD_OUTPUT_HANDLE);
+         IntPtr hnd = GetStdHandle(StdOutputHandle);
          if (hnd != INVALID_HANDLE_VALUE)
          {
             CONSOLE_FONT_INFO_EX info = new CONSOLE_FONT_INFO_EX();
@@ -87,7 +87,7 @@
                // Set console font to Lucida Console.
                CONSOLE_FONT_INFO_EX newInfo = new CONSOLE_FONT_INFO_EX();
                newInfo.cbSize = (uint) Marshal.SizeOf(newInfo);
-               newInfo.FontFamily = TMPF_TRUETYPE;
+               newInfo.FontFamily = TmpfTruetype;
                IntPtr ptr = new IntPtr(newInfo.FaceName);
                Marshal.Copy(fontName.ToCharArray(), 0, ptr, fontName.Length);
                // Get some settings from current font.
@@ -128,7 +128,7 @@
          internal COORD dwFontSize;
          internal int FontFamily;
          internal int FontWeight;
-         internal fixed char FaceName[LF_FACESIZE];
+         internal fixed char FaceName[LfFacesize];
       }
    }
    }

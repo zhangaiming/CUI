@@ -9,18 +9,19 @@ namespace CUIEngine.Widgets
         /// <summary>
         /// 将被销毁时调用
         /// </summary>
-        public event Action<Widget> WidgetReadyToBeDestroyedEvent;
+        public event Action<Widget>? WidgetReadyToBeDestroyedEvent;
         
-        protected RenderClip CurrentClip;   //当前的渲染片段
+        protected RenderClip? CurrentClip;   //当前的渲染片段
         bool shouldUpdate = true; //是否应该更新渲染片段
-        IWidgetOwner parent = null;
+        string name = "";
+        IWidgetOwner? parent = null;
         Vector2Int coord;
         Vector2Int size;
         
         /// <summary>
         /// 父控件,设为null代表无父控件
         /// </summary>
-        public IWidgetOwner Parent
+        public IWidgetOwner? Parent
         {
             get => parent;
             protected set => parent = value;
@@ -42,17 +43,6 @@ namespace CUIEngine.Widgets
         {
             get => size;
             protected set => size = value;
-        }
-        /// <summary>
-        /// 是否应该更新渲染片段,若拥有者是控件,也同时也会更新拥有者的更新信息
-        /// </summary>
-        private bool ShouldUpdate
-        {
-            get => shouldUpdate;
-            set
-            {
-                
-            }
         }
 
         /// <summary>
@@ -84,15 +74,20 @@ namespace CUIEngine.Widgets
         /// </summary>
         public void Destroy()
         {
+            WidgetReadyToBeDestroyedEvent?.Invoke(this);
             OnDestroyed();
         }
         
         public RenderClip GetRenderClip()
         {
-            if (ShouldUpdate)
+            if (CurrentClip == null)
+            {
+                CurrentClip = new RenderClip(size, coord);
+            }
+            if (shouldUpdate)
             {
                 MakeRenderClip();
-                ShouldUpdate = false;
+                shouldUpdate = false;
             }
             return CurrentClip;
         }
@@ -101,7 +96,7 @@ namespace CUIEngine.Widgets
         /// 设置父控件,设为null则默认为根控件
         /// </summary>
         /// <param name="owner"></param>
-        public void SetParent(IWidgetOwner owner)
+        public void SetParent(IWidgetOwner? owner)
         {
             parent?.RemoveWidget(this);
             owner?.AddWidget(this);
@@ -113,7 +108,7 @@ namespace CUIEngine.Widgets
         /// <param name="newSize"></param>
         public virtual void Resize(Vector2Int newSize)
         {
-            CurrentClip.Resize(newSize,Vector2Int.Zero);
+            CurrentClip?.Resize(newSize,Vector2Int.Zero);
             size = newSize;
         }
         /// <summary>
@@ -122,30 +117,25 @@ namespace CUIEngine.Widgets
         /// <param name="newCoord"></param>
         public virtual void Move(Vector2Int newCoord)
         {
-            CurrentClip.Resize(size, newCoord - coord);
+            CurrentClip?.Resize(size, newCoord - coord);
             coord = newCoord;
         }
-        
+
         /// <summary>
         /// 创建指定类型的控件,创建完毕后会自动调用控件的Initialize方法
         /// </summary>
         /// <param name="coord"></param>
         /// <param name="size"></param>
+        /// <param name="name"></param>
         /// <param name="parent"></param>
-        /// <param name="weight"></param>
         /// <typeparam name="TType">控件的类型</typeparam>
         /// <returns></returns>
-        public static TType CreateWidget<TType>(Vector2Int size, Vector2Int coord, IWidgetOwner parent = null) where TType : Widget, new()
+        public static TType CreateWidget<TType>(Vector2Int size, Vector2Int coord, string name, IWidgetOwner? parent = null) where TType : Widget, new()
         {
-            //不可是基类
-            if (typeof(TType) == typeof(Widget))
-            {
-                return null;
-            }
-
             TType widget = new TType();
             widget.coord = coord;
             widget.size = size;
+            widget.name = name;
             widget.parent = parent;
             parent?.AddWidget(widget);
 
@@ -167,5 +157,10 @@ namespace CUIEngine.Widgets
                 }
             }
         }
+        //todo: 待实现
+        /*public TType FindWidget<TType>(string name)
+        {
+            
+        }*/
     }
 }

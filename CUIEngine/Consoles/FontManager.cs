@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace CUIEngine
+namespace CUIEngine.Consoles
 {
     public class FontManager
     {
@@ -12,21 +12,21 @@ namespace CUIEngine
         static extern bool GetCurrentConsoleFontEx(
             IntPtr consoleOutput,
             bool maximumWindow,
-            ref CONSOLE_FONT_INFO_EX lpConsoleCurrentFontEx);
+            ref ConsoleFontInfoEx lpConsoleCurrentFontEx);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern bool SetCurrentConsoleFontEx(
             IntPtr consoleOutput,
             bool maximumWindow,
-            ref CONSOLE_FONT_INFO_EX consoleCurrentFontEx);
+            ref ConsoleFontInfoEx consoleCurrentFontEx);
         
         [StructLayout(LayoutKind.Sequential)]
-        internal struct COORD
+        internal struct Coord
         {
             internal short X;
             internal short Y;
 
-            internal COORD(short x, short y)
+            internal Coord(short x, short y)
             {
                 X = x;
                 Y = y;
@@ -34,29 +34,26 @@ namespace CUIEngine
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal unsafe struct CONSOLE_FONT_INFO_EX
+        internal unsafe struct ConsoleFontInfoEx
         {
             internal uint cbSize;
             internal uint nFont;
-            internal COORD dwFontSize;
+            internal Coord dwFontSize;
             internal int FontFamily;
             internal int FontWeight;
             internal fixed char FaceName[32];
         }
         
-        const int STD_OUTPUT_HANDLE = -11;
-        const int TMPF_TRUETYPE = 4;
+        const int StdOutputHandle = -11;
         static IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
 
-        public static unsafe void SetConsoleFontSize(short n)
+        public static void SetConsoleFontSize(short n)
         {
-            string fontName = "Lucida Console";
-            IntPtr hnd = GetStdHandle(STD_OUTPUT_HANDLE);
+            IntPtr hnd = GetStdHandle(StdOutputHandle);
             if (hnd != INVALID_HANDLE_VALUE)
             {
-                CONSOLE_FONT_INFO_EX info = new CONSOLE_FONT_INFO_EX();
+                ConsoleFontInfoEx info = new ConsoleFontInfoEx();
                 info.cbSize = (uint) Marshal.SizeOf(info);
-                bool tt = false;
                 // First determine whether there's already a TrueType font.
                 if (GetCurrentConsoleFontEx(hnd, false, ref info))
                 {

@@ -1,28 +1,28 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace CUIEngine
+namespace CUIEngine.Consoles
 {
     public class ConsoleMouseManager
     {
         [DllImport("kernel32.dll", SetLastError = true)]
-        static extern bool GetConsoleMode(IntPtr _hConsoleHandle, out uint _mode);
+        static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint mode);
         
         [DllImport("kernel32.dll", SetLastError = true)]
-        static extern bool SetConsoleMode(IntPtr _hConsoleHandle, uint _mode);
+        static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint mode);
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        static extern IntPtr GetStdHandle(int _hConsoleHandle);
+        static extern IntPtr GetStdHandle(int hConsoleHandle);
         
-        const int STD_INPUT_HANDLE = -10;
-        const uint ENABLE_QUICK_EDIT_MODE = 0x0040;
+        const int StdInputHandle = -10;
+        const uint EnableQuickEditMode = 0x0040;
 
         public static void SetConsoleQuickEditMode(bool s)
         {
-            IntPtr stdin = GetStdHandle(STD_INPUT_HANDLE);
+            IntPtr stdin = GetStdHandle(StdInputHandle);
             uint mode;
             GetConsoleMode(stdin, out mode);
-            mode &= s ? ENABLE_QUICK_EDIT_MODE : ~ENABLE_QUICK_EDIT_MODE;
+            mode &= s ? EnableQuickEditMode : ~EnableQuickEditMode;
             SetConsoleMode(stdin, mode);
         }
     }

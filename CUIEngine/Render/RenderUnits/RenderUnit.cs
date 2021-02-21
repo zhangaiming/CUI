@@ -1,10 +1,8 @@
-﻿using CUIEngine.Mathf;
-
-namespace CUIEngine
+﻿namespace CUIEngine.Render
 {
     public struct RenderUnit
     {
-        RenderUnitColor color;
+        Color color;
         char content;
         uint weight;
         bool isEmpty;
@@ -12,7 +10,7 @@ namespace CUIEngine
         /// <summary>
         /// 单位的颜色
         /// </summary>
-        public RenderUnitColor Color
+        public Color Color
         {
             get => color;
             set => color = value;
@@ -45,12 +43,12 @@ namespace CUIEngine
         const uint DefaultWeight = 900000;
         
         public RenderUnit(char content, uint weight = DefaultWeight) 
-            : this(RenderUnitColor.DefaultColor, content, weight){}
-        public RenderUnit(RenderUnitColor color, char content = ' ', uint weight = DefaultWeight)
+            : this(Color.DefaultColor, content, weight){}
+        public RenderUnit(Color color, char content = ' ', uint weight = DefaultWeight)
             : this(false, color, content, weight){}
         public RenderUnit(bool isEmpty, char content = ' ', uint weight = DefaultWeight) 
-            : this(isEmpty, RenderUnitColor.DefaultColor, content, weight){}
-        public RenderUnit(bool isEmpty, RenderUnitColor color, char content = ' ', uint weight = DefaultWeight)
+            : this(isEmpty, Color.DefaultColor, content, weight){}
+        public RenderUnit(bool isEmpty, Color color, char content = ' ', uint weight = DefaultWeight)
         {
             this.weight = weight;
             this.content = content;

@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Runtime.InteropServices;
-using DevToolSet;
+using CUIEngine.Render;
 
 namespace CUIEngine.Widgets
 {
@@ -23,7 +22,7 @@ namespace CUIEngine.Widgets
             {
                 for (int j = 0; j < Size.Y; j++)
                 {
-                    CurrentClip.SetUnit(i, j, new RenderUnit(new RenderUnitColor(ConsoleColor.Blue, BackColor)));
+                    CurrentClip?.SetUnit(i, j, new RenderUnit(new Color(ConsoleColor.Blue, BackColor)));
                 }
             }
         }

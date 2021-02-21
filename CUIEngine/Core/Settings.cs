@@ -1,11 +1,12 @@
 ﻿using System;
+using CUIEngine.Consoles;
 using CUIEngine.Mathf;
 
 namespace CUIEngine
 {
     public static class Settings
     {
-        internal static event Action<Vector2Int> OnScreenSizeChanged;
+        internal static event Action<Vector2Int>? OnScreenSizeChanged;
         
         /// <summary>
         /// 默认单元颜色

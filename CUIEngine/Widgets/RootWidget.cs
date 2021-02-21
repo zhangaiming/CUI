@@ -4,6 +4,8 @@ namespace CUIEngine.Widgets
 {
     public class RootWidget : WidgetContainer
     {
+        static bool isCreated;
+
         protected override void OnInitialize()
         {
             base.OnInitialize();

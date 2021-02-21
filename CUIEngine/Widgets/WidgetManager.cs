@@ -4,8 +4,12 @@ namespace CUIEngine.Widgets
 {
     public static class WidgetManager
     {
-        static RootWidget rootWidget;
-        public static RootWidget RootWidget => rootWidget;
+        static RootWidget? rootWidget;
+
+        /// <summary>
+        /// 根控件
+        /// </summary>
+        public static RootWidget RootWidget => rootWidget!;
         public static void Initialize()
         {
             CreateRootWidget();
@@ -18,7 +22,7 @@ namespace CUIEngine.Widgets
 
         static void CreateRootWidget()
         {
-            rootWidget = Widget.CreateWidget<RootWidget>(Settings.ScreenSize, Vector2Int.Zero);
+            rootWidget = Widget.CreateWidget<RootWidget>(Settings.ScreenSize, Vector2Int.Zero, "RootWidget");
             CUIEngine.SetRootCanvas(rootWidget);
         }
     }

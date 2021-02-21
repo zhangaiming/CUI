@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Threading;
+using CUIEngine.Consoles;
 using CUIEngine.Mathf;
-using DevToolSet;
 
 namespace CUIEngine.Render
 {
@@ -13,7 +12,7 @@ namespace CUIEngine.Render
             Console.CancelKeyPress += (obj, e) => e.Cancel = true;
             FontManager.SetConsoleFontSize(Settings.ConsoleFontSize);
             Console.CursorVisible = Settings.ShowCursor;
-            //ConsoleMouseManager.SetConsoleQuickEditMode(false);
+            ConsoleMouseManager.SetConsoleQuickEditMode(false);
         }
         
         public override void SetScreenSize(Vector2Int size)

@@ -6,8 +6,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevToolSet", "DevToolSet\De
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject", "TestProject\TestProject.csproj", "{2F980E89-37AD-40D9-8D66-646A18101B73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FontTest", "FontTest\FontTest.csproj", "{AF599007-0DD7-4B90-962D-9F4A6001B331}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,9 +24,5 @@ Global
 		{2F980E89-37AD-40D9-8D66-646A18101B73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F980E89-37AD-40D9-8D66-646A18101B73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F980E89-37AD-40D9-8D66-646A18101B73}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AF599007-0DD7-4B90-962D-9F4A6001B331}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AF599007-0DD7-4B90-962D-9F4A6001B331}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AF599007-0DD7-4B90-962D-9F4A6001B331}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AF599007-0DD7-4B90-962D-9F4A6001B331}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

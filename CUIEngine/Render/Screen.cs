@@ -3,7 +3,7 @@ using System.Threading;
 using CUIEngine.Mathf;
 using DevToolSet;
 
-namespace CUIEngine
+namespace CUIEngine.Render
 {
     public abstract class Screen
     {
@@ -21,7 +21,7 @@ namespace CUIEngine
         }
         
         ConcurrentQueue<RenderInfo> renderQueue = new ConcurrentQueue<RenderInfo>();
-        Thread drawingThread;
+        Thread? drawingThread;
         bool shouldDraw = true;
         bool isPaused = false;
         
@@ -73,6 +73,7 @@ namespace CUIEngine
                     //Thread.Sleep(1);
                 }
             });
+            drawingThread.IsBackground = true;
             drawingThread.Start();
             
             Logger.Log("屏幕初始化完毕!");
@@ -87,7 +88,7 @@ namespace CUIEngine
             
             //终止绘画进程
             shouldDraw = false;
-            drawingThread.Join();
+            drawingThread?.Join();
             Logger.Log("屏幕卸载完毕!");
         }
         /// <summary>
@@ -99,9 +100,9 @@ namespace CUIEngine
             int sizeX = clip.Size.X, sizeY = clip.Size.Y;
             int cx = clip.Coord.X, cy = clip.Coord.Y;
             RenderUnit unit;
-            for(int j = 0; j < clip.Size.Y; j++)
+            for(int j = 0; j < sizeY; j++)
             {
-                for (int i = 0; i < clip.Size.X; i++)
+                for (int i = 0; i < sizeX; i++)
                 {
                     unit = clip.GetUnit(i, j);
                     if (!unit.IsEmpty)
@@ -129,7 +130,7 @@ namespace CUIEngine
         /// </summary>
         public void Erase(int x, int y)
         {
-            Draw(x, y, new RenderUnit(RenderUnitColor.DefaultColor, ' '));
+            Draw(x, y, new RenderUnit(Color.DefaultColor));
         }
         /// <summary>
         /// 控制暂停绘制

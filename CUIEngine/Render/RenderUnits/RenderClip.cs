@@ -1,15 +1,10 @@
 ﻿//todo: 权重或许可以去掉, 但是为了防止可能有考虑不周全的地方, 以后再确定要不要删掉
+
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using CUIEngine.Mathf;
-using DevToolSet;
 
-namespace CUIEngine
+namespace CUIEngine.Render
 {
     public class RenderClip
     {
@@ -39,6 +34,7 @@ namespace CUIEngine
         /// </summary>
         /// <param name="x">片段宽度</param>
         /// <param name="y">片段高度</param>
+        /// <param name="coord"></param>
         public RenderClip(int x, int y, Vector2Int coord)
         {
             size.X = x;
@@ -47,11 +43,12 @@ namespace CUIEngine
             units = new RenderUnit[x * y];
             Clear();
         }
-        
+
         /// <summary>
         /// 进行渲染片段的初始化, 默认全为空单元
         /// </summary>
-        /// <param name="Size">片段的大小</param>
+        /// <param name="size"></param>
+        /// <param name="coord"></param>
         public RenderClip(Vector2Int size, Vector2Int coord) : this(size.X, size.Y, coord){}
 
         /// <summary>
@@ -91,7 +88,7 @@ namespace CUIEngine
                 if(x * y > 100)
                 //并行处理
                 {
-                    Parallel.For(0, x * y, (int k) =>
+                    Parallel.For(0, x * y, k =>
                     {
                         int i = k % x;
                         int j = k / x;
@@ -155,11 +152,11 @@ namespace CUIEngine
             unit.IsEmpty = true;
             SetUnit(x, y, unit);
         }
+
         /// <summary>
         /// 直接设置对应位置的单元, 只要在范围内就一定会对原单元进行覆盖
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
+        /// <param name="coord"></param>
         /// <param name="unit"></param>
         public void SetUnit(Vector2Int coord, RenderUnit unit)
         {
@@ -250,7 +247,7 @@ namespace CUIEngine
         /// <param name="other"></param>
         /// <param name="unitCoveredHandler"></param>
         /// <param name="shouldClip"></param>
-        public void MergeWith(RenderClip other, Action<int, int, RenderUnit> unitCoveredHandler, bool shouldClip)
+        public void MergeWith(RenderClip other, Action<int, int, RenderUnit>? unitCoveredHandler, bool shouldClip)
         {
             Vector2Int offset = other.coord - this.coord;
             int x, y;

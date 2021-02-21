@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using CUIEngine.Render;
 using CUIEngine.Widgets;
 using DevToolSet;
@@ -8,10 +7,10 @@ namespace CUIEngine
 {
     public static class CUIEngine
     {
-        static Renderer renderer;
-        public static Renderer Renderer => renderer;
+        static Renderer? renderer;
+        public static Renderer? Renderer => renderer;
 
-        static ICanvas rootCanvas;
+        static ICanvas? rootCanvas;
 
         /// <summary>
         /// 初始化CUI引擎
@@ -48,7 +47,7 @@ namespace CUIEngine
             
         }
 
-        internal static void SetRootCanvas(ICanvas canvas)
+        internal static void SetRootCanvas(ICanvas? canvas)
         {
             if (rootCanvas == null)
             {

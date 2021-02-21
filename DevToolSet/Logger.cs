@@ -17,10 +17,10 @@ namespace DevToolSet
     {
         public static string LogFileDir = "";
         public static int FlushTimeSpanByMs = 10;
-        static FileStream fs;
-        static bool fileCreated = false;
+        static FileStream? fs;
+        static bool fileCreated;
         static string curFilePath = "";
-        static Thread messageSolveThread;
+        static Thread? messageSolveThread;
         static bool shouldSolveMessage = true;
 
         static ConcurrentQueue<string> messageQueue = new ConcurrentQueue<string>();
@@ -49,7 +49,7 @@ namespace DevToolSet
         public static void Shutdown()
         {
             shouldSolveMessage = false;
-            messageSolveThread.Join();
+            messageSolveThread?.Join();
         }
         
         static void CreateLogFile()
