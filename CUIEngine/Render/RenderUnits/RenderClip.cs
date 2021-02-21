@@ -79,7 +79,36 @@ namespace CUIEngine
                 SetUnit(i, j, src.GetUnit(i, j));
             }
         }
-
+        /// <summary>
+        /// 对每一个单元进行重新加权,最终权值过高或过低时会被截取至uint的最大值或最小值
+        /// </summary>
+        /// <param name="w"></param>
+        public void AddWeight(int w)
+        {
+            for (int i = 0; i < size.X; i++)
+            {
+                for (int j = 0; j < size.Y; j++)
+                {
+                    RenderUnit unit = GetUnit(i, j);
+                    if (-w > unit.Weight)
+                    {
+                        unit.Weight = 0;
+                    }else
+                    {
+                        long res = w + unit.Weight;
+                        if (res > uint.MaxValue)
+                        {
+                            unit.Weight = uint.MaxValue;
+                        }
+                        else
+                        {
+                            unit.Weight = (uint) res;
+                        }
+                    }
+                }
+            }
+        }
+        
         /// <summary>
         /// 调整片段大小, 片段内容及内容坐标保持不变
         /// </summary>
@@ -282,7 +311,7 @@ namespace CUIEngine
                     if (covered)
                     {
                         //ThreadPool.QueueUserWorkItem(obj => unitCoveredHandler(i, j, unit));
-                        unitCoveredHandler.BeginInvoke(i, j, unit, null, null);
+                        unitCoveredHandler?.BeginInvoke(i, j, unit, null, null);
                     }
                 }
             }

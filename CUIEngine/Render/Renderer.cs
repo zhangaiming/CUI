@@ -22,11 +22,11 @@ namespace CUIEngine.Render
         /// <summary>
         /// 控制台绘画者
         /// </summary>
-        Drawer drawer;
+        Screen screen;
         /// <summary>
         /// 屏幕缓冲片段
         /// </summary>
-        RenderClip screenBufferClip;
+        RenderClip bufferClip;
         /// <summary>
         /// 是否已经过初始化
         /// </summary>
@@ -74,17 +74,17 @@ namespace CUIEngine.Render
             Logger.Log("正在初始化渲染器...");
 
             //清空屏幕缓冲
-            screenBufferClip = new RenderClip(Settings.ScreenSize, Vector2Int.Zero);
+            bufferClip = new RenderClip(Settings.ScreenSize, Vector2Int.Zero);
 
             //添加屏幕大小更新事件
             Settings.OnScreenSizeChanged += OnScreenSizeChanged;
             
             //初始化绘制器
-            drawer = new ConsoleDrawer();
-            drawer.Initialize();
+            screen = new ConsoleScreen();
+            screen.Initialize();
             
             //设置控制台大小
-            drawer.SetScreenSize(Settings.ScreenSize);
+            screen.SetScreenSize(Settings.ScreenSize);
 
             //启动渲染线程
             renderThread = new Thread(() =>
@@ -111,7 +111,7 @@ namespace CUIEngine.Render
         {
             Logger.Log("正在卸载渲染器...");
             Settings.OnScreenSizeChanged -= OnScreenSizeChanged;
-            drawer.Shutdown();
+            screen.Shutdown();
             isInitialized = false;
             Logger.Log("渲染器卸载完毕!");
         }
@@ -126,7 +126,7 @@ namespace CUIEngine.Render
                 RenderClip clip = canvas?.GetRenderClip();
                 if(clip != null)
                 {
-                    screenBufferClip.MergeWith(clip, MergeCallback, true);
+                    bufferClip.MergeWith(clip, MergeCallback, true);
                 }
             }
         }
@@ -147,16 +147,14 @@ namespace CUIEngine.Render
         }
         void MergeCallback(int x, int y, RenderUnit unit)
         {
-            drawer.Draw(x, y, unit);
+            screen.Draw(x, y, unit);
         }
         void OnScreenSizeChanged(Vector2Int newSize)
         {
             PauseRender();
-            drawer.SetPause(true);
-            screenBufferClip.Resize(newSize, Vector2Int.Zero);
-            drawer.SetScreenSize(newSize);
-            drawer.Draw(screenBufferClip);
-            drawer.SetPause(false);
+            bufferClip.Resize(newSize, Vector2Int.Zero);
+            screen.SetScreenSize(newSize);
+            screen.Draw(bufferClip);
             StartRender();
         }
     }

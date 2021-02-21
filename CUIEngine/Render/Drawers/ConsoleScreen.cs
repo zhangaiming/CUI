@@ -6,18 +6,20 @@ using DevToolSet;
 
 namespace CUIEngine.Render
 {
-    public class ConsoleDrawer : Drawer
+    public class ConsoleScreen : Screen
     {
         protected override void OnInitialize()
         {
             Console.CancelKeyPress += (obj, e) => e.Cancel = true;
             FontManager.SetConsoleFontSize(Settings.ConsoleFontSize);
             Console.CursorVisible = Settings.ShowCursor;
-            ConsoleMouseManager.SetConsoleQuickEditMode(false);
+            //ConsoleMouseManager.SetConsoleQuickEditMode(false);
         }
         
         public override void SetScreenSize(Vector2Int size)
         {
+            SetPause(true);
+            
             Console.ResetColor();
             Console.Clear();
             int x = size.X, y = size.Y;
@@ -26,6 +28,8 @@ namespace CUIEngine.Render
             
             //等待控制台窗口设置
             Thread.Sleep(10);
+            
+            SetPause(false);
         }
         
         protected override void DrawUnit(int x, int y, RenderUnit unit)

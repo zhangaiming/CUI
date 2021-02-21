@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Threading;
 using CUIEngine.Mathf;
 using CUIEngine.Render;
+using CUIEngine.Widgets;
 
 namespace CUIEngine
 {
     internal class Canvas : ICanvas
     {
+        public Vector2Int Size { get; }
+
         public RenderClip GetRenderClip()
         {
             return CreateFilledRenderClip(new Vector2Int(0, 0), new Vector2Int(20, 15), ConsoleColor.Green);
@@ -33,45 +37,11 @@ namespace CUIEngine
         {
             CUIEngine.Initialize();
 
-            Canvas c = new Canvas();
-            CUIEngine.Renderer.Canvas = c;
-            
-            Console.ReadKey();
-            Settings.ScreenSize = new Vector2Int(30, 20);
+            TestWidget w =
+                Widget.CreateWidget<TestWidget>(new Vector2Int(5, 5), Vector2Int.Zero, WidgetManager.RootWidget);
+            w.BackColor = ConsoleColor.Blue;
 
             Console.ReadKey();
         }
-
-        /*static void PaintRenderClip(RenderClip clip)
-        {
-            int x = clip.Size.X, y = clip.Size.Y;
-            RenderUnit u;
-            int ox = clip.Coord.X, oy = clip.Coord.Y;
-            for (int j = 0; j < y + oy; j++)
-            {
-                for (int i = 0; i < x + ox; i++)
-                {
-                    if (i < ox || j < oy)
-                    {
-                        Console.ResetColor();
-                        Console.Write(' ');
-                        continue;
-                    }
-                    u = clip.GetUnit(i - ox, j - oy);
-                    if(!u.IsEmpty)
-                    {
-                        Console.ForegroundColor = u.Color.ForegroundColor;
-                        Console.BackgroundColor = u.Color.BackgroundColor;
-                        Console.Write(u.Content);
-                    }
-                    else
-                    {
-                        Console.ResetColor();
-                        Console.Write(' ');
-                    }
-                }
-                Console.WriteLine();
-            }
-        }*/
     }
 }

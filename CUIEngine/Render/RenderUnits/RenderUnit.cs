@@ -42,13 +42,15 @@ namespace CUIEngine
             set => isEmpty = value;
         }
 
-        public RenderUnit(char content, uint weight = 10000) 
+        const uint DefaultWeight = 900000;
+        
+        public RenderUnit(char content, uint weight = DefaultWeight) 
             : this(RenderUnitColor.DefaultColor, content, weight){}
-        public RenderUnit(RenderUnitColor color, char content = ' ', uint weight = 10000)
+        public RenderUnit(RenderUnitColor color, char content = ' ', uint weight = DefaultWeight)
             : this(false, color, content, weight){}
-        public RenderUnit(bool isEmpty, char content = ' ', uint weight = 10000) 
+        public RenderUnit(bool isEmpty, char content = ' ', uint weight = DefaultWeight) 
             : this(isEmpty, RenderUnitColor.DefaultColor, content, weight){}
-        public RenderUnit(bool isEmpty, RenderUnitColor color, char content = ' ', uint weight = 10000)
+        public RenderUnit(bool isEmpty, RenderUnitColor color, char content = ' ', uint weight = DefaultWeight)
         {
             this.weight = weight;
             this.content = content;

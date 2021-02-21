@@ -5,7 +5,7 @@ using DevToolSet;
 
 namespace CUIEngine
 {
-    public abstract class Drawer
+    public abstract class Screen
     {
         struct RenderInfo
         {
@@ -32,7 +32,7 @@ namespace CUIEngine
         public abstract void SetScreenSize(Vector2Int size);
 
         /// <summary>
-        /// 在控制台中绘制一个像素
+        /// 在屏幕中绘制一个像素
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -49,11 +49,11 @@ namespace CUIEngine
         protected virtual void OnShutdown(){}
         
         /// <summary>
-        /// 初始化绘画器
+        /// 初始化屏幕
         /// </summary>
         internal void Initialize()
         {
-            Logger.Log("正在初始化控制台绘画器...");
+            Logger.Log("正在初始化屏幕...");
             OnInitialize();
             shouldDraw = true;
 
@@ -75,18 +75,18 @@ namespace CUIEngine
             });
             drawingThread.Start();
             
-            Logger.Log("控制台绘画器初始化完毕!");
+            Logger.Log("屏幕初始化完毕!");
         }
         /// <summary>
-        /// 终止Renderer
+        /// 终止屏幕
         /// </summary>
         internal void Shutdown()
         {
-            Logger.Log("正在卸载控制台绘画器...");
+            Logger.Log("正在卸载屏幕...");
             OnShutdown();
             shouldDraw = false;
             drawingThread.Join();
-            Logger.Log("控制台绘画器卸载完毕!");
+            Logger.Log("屏幕卸载完毕!");
         }
         /// <summary>
         /// 将一个片段加入绘制队列
