@@ -4,7 +4,7 @@ namespace CUIEngine_Framework.Widgets
 {
     public class RootWidget : WidgetContainer
     {
-        static bool isCreated;
+        //static bool isCreated;
 
         protected override void OnInitialize()
         {

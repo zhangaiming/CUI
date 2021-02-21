@@ -35,7 +35,7 @@ namespace CUIEngine.Mathf
             this.y = y;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is Vector2Int)
             {
@@ -47,27 +47,9 @@ namespace CUIEngine.Mathf
 
         public override int GetHashCode()
         {
-            return ShiftAndWrap(x.GetHashCode(), 2) ^ y.GetHashCode();
+            return HashCode.Combine(x, y);
         }
 
-        /// <summary>
-        /// 为生成哈希码提供的int移位并换行的方法
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="positions"></param>
-        /// <returns></returns>
-        static int ShiftAndWrap(int value, int positions)
-        {
-            positions = positions & 0x1F;
-
-            // Save the existing bit pattern, but interpret it as an unsigned integer.
-            uint number = BitConverter.ToUInt32(BitConverter.GetBytes(value), 0);
-            // Preserve the bits to be discarded.
-            uint wrapped = number >> (32 - positions);
-            // Shift and wrap the discarded bits.
-            return BitConverter.ToInt32(BitConverter.GetBytes((number << positions) | wrapped), 0);
-        }
-        
         public static Vector2Int operator- (Vector2Int a, Vector2Int b)
         {
             return new Vector2Int(a.x - b.x, a.y - b.y);

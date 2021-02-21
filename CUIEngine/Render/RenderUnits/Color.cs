@@ -36,16 +36,14 @@ namespace CUIEngine.Render
             backColor = back;
         }
 
-#pragma warning disable 659
-        public override bool Equals(object o)
-#pragma warning restore 659
+        public bool Equals(Color other)
         {
-            if (o is Color)
-            {
-                Color c = (Color)o;
-                return foreColor == c.foreColor && backColor == c.backColor;
-            }
-            return false;
+            return foreColor == other.foreColor && backColor == other.backColor;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine((int) foreColor, (int) backColor);
         }
     }
 }

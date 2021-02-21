@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using CUIEngine.Mathf;
 using CUIEngine.Render;
 
@@ -184,10 +185,24 @@ namespace CUIEngine.Widgets
                 }
             }
         }
-        //todo: 待实现
-        public TType FindWidget<TType>(string name) 
+        /// <summary>
+        /// 返回找到的第一个指定名字的控件
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        [return: MaybeNull]
+        public static T FindWidget<T>(string name) where T : Widget
         {
-            return default(TType);
+            if (widgetPool.ContainsKey(name))
+            {
+                List<Widget> widgets = widgetPool[name];
+                if (widgets.Count >= 1)
+                {
+                    return (T)widgets[0];
+                }
+            }
+
+            return null;
         }
 
         /// <summary>

@@ -185,10 +185,10 @@ namespace CUIEngine_Framework.Widgets
             }
         }
         //todo: 待实现
-        public TType FindWidget<TType>(string name) 
+        /*public TType FindWidget<TType>(string name) 
         {
-            return default(TType);
-        }
+            
+        }*/
 
         /// <summary>
         /// 向控件池中添加指定控件
