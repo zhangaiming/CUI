@@ -1,6 +1,4 @@
-﻿//todo: 对处于屏幕外的控件进行剔除
-
-using System;
+﻿using System;
 using CUIEngine.Mathf;
 using CUIEngine.Render;
 
@@ -46,21 +44,14 @@ namespace CUIEngine.Widgets
             protected set => size = value;
         }
         /// <summary>
-        /// 是否应该更新渲染片段,若设置为应该更新,则会让父控件也进行更新
+        /// 是否应该更新渲染片段,若拥有者是控件,也同时也会更新拥有者的更新信息
         /// </summary>
-        public bool ShouldUpdate
+        private bool ShouldUpdate
         {
             get => shouldUpdate;
-            protected set
+            set
             {
-                shouldUpdate = value;
-                if(shouldUpdate)
-                {
-                    if (parent is Widget)
-                    {
-                        ((Widget) parent).ShouldUpdate = value;
-                    }
-                }
+                
             }
         }
 
@@ -76,7 +67,7 @@ namespace CUIEngine.Widgets
         /// <summary>
         /// 更新渲染片段
         /// </summary>
-        public abstract void UpdateRenderClip();
+        protected abstract void MakeRenderClip();
         
         /// <summary>
         /// 初始化控件
@@ -100,7 +91,7 @@ namespace CUIEngine.Widgets
         {
             if (ShouldUpdate)
             {
-                UpdateRenderClip();
+                MakeRenderClip();
                 ShouldUpdate = false;
             }
             return CurrentClip;
@@ -161,6 +152,20 @@ namespace CUIEngine.Widgets
             widget.Initialize();
 
             return widget;
+        }
+        /// <summary>
+        /// 通知控件进行渲染片段的更新,若此控件的拥有者也是一个控件,会同时更新拥有者的更新信息
+        /// </summary>
+        public void UpdateRenderClip()
+        {
+            shouldUpdate = true;
+            if(shouldUpdate)
+            {
+                if (parent is Widget)
+                {
+                    ((Widget) parent).UpdateRenderClip();
+                }
+            }
         }
     }
 }

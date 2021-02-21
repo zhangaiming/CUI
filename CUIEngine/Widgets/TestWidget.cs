@@ -13,13 +13,12 @@ namespace CUIEngine.Widgets
             set
             {
                 backColor = value;
-                ShouldUpdate = true;
+                UpdateRenderClip();
             }
         }
 
-        public override void UpdateRenderClip()
+        protected override void MakeRenderClip()
         {
-            Logger.Log("更新了测试用控件的渲染片段");
             for (int i = 0; i < Size.X; i++)
             {
                 for (int j = 0; j < Size.Y; j++)

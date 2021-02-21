@@ -17,12 +17,12 @@ namespace CUIEngine.Widgets
             set => clipChildren = value;
         }
 
-        public override void UpdateRenderClip()
+        protected override void MakeRenderClip()
         {
-            Logger.Log("更新了容器的渲染片段");
-            //todo: 给渲染片段加一个清空方法
-            CurrentClip = new RenderClip(Size, Coord);
-            foreach (Widget widget in children)
+            CurrentClip.Clear();
+            Widget[] temp = new Widget[children.Count];
+            children.CopyTo(temp);
+            foreach (Widget widget in temp)
             {
                 CurrentClip.MergeWith(widget.GetRenderClip(), null, false);
             }
@@ -34,7 +34,7 @@ namespace CUIEngine.Widgets
         public void AddWidget(Widget widget)
         {
             children.Add(widget);
-            ShouldUpdate = true;
+            UpdateRenderClip();
         }
         public void RemoveWidget(Widget widget)
         {
@@ -42,7 +42,7 @@ namespace CUIEngine.Widgets
             {
                 widget.SetParent(null);
                 children.Remove(widget);
-                ShouldUpdate = true;
+                UpdateRenderClip();
             }
         }
         /// <summary>
@@ -54,7 +54,7 @@ namespace CUIEngine.Widgets
             if (index > -1 && index < children.Count)
             {
                 children.RemoveAt(children.Count - index - 1);
-                ShouldUpdate = true;
+                UpdateRenderClip();
             }
         }
         public bool ContainWidget(Widget widget)
@@ -70,9 +70,9 @@ namespace CUIEngine.Widgets
             int i = IndexOf(widget);
             if (i != -1)
             {
-                children.RemoveAt(-1);
+                children.RemoveAt(i);
                 children.Add(widget);
-                ShouldUpdate = true;
+                UpdateRenderClip();
             }
         }
         /// <summary>

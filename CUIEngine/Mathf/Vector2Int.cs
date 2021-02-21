@@ -71,11 +71,13 @@ namespace CUIEngine.Mathf
             return new Vector2Int(a.x * b.x, a.y * b.y);
         }
 
+        /// <summary>
+        /// 获取此矢量格式化后的字符串
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("(").Append(x).Append(",").Append(y).Append(")");
-            return sb.ToString();
+            return string.Format("({0},{1})", x, y);;
         }
     }
 }

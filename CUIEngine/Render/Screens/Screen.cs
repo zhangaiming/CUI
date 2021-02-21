@@ -84,6 +84,8 @@ namespace CUIEngine
         {
             Logger.Log("正在卸载屏幕...");
             OnShutdown();
+            
+            //终止绘画进程
             shouldDraw = false;
             drawingThread.Join();
             Logger.Log("屏幕卸载完毕!");

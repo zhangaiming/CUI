@@ -111,7 +111,14 @@ namespace CUIEngine.Render
         {
             Logger.Log("正在卸载渲染器...");
             Settings.OnScreenSizeChanged -= OnScreenSizeChanged;
+            
+            //关闭屏幕
             screen.Shutdown();
+            
+            //终止渲染进程
+            shouldRender = false;
+            renderThread.Join();
+            
             isInitialized = false;
             Logger.Log("渲染器卸载完毕!");
         }

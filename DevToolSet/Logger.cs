@@ -66,19 +66,14 @@ namespace DevToolSet
                 fileCreated = true;
             }
         }
-
-        public static void Log(bool message, LogType logType = LogType.Normal)
-        {
-            Log(message ? "true" : "false", logType);
-        }
-        
         /// <summary>
         /// 输出日志
         /// </summary>
         /// <param name="message"></param>
-        public static void Log(string message, LogType logType = LogType.Normal)
+        /// <param name="logType"></param>
+        public static void Log(object message, LogType logType = LogType.Normal)
         {
-            messageQueue.Enqueue(FormatLogMessage(message, logType));
+            messageQueue.Enqueue(FormatLogMessage(message.ToString(), logType));
         }
 
         static void Print(string message)

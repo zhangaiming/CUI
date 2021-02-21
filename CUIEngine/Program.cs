@@ -3,6 +3,7 @@ using System.Threading;
 using CUIEngine.Mathf;
 using CUIEngine.Render;
 using CUIEngine.Widgets;
+using DevToolSet;
 
 namespace CUIEngine
 {
@@ -37,11 +38,22 @@ namespace CUIEngine
         {
             CUIEngine.Initialize();
 
-            TestWidget w =
+            TestWidget w1 =
                 Widget.CreateWidget<TestWidget>(new Vector2Int(5, 5), Vector2Int.Zero, WidgetManager.RootWidget);
-            w.BackColor = ConsoleColor.Blue;
-
+            w1.BackColor = ConsoleColor.Blue;
+            TestWidget w2=
+                Widget.CreateWidget<TestWidget>(new Vector2Int(5, 5), new Vector2Int(2, 2), WidgetManager.RootWidget);
+            w2.BackColor = ConsoleColor.Green;
+            Logger.Log(string.Format("index of w1: {0}", WidgetManager.RootWidget.IndexOf(w1)));
+            Logger.Log(string.Format("index of w2: {0}", WidgetManager.RootWidget.IndexOf(w2)));
+            Console.ReadKey(true);
+            WidgetManager.RootWidget.TopUpWidget(w1);
+            Logger.Log(string.Format("index of w1: {0}", WidgetManager.RootWidget.IndexOf(w1)));
+            Logger.Log(string.Format("index of w2: {0}", WidgetManager.RootWidget.IndexOf(w2)));
+            
             Console.ReadKey();
+            CUIEngine.Shutdown();
+            //System.Environment.Exit(0);
         }
     }
 }

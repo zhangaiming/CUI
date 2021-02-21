@@ -1,4 +1,5 @@
-﻿using System;
+﻿//todo: 权重或许可以去掉, 但是为了防止可能有考虑不周全的地方, 以后再确定要不要删掉
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -12,7 +13,6 @@ namespace CUIEngine
 {
     public class RenderClip
     {
-        //List<RenderUnit> units;
         RenderUnit[] units;
         Vector2Int size;
         Vector2Int coord;
@@ -45,13 +45,7 @@ namespace CUIEngine
             size.Y = y;
             this.coord = coord;
             units = new RenderUnit[x * y];
-            RenderUnit emptyUnit = new RenderUnit(true);
-            for (int k = 0; k < x * y; k++)
-            {
-                int i = k % x;
-                int j = k / x;
-                SetUnit(i, j, emptyUnit);
-            }
+            Clear();
         }
         
         /// <summary>
@@ -79,36 +73,6 @@ namespace CUIEngine
                 SetUnit(i, j, src.GetUnit(i, j));
             }
         }
-        /// <summary>
-        /// 对每一个单元进行重新加权,最终权值过高或过低时会被截取至uint的最大值或最小值
-        /// </summary>
-        /// <param name="w"></param>
-        public void AddWeight(int w)
-        {
-            for (int i = 0; i < size.X; i++)
-            {
-                for (int j = 0; j < size.Y; j++)
-                {
-                    RenderUnit unit = GetUnit(i, j);
-                    if (-w > unit.Weight)
-                    {
-                        unit.Weight = 0;
-                    }else
-                    {
-                        long res = w + unit.Weight;
-                        if (res > uint.MaxValue)
-                        {
-                            unit.Weight = uint.MaxValue;
-                        }
-                        else
-                        {
-                            unit.Weight = (uint) res;
-                        }
-                    }
-                }
-            }
-        }
-        
         /// <summary>
         /// 调整片段大小, 片段内容及内容坐标保持不变
         /// </summary>
@@ -316,7 +280,20 @@ namespace CUIEngine
                 }
             }
         }
-
+        /// <summary>
+        /// 清空渲染片段中的所有单元
+        /// </summary>
+        public void Clear()
+        {
+            int x = size.X, y = size.Y;
+            RenderUnit emptyUnit = new RenderUnit(true);
+            for (int k = 0; k < x * y; k++)
+            {
+                int i = k % x;
+                int j = k / x;
+                SetUnit(i, j, emptyUnit);
+            }
+        }
         static int GetMergeResultEdgeLength(int a, int b, int offset)
         {
             if (offset > 0)
