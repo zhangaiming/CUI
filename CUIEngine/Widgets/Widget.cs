@@ -29,31 +29,31 @@ namespace CUIEngine.Widgets
         /// <summary>
         /// 控件的大小
         /// </summary>
-        public override Vector2Int Size
+        public sealed override Vector2Int Size
         {
             get => size;
-            protected set
+            set
             {
                 size = value;
                 CurrentClip?.Resize(value,Vector2Int.Zero);
+                OnSizeChanged();
             }
         }
 
         /// <summary>
         /// 控件的坐标,这里指绝对坐标
         /// </summary>
-        public override Vector2Int Coord
+        public sealed override Vector2Int Coord
         {
             get => coord;
-            protected set
+            set
             {
                 coord = value;
                 CurrentClip?.Resize(size, value - coord);
+                OnCoordChanged();
             }
         }
 
-        protected Widget() : base("", "") {}
-        
         /// <summary>
         /// 初始化时调用
         /// </summary>
@@ -67,6 +67,16 @@ namespace CUIEngine.Widgets
         /// 更新渲染片段
         /// </summary>
         protected abstract void MakeRenderClip();
+        
+        /// <summary>
+        /// 当控件大小发生改变时调用 
+        /// </summary>
+        protected virtual void OnSizeChanged(){}
+        
+        /// <summary>
+        /// 当控件位置发生改变时调用
+        /// </summary>
+        protected virtual void OnCoordChanged(){}
         
         /// <summary>
         /// 初始化控件
@@ -125,26 +135,46 @@ namespace CUIEngine.Widgets
         /// <param name="coord"></param>
         /// <param name="size"></param>
         /// <param name="name"></param>
+        /// <param name="tag"></param>
         /// <param name="parent"></param>
         /// <typeparam name="TType">控件的类型</typeparam>
         /// <returns></returns>
-        public static TType CreateWidget<TType>(Vector2Int size, Vector2Int coord, string name, IWidgetOwner? parent) where TType : Widget, new()
+        public static TType CreateWidget<TType>(Vector2Int size, Vector2Int coord, string name, string tag, IWidgetOwner? parent) where TType : Widget, new()
         {
             TType widget = new TType();
             widget.Coord = coord;
             widget.Size = size;
             widget.Name = name;
+            widget.Tag = tag;
             widget.parent = parent;
 
+            Sprite.Initialize(widget);
+            
             if(parent is IMultiWidgetsOwner)
             {
                 ((IMultiWidgetsOwner)parent).AddWidget(widget);
             }
-
+            
             widget.Initialize();
 
             return widget;
         }
+
+        /// <summary>
+        /// 创建指定类型的控件,创建完毕后会自动调用控件的Initialize方法
+        /// </summary>
+        /// <param name="coord"></param>
+        /// <param name="size"></param>
+        /// <param name="name"></param>
+        /// <param name="parent"></param>
+        /// <typeparam name="TType">控件的类型</typeparam>
+        /// <returns></returns>
+        public static TType CreateWidget<TType>(Vector2Int size, Vector2Int coord, string name, IWidgetOwner? parent)
+            where TType : Widget, new()
+        {
+            return CreateWidget<TType>(size, coord, name, "", parent);
+        }
+        
         /// <summary>
         /// 通知控件进行渲染片段的更新,若此控件的拥有者也是一个控件,会同时更新拥有者的更新信息
         /// </summary>

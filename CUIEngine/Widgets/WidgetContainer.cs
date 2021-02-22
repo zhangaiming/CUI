@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using CUIEngine.Render;
 
 namespace CUIEngine.Widgets
 {
-    public class WidgetContainer : Widget, IWidgetOwner
+    public class WidgetContainer : Widget, IMultiWidgetsOwner
     {
         List<Widget> children = new List<Widget>();   //越靠后优先级越高,越被渲染在上层
         bool clipChildren = false;
@@ -23,9 +24,15 @@ namespace CUIEngine.Widgets
             children.CopyTo(temp);
             foreach (Widget widget in temp)
             {
-                CurrentClip?.MergeWith(widget.GetRenderClip(), null, false);
+                CurrentClip?.MergeWith(widget.GetRenderClip(), null, ClipChildren);
             }
         }
+
+        /*protected RenderClip GetChildrenRenderClip()
+        {
+            //RenderClip res = new RenderClip()
+            
+        }*/
         /// <summary>
         /// 添加控件到最上层
         /// </summary>

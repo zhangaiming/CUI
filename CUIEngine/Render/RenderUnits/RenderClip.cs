@@ -270,7 +270,7 @@ namespace CUIEngine.Render
                     bool covered = this.PutUnit(i + ox, j + oy, unit);
                     if (covered)
                     {
-                        unitCoveredHandler?.BeginInvoke(i, j, unit, null, null);
+                        unitCoveredHandler?.Invoke(i, j, unit);
                     }
                 }
             }

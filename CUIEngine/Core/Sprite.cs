@@ -10,16 +10,17 @@ namespace CUIEngine
         string tag = "";
         string name = "";
         bool isDestroyed = false;
+        bool isInitialized = false;
         
         /// <summary>
         /// 精灵的坐标
         /// </summary>
-        public virtual Vector2Int Coord { get; protected set; } = Vector2Int.Zero;
+        public virtual Vector2Int Coord { get; set; } = Vector2Int.Zero;
         
         /// <summary>
         /// 精灵的大小
         /// </summary>
-        public virtual Vector2Int Size { get; protected set; } = Vector2Int.Zero;
+        public virtual Vector2Int Size { get; set; } = Vector2Int.Zero;
 
         /// <summary>
         /// 精灵的标签,用于做寻找精灵的标识
@@ -44,12 +45,16 @@ namespace CUIEngine
         /// </summary>
         public bool IsDestroyed => isDestroyed;
 
-        public Sprite(string name, string tag = "")
+        /// <summary>
+        /// 初始化精灵,将其加入精灵池
+        /// </summary>
+        public static void Initialize(Sprite sprite)
         {
-            Name = name;
-            Tag = tag;
-            
-            AddToPool(this);
+            if(!sprite.isInitialized)
+            {
+                AddToPool(sprite);
+                sprite.isInitialized = true;
+            }
         }
 
         /// <summary>
@@ -57,8 +62,11 @@ namespace CUIEngine
         /// </summary>
         public static void DestroySprite(Sprite sprite)
         {
-            RemoveFromPool(sprite);
-            sprite.isDestroyed = true;
+            if(!sprite.isDestroyed)
+            {
+                RemoveFromPool(sprite);
+                sprite.isDestroyed = true;
+            }
         }
         
         /// <summary>
@@ -107,10 +115,10 @@ namespace CUIEngine
         {
             if (spritesPool.ContainsKey(name))
             {
-                List<Sprite> widgets = spritesPool[name];
-                if (widgets.Count >= 1)
+                List<Sprite> sprites = spritesPool[name];
+                if (sprites.Count >= 1)
                 {
-                    return (TSprite)widgets[0];
+                    return (TSprite)sprites[0];
                 }
             }
             return null;
