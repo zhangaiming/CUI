@@ -55,7 +55,7 @@ namespace CUIEngine
         }
         
         
-        static Vector2Int screenSize = new Vector2Int(60, 35);
+        static Vector2Int screenSize = new Vector2Int(100, 100);
         static bool showCursor = false;
         static short consoleFontSize = 10;
     }

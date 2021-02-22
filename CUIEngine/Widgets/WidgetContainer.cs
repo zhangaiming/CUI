@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CUIEngine.Mathf;
 using CUIEngine.Render;
 
 namespace CUIEngine.Widgets
@@ -20,19 +21,25 @@ namespace CUIEngine.Widgets
         protected override void MakeRenderClip()
         {
             CurrentClip?.Clear();
+            CurrentClip?.MergeWith(GetChildrenRenderClip(), null, ClipChildren);
+        }
+
+        /// <summary>
+        /// 获取未裁剪的由所有子控件按优先级叠加的渲染片段
+        /// </summary>
+        /// <returns></returns>
+        protected RenderClip GetChildrenRenderClip()
+        {
+            RenderClip res = new RenderClip();
             Widget[] temp = new Widget[children.Count];
             children.CopyTo(temp);
             foreach (Widget widget in temp)
             {
-                CurrentClip?.MergeWith(widget.GetRenderClip(), null, ClipChildren);
+                res.MergeWith(widget.GetRenderClip(), null, false);
             }
-        }
 
-        /*protected RenderClip GetChildrenRenderClip()
-        {
-            //RenderClip res = new RenderClip()
-            
-        }*/
+            return res;
+        }
         /// <summary>
         /// 添加控件到最上层
         /// </summary>
@@ -46,7 +53,6 @@ namespace CUIEngine.Widgets
         {
             if (ContainWidget(widget))
             {
-                widget.SetParent(null);
                 children.Remove(widget);
                 UpdateRenderClip();
             }
@@ -81,11 +87,6 @@ namespace CUIEngine.Widgets
                 UpdateRenderClip();
             }
         }
-        /// <summary>
-        /// 获取某个控件的在该容器中的索引,索引越小说明优先级越高,索引为-1代表控件不在该容器中
-        /// </summary>
-        /// <param name="widget"></param>
-        /// <returns>控件的索引,返回-1代表控件不在该容器中</returns>
         public int IndexOf(Widget widget)
         {
             int count = children.Count;
@@ -97,6 +98,28 @@ namespace CUIEngine.Widgets
                 }
             }
             return -1; 
+        }
+
+        protected override void OnCoordChanged(Vector2Int oldCoord, Vector2Int newCoord)
+        {
+            base.OnCoordChanged(oldCoord, newCoord);
+            foreach (Widget widget in children)
+            {
+                MoveChildren(newCoord - oldCoord);
+            }
+        }
+
+        /// <summary>
+        /// 子控件相对移动
+        /// </summary>
+        /// <param name="offset"></param>
+        protected void MoveChildren(Vector2Int offset)
+        {
+            foreach (Widget widget in children)
+            {
+                //子控件相对移动
+                widget.Coord = widget.Coord + offset;
+            }
         }
     }
 }

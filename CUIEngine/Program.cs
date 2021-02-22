@@ -1,5 +1,7 @@
 ﻿using System;
+using CUIEngine.Forms;
 using CUIEngine.Mathf;
+using CUIEngine.Render;
 using CUIEngine.Widgets;
 using DevToolSet;
 
@@ -11,19 +13,9 @@ namespace CUIEngine
         {
             CUIEngine.Initialize();
 
-            TestWidget w1 =
-                Widget.CreateWidget<TestWidget>(new Vector2Int(5, 5), Vector2Int.Zero, "w1", WidgetManager.RootWidget);
-            w1.BackColor = ConsoleColor.Blue;
-            Widget.CreateWidget<TestWidget>(new Vector2Int(10, 10), new Vector2Int(5, 5), "w2", WidgetManager.RootWidget);
-            TestWidget? w2 = Widget.Find<TestWidget>("w2");
-            w2!.BackColor = ConsoleColor.Green;
-            Logger.Log(string.Format("index of w1: {0}", WidgetManager.RootWidget.IndexOf(w1)));
-            Logger.Log(string.Format("index of w2: {0}", WidgetManager.RootWidget.IndexOf(w2)));
-            Console.ReadKey(true);
-            WidgetManager.RootWidget.TopUpWidget(w1);
-            Logger.Log(string.Format("index of w1: {0}", WidgetManager.RootWidget.IndexOf(w1)));
-            Logger.Log(string.Format("index of w2: {0}", WidgetManager.RootWidget.IndexOf(w2)));
-            
+            TestForm form = Widget.CreateWidget<TestForm>(new Vector2Int(30, 30), new Vector2Int(3, 3), "form",
+                RootCanvas.Instance);
+
             Console.ReadKey();
             CUIEngine.Shutdown();
         }

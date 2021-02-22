@@ -13,7 +13,7 @@ namespace CUIEngine.Widgets
         
         protected RenderClip? CurrentClip;   //当前的渲染片段
         bool shouldUpdate = true;   //是否应该更新渲染片段
-        IWidgetOwner? parent;
+        IWidgetOwner parent = null!;
         Vector2Int coord;
         Vector2Int size;
 
@@ -23,7 +23,15 @@ namespace CUIEngine.Widgets
         public IWidgetOwner Parent
         {
             get => parent!;
-            protected set => parent = value;
+            protected set
+            {
+                if (parent != value)
+                {
+                    UpdateParentRenderClip();
+                    parent = value;
+                    UpdateParentRenderClip();
+                }
+            }
         }
 
         /// <summary>
@@ -34,9 +42,14 @@ namespace CUIEngine.Widgets
             get => size;
             set
             {
-                size = value;
-                CurrentClip?.Resize(value,Vector2Int.Zero);
-                OnSizeChanged();
+                if(size != value)
+                {
+                    Vector2Int oldSize = size;
+                    size = value;
+                    CurrentClip?.Resize(value, Vector2Int.Zero);
+                    OnSizeChanged(oldSize, size);
+                    UpdateRenderClip();
+                }
             }
         }
 
@@ -48,9 +61,32 @@ namespace CUIEngine.Widgets
             get => coord;
             set
             {
-                coord = value;
-                CurrentClip?.Resize(size, value - coord);
-                OnCoordChanged();
+                if(coord != value)
+                {
+                    Vector2Int oldCoord = coord;
+                    coord = value;
+                    CurrentClip?.Resize(size, value - coord);
+                    OnCoordChanged(oldCoord, coord);
+                    UpdateRenderClip();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 控件的相对坐标,即相对于父控件的坐标
+        /// </summary>
+        public Vector2Int LocalCoord
+        {
+            get
+            {
+                if (parent is Sprite)
+                {
+                    return Coord - ((Sprite) parent).Coord;
+                }
+                else
+                {
+                    return Coord;
+                }
             }
         }
 
@@ -71,12 +107,12 @@ namespace CUIEngine.Widgets
         /// <summary>
         /// 当控件大小发生改变时调用 
         /// </summary>
-        protected virtual void OnSizeChanged(){}
+        protected virtual void OnSizeChanged(Vector2Int oldSize, Vector2Int newSize){}
         
         /// <summary>
         /// 当控件位置发生改变时调用
         /// </summary>
-        protected virtual void OnCoordChanged(){}
+        protected virtual void OnCoordChanged(Vector2Int oldCoord, Vector2Int newCoord){}
         
         /// <summary>
         /// 初始化控件
@@ -139,7 +175,7 @@ namespace CUIEngine.Widgets
         /// <param name="parent"></param>
         /// <typeparam name="TType">控件的类型</typeparam>
         /// <returns></returns>
-        public static TType CreateWidget<TType>(Vector2Int size, Vector2Int coord, string name, string tag, IWidgetOwner? parent) where TType : Widget, new()
+        public static TType CreateWidget<TType>(Vector2Int size, Vector2Int coord, string name, string tag, IWidgetOwner parent) where TType : Widget, new()
         {
             TType widget = new TType();
             widget.Coord = coord;
@@ -169,7 +205,7 @@ namespace CUIEngine.Widgets
         /// <param name="parent"></param>
         /// <typeparam name="TType">控件的类型</typeparam>
         /// <returns></returns>
-        public static TType CreateWidget<TType>(Vector2Int size, Vector2Int coord, string name, IWidgetOwner? parent)
+        public static TType CreateWidget<TType>(Vector2Int size, Vector2Int coord, string name, IWidgetOwner parent)
             where TType : Widget, new()
         {
             return CreateWidget<TType>(size, coord, name, "", parent);
@@ -183,10 +219,18 @@ namespace CUIEngine.Widgets
             shouldUpdate = true;
             if(shouldUpdate)
             {
-                if (parent is Widget)
-                {
-                    ((Widget) parent).UpdateRenderClip();
-                }
+                UpdateParentRenderClip();
+            }
+        }
+
+        /// <summary>
+        /// 通知父控件更新渲染片段
+        /// </summary>
+        void UpdateParentRenderClip()
+        {
+            if (parent is Widget)
+            {
+                ((Widget) parent).UpdateRenderClip();
             }
         }
     }

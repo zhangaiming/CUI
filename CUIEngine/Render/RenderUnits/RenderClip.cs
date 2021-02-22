@@ -30,19 +30,31 @@ namespace CUIEngine.Render
         }
 
         /// <summary>
+        /// 进行渲染片段的初始化,默认为空片段,即一个单元都没有
+        /// </summary>
+        /// <param name="sizeX"></param>
+        /// <param name="sizeY"></param>
+        /// <param name="coordX"></param>
+        /// <param name="coordY"></param>
+        public RenderClip(int sizeX = 0, int sizeY = 0, int coordX = 0, int coordY = 0)
+        {
+            sizeX = Math.Max(sizeX, 0);
+            sizeY = Math.Max(sizeY, 0);
+            size.X = sizeX;
+            size.Y = sizeY;
+            coord.X = coordX;
+            coord.Y = coordY;
+            units = new RenderUnit[sizeX * sizeY];
+            Clear();
+        }
+        
+        /// <summary>
         /// 进行渲染片段的初始化, 默认全为空单元
         /// </summary>
         /// <param name="x">片段宽度</param>
         /// <param name="y">片段高度</param>
         /// <param name="coord"></param>
-        public RenderClip(int x, int y, Vector2Int coord)
-        {
-            size.X = x;
-            size.Y = y;
-            this.coord = coord;
-            units = new RenderUnit[x * y];
-            Clear();
-        }
+        public RenderClip(int x, int y, Vector2Int coord) : this(x, y, coord.X, coord.Y) { }
 
         /// <summary>
         /// 进行渲染片段的初始化, 默认全为空单元

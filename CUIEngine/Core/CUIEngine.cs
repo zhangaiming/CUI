@@ -10,7 +10,7 @@ namespace CUIEngine
         static Renderer? renderer;
         public static Renderer? Renderer => renderer;
 
-        static ICanvas? rootCanvas;
+        static RootCanvas? rootCanvas;
 
         /// <summary>
         /// 初始化CUI引擎
@@ -25,7 +25,8 @@ namespace CUIEngine
             //渲染器初始化
             renderer = new Renderer();
             renderer.Initialize();
-            WidgetManager.Initialize();
+            //WidgetManager.Initialize();
+            SetRootCanvas(RootCanvas.Instance);
             //因为如果立即开始渲染会导致出现奇怪的错误,所以在这里等5毫秒
             Thread.Sleep(5);
             renderer.StartRender();
@@ -47,7 +48,7 @@ namespace CUIEngine
             
         }
 
-        internal static void SetRootCanvas(ICanvas? canvas)
+        internal static void SetRootCanvas(RootCanvas canvas)
         {
             if (rootCanvas == null)
             {

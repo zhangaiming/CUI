@@ -22,8 +22,8 @@ namespace CUIEngine.Widgets
 
         static void CreateRootWidget()
         {
-            rootWidget = Widget.CreateWidget<WidgetContainer>(Settings.ScreenSize, Vector2Int.Zero, "RootWidget", null);
-            CUIEngine.SetRootCanvas(rootWidget);
+            //rootWidget = Widget.CreateWidget<WidgetContainer>(Settings.ScreenSize, Vector2Int.Zero, "RootWidget", null);
+            //CUIEngine.SetRootCanvas(rootWidget);
         }
     }
 }
