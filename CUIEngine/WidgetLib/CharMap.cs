@@ -1,6 +1,6 @@
-﻿using System;
+﻿using CUIEngine.Widgets;
 
-namespace CUIEngine.Widgets
+namespace CUIEngine.WidgetLib
 {
     /// <summary>
     /// 字符图

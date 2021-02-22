@@ -1,8 +1,8 @@
 ﻿using System;
-using CUIEngine.Mathf;
 using CUIEngine.Render;
+using CUIEngine.Widgets;
 
-namespace CUIEngine.Widgets
+namespace CUIEngine.WidgetLib
 {
     public class TestWidget : Widget
     {

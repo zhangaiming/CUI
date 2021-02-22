@@ -1,9 +1,6 @@
 ﻿using System;
 using CUIEngine.Forms;
 using CUIEngine.Mathf;
-using CUIEngine.Render;
-using CUIEngine.Widgets;
-using DevToolSet;
 
 namespace CUIEngine
 {
@@ -13,8 +10,7 @@ namespace CUIEngine
         {
             CUIEngine.Initialize();
 
-            TestForm form = Widget.CreateWidget<TestForm>(new Vector2Int(30, 30), new Vector2Int(3, 3), "form",
-                RootCanvas.Instance);
+            Form.Create<TestForm>(new Vector2Int(3, 3), "Form");
 
             Console.ReadKey();
             CUIEngine.Shutdown();

@@ -9,11 +9,6 @@ namespace CUIEngine
         internal static event Action<Vector2Int>? OnScreenSizeChanged;
         
         /// <summary>
-        /// 默认单元颜色
-        /// </summary>
-        public static ConsoleColor DefaultForegroundColor { get; set; } = ConsoleColor.Gray;
-        public static ConsoleColor DefaultBackgroundColor { get; set; } = ConsoleColor.Blue;
-        /// <summary>
         /// 渲染帧间隔
         /// </summary>
         public static short RenderTimespan { get; set; } = 10;
@@ -55,7 +50,7 @@ namespace CUIEngine
         }
         
         
-        static Vector2Int screenSize = new Vector2Int(100, 100);
+        static Vector2Int screenSize = new Vector2Int(80, 50);
         static bool showCursor = false;
         static short consoleFontSize = 10;
     }

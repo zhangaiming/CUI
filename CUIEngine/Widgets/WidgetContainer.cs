@@ -103,10 +103,7 @@ namespace CUIEngine.Widgets
         protected override void OnCoordChanged(Vector2Int oldCoord, Vector2Int newCoord)
         {
             base.OnCoordChanged(oldCoord, newCoord);
-            foreach (Widget widget in children)
-            {
-                MoveChildren(newCoord - oldCoord);
-            }
+            MoveChildren(newCoord - oldCoord);
         }
 
         /// <summary>

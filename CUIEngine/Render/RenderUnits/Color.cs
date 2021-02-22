@@ -10,7 +10,7 @@ namespace CUIEngine.Render
         ConsoleColor foreColor, backColor;
         
         public static readonly Color DefaultColor =
-            new Color(Settings.DefaultForegroundColor, Settings.DefaultBackgroundColor);
+            new Color(ConsoleColor.DarkGray, ConsoleColor.Black);
 
         /// <summary>
         /// 前景颜色
