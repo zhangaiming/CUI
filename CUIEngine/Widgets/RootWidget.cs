@@ -4,8 +4,6 @@ namespace CUIEngine.Widgets
 {
     public class RootWidget : WidgetContainer
     {
-        static bool isCreated;
-
         protected override void OnInitialize()
         {
             base.OnInitialize();
@@ -20,9 +18,12 @@ namespace CUIEngine.Widgets
         }
 
         /// <summary>
-        /// 根控件不允许被移动
+        /// 设置大小
         /// </summary>
-        /// <param name="newCoord"></param>
-        public override void Move(Vector2Int newCoord) { }
+        /// <param name="newSize"></param>
+        void Resize(Vector2Int newSize)
+        {
+            Size = newSize;
+        }
     }
 }
