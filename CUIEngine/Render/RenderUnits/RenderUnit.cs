@@ -4,7 +4,6 @@
     {
         Color color;
         char content;
-        //uint weight;
         bool isEmpty;
 
         /// <summary>
@@ -23,14 +22,6 @@
             get => content;
             set => content = value;
         }
-        /*/// <summary>
-        /// 单位的权重, 权重越大的单位越在上层
-        /// </summary>
-        public uint Weight
-        {
-            get => weight;
-            set => weight = value;
-        }*/
         /// <summary>
         /// 单位是否为空
         /// </summary>
@@ -40,8 +31,6 @@
             set => isEmpty = value;
         }
 
-        const uint DefaultWeight = 900000;
-        
         public RenderUnit(char content) 
             : this(Color.DefaultColor, content){}
         public RenderUnit(Color color, char content = ' ')

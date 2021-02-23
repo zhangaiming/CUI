@@ -17,13 +17,15 @@ namespace CUIEngine.Widgets
         Vector2Int coord;
         Vector2Int size;
 
+        bool isVisible = true;    //是否可见
+
         /// <summary>
         /// 父控件,设为null代表无父控件
         /// </summary>
         public IWidgetOwner Parent
         {
             get => parent!;
-            protected set
+            private set
             {
                 if (parent != value)
                 {
@@ -42,6 +44,8 @@ namespace CUIEngine.Widgets
             get => size;
             set
             {
+                value.X = Math.Max(0, value.X);
+                value.Y = Math.Max(0, value.Y);
                 if(size != value)
                 {
                     Vector2Int oldSize = size;
@@ -91,6 +95,22 @@ namespace CUIEngine.Widgets
         }
 
         /// <summary>
+        /// 控件是否可视
+        /// </summary>
+        public bool IsVisible
+        {
+            get => isVisible;
+            set
+            {
+                if (isVisible != value)
+                {
+                    isVisible = value;
+                    OnVisibilityChanged();
+                }
+            }
+        }
+
+        /// <summary>
         /// 初始化时调用
         /// </summary>
         protected virtual void OnInitialize(){}
@@ -115,14 +135,19 @@ namespace CUIEngine.Widgets
         protected virtual void OnCoordChanged(Vector2Int oldCoord, Vector2Int newCoord){}
         
         /// <summary>
+        /// 当控件可视度发生改变时调用
+        /// </summary>
+        protected virtual void OnVisibilityChanged(){}
+        
+        /// <summary>
         /// 初始化控件
         /// </summary>
         public void Initialize()
         {
-            OnInitialize();
-            
             //初始化渲染片段
             CurrentClip = new RenderClip(size, coord);
+            
+            OnInitialize();
         }
         /// <summary>
         /// 销毁控件
@@ -136,16 +161,26 @@ namespace CUIEngine.Widgets
         
         public RenderClip GetRenderClip()
         {
-            if (CurrentClip == null)
+            if(isVisible)
             {
-                CurrentClip = new RenderClip(size, coord);
+                if (CurrentClip == null)
+                {
+                    CurrentClip = new RenderClip(size, coord);
+                }
+
+                if (shouldUpdate)
+                {
+                    MakeRenderClip();
+                    shouldUpdate = false;
+                }
+
+                return CurrentClip;
             }
-            if (shouldUpdate)
+            else
             {
-                MakeRenderClip();
-                shouldUpdate = false;
+                //返回空片段
+                return new RenderClip();
             }
-            return CurrentClip;
         }
 
         /// <summary>
@@ -162,7 +197,8 @@ namespace CUIEngine.Widgets
             {
                 ((IMultiWidgetsOwner)owner).AddWidget(this);
             }
-            parent = owner;
+            Parent = owner;
+            
         }
 
         /// <summary>
@@ -182,15 +218,10 @@ namespace CUIEngine.Widgets
             widget.Size = size;
             widget.Name = name;
             widget.Tag = tag;
-            widget.parent = parent;
+            widget.SetParent(parent);
 
             Sprite.Initialize(widget);
-            
-            if(parent is IMultiWidgetsOwner)
-            {
-                ((IMultiWidgetsOwner)parent).AddWidget(widget);
-            }
-            
+
             widget.Initialize();
 
             return widget;

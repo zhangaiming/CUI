@@ -10,9 +10,9 @@ namespace CUIEngine
         {
             CUIEngine.Initialize();
 
-            Form.Create<TestForm>(new Vector2Int(3, 3), "Form");
+            Form.Create<TestForm>(new Vector2Int(5, 3), "Form");
 
-            Console.ReadKey();
+            Console.ReadKey(true);
             CUIEngine.Shutdown();
         }
     }

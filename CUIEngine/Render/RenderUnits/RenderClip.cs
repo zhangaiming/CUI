@@ -163,7 +163,6 @@ namespace CUIEngine.Render
             unit.IsEmpty = true;
             SetUnit(x, y, unit);
         }
-
         /// <summary>
         /// 直接设置对应位置的单元, 只要在范围内就一定会对原单元进行覆盖
         /// </summary>
@@ -186,33 +185,23 @@ namespace CUIEngine.Render
                 units[y * size.X + x] = unit;
             }
         }
-        /*/// <summary>
-        /// 根据单元的权重判断是否对原单元进行覆盖
-        /// </summary>
-        /// <param name="coord"></param>
-        /// <param name="unit"></param>
-        /// <returns>当原单元被覆盖则返回true</returns>
-        public bool PutUnit(Vector2Int coord, RenderUnit unit)
-        {
-            return PutUnit(coord.X, coord.Y, unit);
-        }
         /// <summary>
-        /// 根据单元的权重判断是否对原单元进行覆盖
+        /// 尝试设置对应位置的单元,若要设置的单元为空单元,则设置失败
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="unit"></param>
-        /// <returns>当原单元被覆盖则返回true</returns>
+        /// <returns></returns>
         public bool PutUnit(int x, int y, RenderUnit unit)
         {
-            RenderUnit target = GetUnit(x, y);
-            if (!unit.IsEmpty && (target.IsEmpty || target.Weight <= unit.Weight))
+            if (!unit.IsEmpty)
             {
                 SetUnit(x, y, unit);
                 return true;
             }
+
             return false;
-        }*/
+        }
         /// <summary>
         /// 获得一个单元
         /// </summary>
@@ -279,8 +268,11 @@ namespace CUIEngine.Render
                 for (int j = 0; j < by; j++)
                 {
                     RenderUnit unit = other.units[j * other.size.X + i];
-                    this.SetUnit(i + ox, j + oy, unit);
-                    unitCoveredHandler?.Invoke(i, j, unit);
+                    bool covered = this.PutUnit(i + ox, j + oy, unit);
+                    if(covered)
+                    {
+                        unitCoveredHandler?.Invoke(i, j, unit);
+                    }
                 }
             }
         }

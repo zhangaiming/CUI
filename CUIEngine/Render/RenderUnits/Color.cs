@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.VisualBasic.CompilerServices;
 
 namespace CUIEngine.Render
 {
@@ -39,6 +40,16 @@ namespace CUIEngine.Render
         public bool Equals(Color other)
         {
             return foreColor == other.foreColor && backColor == other.backColor;
+        }
+        
+        public static bool operator ==(Color a, Color b)
+        {
+            return a.Equals(b);
+        }
+        
+        public static bool operator !=(Color a, Color b)
+        {
+            return !a.Equals(b);
         }
 
         public override int GetHashCode()
