@@ -181,12 +181,12 @@ namespace CUIEngine.Render
         /// <param name="unit"></param>
         public void SetUnit(int x, int y, RenderUnit unit)
         {
-            if (x < size.X && y < size.Y)
+            if (x >= 0 && x < size.X && y >= 0 && y < size.Y)
             {
                 units[y * size.X + x] = unit;
             }
         }
-        /// <summary>
+        /*/// <summary>
         /// 根据单元的权重判断是否对原单元进行覆盖
         /// </summary>
         /// <param name="coord"></param>
@@ -212,7 +212,7 @@ namespace CUIEngine.Render
                 return true;
             }
             return false;
-        }
+        }*/
         /// <summary>
         /// 获得一个单元
         /// </summary>
@@ -279,11 +279,8 @@ namespace CUIEngine.Render
                 for (int j = 0; j < by; j++)
                 {
                     RenderUnit unit = other.units[j * other.size.X + i];
-                    bool covered = this.PutUnit(i + ox, j + oy, unit);
-                    if (covered)
-                    {
-                        unitCoveredHandler?.Invoke(i, j, unit);
-                    }
+                    this.SetUnit(i + ox, j + oy, unit);
+                    unitCoveredHandler?.Invoke(i, j, unit);
                 }
             }
         }

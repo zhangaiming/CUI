@@ -4,7 +4,7 @@
     {
         Color color;
         char content;
-        uint weight;
+        //uint weight;
         bool isEmpty;
 
         /// <summary>
@@ -23,14 +23,14 @@
             get => content;
             set => content = value;
         }
-        /// <summary>
+        /*/// <summary>
         /// 单位的权重, 权重越大的单位越在上层
         /// </summary>
         public uint Weight
         {
             get => weight;
             set => weight = value;
-        }
+        }*/
         /// <summary>
         /// 单位是否为空
         /// </summary>
@@ -42,15 +42,14 @@
 
         const uint DefaultWeight = 900000;
         
-        public RenderUnit(char content, uint weight = DefaultWeight) 
-            : this(Color.DefaultColor, content, weight){}
-        public RenderUnit(Color color, char content = ' ', uint weight = DefaultWeight)
-            : this(false, color, content, weight){}
-        public RenderUnit(bool isEmpty, char content = ' ', uint weight = DefaultWeight) 
-            : this(isEmpty, Color.DefaultColor, content, weight){}
-        public RenderUnit(bool isEmpty, Color color, char content = ' ', uint weight = DefaultWeight)
+        public RenderUnit(char content) 
+            : this(Color.DefaultColor, content){}
+        public RenderUnit(Color color, char content = ' ')
+            : this(false, color, content){}
+        public RenderUnit(bool isEmpty, char content = ' ') 
+            : this(isEmpty, Color.DefaultColor, content){}
+        public RenderUnit(bool isEmpty, Color color, char content = ' ')
         {
-            this.weight = weight;
             this.content = content;
             this.color = color;
             this.isEmpty = isEmpty;
