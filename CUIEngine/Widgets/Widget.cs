@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using CUIEngine.Mathf;
 using CUIEngine.Render;
+using DevToolSet;
 
 namespace CUIEngine.Widgets
 {
@@ -11,7 +13,8 @@ namespace CUIEngine.Widgets
         /// </summary>
         public event Action<Widget>? WidgetReadyToBeDestroyedEvent;
         
-        protected RenderClip? CurrentClip;   //当前的渲染片段
+        RenderClip? fullClip;   //当前的渲染片段,包含擦除片段
+        protected RenderClip? CurrentClip;    //当前的渲染片段
         bool shouldUpdate = true;   //是否应该更新渲染片段
         IWidgetOwner parent = null!;
         Vector2Int coord;
@@ -69,8 +72,11 @@ namespace CUIEngine.Widgets
                 {
                     Vector2Int oldCoord = coord;
                     coord = value;
-                    CurrentClip?.Resize(size, value - coord);
+                    Stopwatch sw = Stopwatch.StartNew();
+                    CurrentClip?.Resize(size, value - oldCoord);
                     OnCoordChanged(oldCoord, coord);
+                    sw.Stop();
+                    Logger.Log(string.Format("改变坐标用时:{0}", sw.Elapsed));
                     UpdateRenderClip();
                 }
             }
@@ -161,6 +167,7 @@ namespace CUIEngine.Widgets
         
         public RenderClip GetRenderClip()
         {
+            fullClip = new RenderClip(CurrentClip!.Size, CurrentClip!.Coord);
             if(isVisible)
             {
                 if (CurrentClip == null)
@@ -170,17 +177,16 @@ namespace CUIEngine.Widgets
 
                 if (shouldUpdate)
                 {
+                    Stopwatch sw = Stopwatch.StartNew();
                     MakeRenderClip();
+                    sw.Stop();
+                    Logger.Log(Name + "生成渲染片段所用时间: " + sw.Elapsed);
                     shouldUpdate = false;
+                    fullClip.MergeWith(CurrentClip, null, false, true);
                 }
+            }
 
-                return CurrentClip;
-            }
-            else
-            {
-                //返回空片段
-                return new RenderClip();
-            }
+            return fullClip;
         }
 
         /// <summary>
@@ -248,10 +254,7 @@ namespace CUIEngine.Widgets
         public void UpdateRenderClip()
         {
             shouldUpdate = true;
-            if(shouldUpdate)
-            {
-                UpdateParentRenderClip();
-            }
+            UpdateParentRenderClip();
         }
 
         /// <summary>
@@ -259,9 +262,9 @@ namespace CUIEngine.Widgets
         /// </summary>
         void UpdateParentRenderClip()
         {
-            if (parent is Widget)
+            if (parent is ICanvas)
             {
-                ((Widget) parent).UpdateRenderClip();
+                ((ICanvas) parent).UpdateRenderClip();
             }
         }
     }

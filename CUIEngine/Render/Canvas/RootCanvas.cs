@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using CUIEngine.Forms;
 using CUIEngine.Mathf;
+using CUIEngine.WidgetLib;
 using CUIEngine.Widgets;
 
 namespace CUIEngine.Render
@@ -7,6 +9,8 @@ namespace CUIEngine.Render
     public class RootCanvas : ICanvas, IMultiWidgetsOwner
     {
         static RootCanvas? instance;
+        RenderClip? currentClip;
+        bool shouldUpdate = true;
 
         /// <summary>
         /// 实例
@@ -38,26 +42,44 @@ namespace CUIEngine.Render
             {
                 instance = new RootCanvas();
                 instance.size = Settings.ScreenSize;
+                instance.currentClip = new RenderClip(instance.size, Vector2Int.Zero);
+                /*TestWidget background =
+                    Widget.CreateWidget<TestWidget>(instance.size, Vector2Int.Zero, "UIBackground", instance);*/
                 Settings.OnScreenSizeChanged += instance.Resize;
             }
         }
         
         public RenderClip GetRenderClip()
         {
-            RenderClip clip = new RenderClip(size, Vector2Int.Zero);
-            int cnt = canvasList.Count;
-            for (int i = 0; i < cnt; i++)
+            if(shouldUpdate)
             {
-                ICanvas canvas = canvasList[i];
-                clip.MergeWith(canvas.GetRenderClip(), null, true);
-            }
+                if (currentClip == null)
+                {
+                    currentClip = new RenderClip(size, Vector2Int.Zero);
+                }
 
-            return clip;
+                currentClip.Clear();
+                int cnt = canvasList.Count;
+                for (int i = 0; i < cnt; i++)
+                {
+                    ICanvas canvas = canvasList[i];
+                    currentClip.MergeWith(canvas.GetRenderClip(), null, true);
+                }
+
+                shouldUpdate = false;
+            }
+            return currentClip!;
+        }
+
+        public void UpdateRenderClip()
+        {
+            shouldUpdate = true;
         }
 
         void Resize(Vector2Int newSize)
         {
             size = newSize;
+            currentClip?.Resize(size, Vector2Int.Zero);
         }
 
         public void AddWidget(Widget widget)

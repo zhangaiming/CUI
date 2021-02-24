@@ -1,4 +1,5 @@
 ﻿using System;
+using CUIEngine.Inputs;
 using CUIEngine.Mathf;
 using CUIEngine.Render;
 using CUIEngine.WidgetLib;
@@ -24,8 +25,13 @@ namespace CUIEngine.Forms
             Widget.CreateWidget<TestWidget>(new Vector2Int(5, 5), new Vector2Int(7, 7), "w2", this);
             TestWidget? w2 = Widget.Find<TestWidget>("w2");
             w2!.BackColor = ConsoleColor.Green;
+            
+            Input.AttachHandler(MoveFormDown, ConsoleKey.S);
         }
-        
-        
+
+        void MoveFormDown()
+        {
+            this.Coord += new Vector2Int(0, 1);
+        }
     }
 }

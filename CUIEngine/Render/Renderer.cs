@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Diagnostics;
+using System.Threading;
 using CUIEngine.Mathf;
 using DevToolSet;
 
@@ -6,7 +7,7 @@ namespace CUIEngine.Render
 {
     public delegate void OnRenderBegin();
     public delegate void OnRenderFinished();
-    public class Renderer
+    public static class Renderer
     {
         /// <summary>
         /// 当新的一帧开始渲染前调用
@@ -20,37 +21,37 @@ namespace CUIEngine.Render
         /// <summary>
         /// 控制台绘画者
         /// </summary>
-        Screen? screen;
+        static Screen? screen;
         /// <summary>
         /// 屏幕缓冲片段
         /// </summary>
-        RenderClip? bufferClip;
+        static RenderClip? bufferClip;
         /// <summary>
         /// 是否已经过初始化
         /// </summary>
-        bool isInitialized = false;
+        static bool isInitialized = false;
         /// <summary>
         /// 渲染线程开关
         /// </summary>
-        bool shouldRender = true;
+        static bool shouldRender = true;
         /// <summary>
         /// 画布
         /// </summary>
-        ICanvas? canvas;
+        static ICanvas? canvas;
         /// <summary>
         /// 渲染线程
         /// </summary>
-        Thread? renderThread;
+        static Thread? renderThread;
 
         /// <summary>
         /// 是否暂停渲染
         /// </summary>
-        bool isPaused = true;
+        static bool isPaused = true;
 
         /// <summary>
         /// 画布
         /// </summary>
-        public ICanvas? Canvas
+        public static ICanvas? Canvas
         {
             get => canvas;
             set => canvas = value;
@@ -58,7 +59,7 @@ namespace CUIEngine.Render
         /// <summary>
         /// 帧间隔(毫秒)
         /// </summary>
-        public short RenderTimespan
+        public static short RenderTimespan
         {
             get => Settings.RenderTimespan;
             set => Settings.RenderTimespan = value;
@@ -67,7 +68,7 @@ namespace CUIEngine.Render
         /// <summary>
         /// 初始化渲染器
         /// </summary>
-        internal void Initialize()
+        internal static void Initialize()
         {
             Logger.Log("正在初始化渲染器...");
 
@@ -106,7 +107,7 @@ namespace CUIEngine.Render
         /// <summary>
         /// 终止渲染器
         /// </summary>
-        internal void Shutdown()
+        internal static void Shutdown()
         {
             Logger.Log("正在卸载渲染器...");
             Settings.OnScreenSizeChanged -= OnScreenSizeChanged;
@@ -124,34 +125,39 @@ namespace CUIEngine.Render
         /// <summary>
         /// 渲染新的一帧
         /// </summary>
-        internal void RenderOneFrame()
+        internal static void RenderOneFrame()
         {
             if(isInitialized)
             {
+                Stopwatch sw = Stopwatch.StartNew();
                 RenderClip clip = canvas!.GetRenderClip();
-                bufferClip?.MergeWith(clip, MergeCallback, true);
+                bufferClip?.MergeWith(clip, MergeCallback, true, true);
+                sw.Stop();
+                if(sw.ElapsedMilliseconds >= 5)
+                    Logger.Log(string.Format("渲染新的一帧,用时:{0}", sw.Elapsed));
+                //bufferClip = canvas!.GetRenderClip();
             }
         }
 
         /// <summary>
         /// 暂停渲染
         /// </summary>
-        internal void PauseRender()
+        internal static void PauseRender()
         {
             isPaused = true;
         }
         /// <summary>
         /// 继续渲染
         /// </summary>
-        internal void StartRender()
+        internal static void StartRender()
         {
             isPaused = false;
         }
-        void MergeCallback(int x, int y, RenderUnit unit)
+        static void MergeCallback(int x, int y, RenderUnit unit)
         {
             screen?.Draw(x, y, unit);
         }
-        void OnScreenSizeChanged(Vector2Int newSize)
+        static void OnScreenSizeChanged(Vector2Int newSize)
         {
             PauseRender();
             bufferClip?.Resize(newSize, Vector2Int.Zero);

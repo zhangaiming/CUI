@@ -23,7 +23,7 @@ namespace CUIEngine.WidgetLib
             {
                 for (int j = 0; j < Size.Y; j++)
                 {
-                    CurrentClip?.SetUnit(i, j, new RenderUnit(new Color(ConsoleColor.Blue, BackColor)));
+                    CurrentClip?.SetUnit(i, j, new RenderUnit(new Color(ConsoleColor.DarkGray, BackColor)));
                 }
             }
         }

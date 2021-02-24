@@ -13,5 +13,10 @@ namespace CUIEngine.Render
         /// </summary>
         /// <returns></returns>
         RenderClip GetRenderClip();
+
+        /// <summary>
+        /// 更新渲染片段
+        /// </summary>
+        void UpdateRenderClip();
     }
 }

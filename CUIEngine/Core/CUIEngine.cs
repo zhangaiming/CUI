@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
+using CUIEngine.Inputs;
 using CUIEngine.Render;
 using DevToolSet;
 
@@ -6,11 +8,6 @@ namespace CUIEngine
 {
     public static class CUIEngine
     {
-        static Renderer? renderer;
-        public static Renderer? Renderer => renderer;
-
-        static RootCanvas? rootCanvas;
-
         /// <summary>
         /// 初始化CUI引擎
         /// </summary>
@@ -22,12 +19,14 @@ namespace CUIEngine
             Logger.Initialize(@"C:\Users\legion\Documents\CUI\");
 
             //渲染器初始化
-            renderer = new Renderer();
-            renderer.Initialize();
+            Renderer.Initialize();
             SetRootCanvas(RootCanvas.Instance);
             //因为如果立即开始渲染会导致出现奇怪的错误,所以在这里等5毫秒
             Thread.Sleep(5);
-            renderer.StartRender();
+            Renderer.StartRender();
+            
+            //输入处理初始化
+            Input.Initialize();
             Logger.Log("CUI启动成功!");
         }
 
@@ -37,7 +36,8 @@ namespace CUIEngine
         public static void Shutdown()
         {
             Logger.Log("正在关闭CUI...");
-            renderer?.Shutdown();
+            Renderer.Shutdown();
+            Input.Shutdown();
             Logger.Log("CUI关闭成功!");
             
             
@@ -47,14 +47,7 @@ namespace CUIEngine
 
         internal static void SetRootCanvas(RootCanvas canvas)
         {
-            if (rootCanvas == null)
-            {
-                rootCanvas = canvas;
-                if (renderer != null)
-                {
-                    renderer.Canvas = rootCanvas;
-                }
-            }
+            Renderer.Canvas = canvas;
         }
     }
 }

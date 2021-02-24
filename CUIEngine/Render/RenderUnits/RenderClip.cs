@@ -241,13 +241,15 @@ namespace CUIEngine.Render
             res.MergeWith(b, unitCoveredHandler, shouldClip);
             return res;
         }
+
         /// <summary>
         /// 将片段与另一片段进行合并, 会改变原片段
         /// </summary>
         /// <param name="other"></param>
         /// <param name="unitCoveredHandler"></param>
         /// <param name="shouldClip"></param>
-        public void MergeWith(RenderClip other, Action<int, int, RenderUnit>? unitCoveredHandler, bool shouldClip)
+        /// <param name="forceCover"></param>
+        public void MergeWith(RenderClip other, Action<int, int, RenderUnit>? unitCoveredHandler, bool shouldClip, bool forceCover = false)
         {
             Vector2Int offset = other.coord - this.coord;
             int x, y;
@@ -263,15 +265,25 @@ namespace CUIEngine.Render
             int ox = Math.Max(offset.X, 0);
             int oy = Math.Max(offset.Y, 0);
             int bx = other.Size.X, by = other.Size.Y;
-            for (int i = 0; i < bx; i++)
             {
-                for (int j = 0; j < by; j++)
+                for (int i = 0; i < bx; i++)
                 {
-                    RenderUnit unit = other.units[j * other.size.X + i];
-                    bool covered = this.PutUnit(i + ox, j + oy, unit);
-                    if(covered)
+                    for (int j = 0; j < by; j++)
                     {
-                        unitCoveredHandler?.Invoke(i, j, unit);
+                        RenderUnit unit = other.units[j * other.size.X + i];
+                        if (forceCover)
+                        {
+                            this.SetUnit(i + ox, j + oy, unit);
+                            unitCoveredHandler?.Invoke(i, j, unit);
+                        }
+                        else
+                        {
+                            bool covered = this.PutUnit(i + ox, j + oy, unit);
+                            if (covered)
+                            {
+                                unitCoveredHandler?.Invoke(i, j, unit);
+                            }
+                        }
                     }
                 }
             }

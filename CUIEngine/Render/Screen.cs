@@ -24,7 +24,7 @@ namespace CUIEngine.Render
         Thread? drawingThread;
         bool shouldDraw = true;
         bool isPaused = false;
-        
+
         /// <summary>
         /// 设置新的屏幕大小
         /// </summary>
@@ -124,13 +124,6 @@ namespace CUIEngine.Render
             {
                 renderQueue.Enqueue(new RenderInfo(x, y, unit));
             }
-        }
-        /// <summary>
-        /// 擦除一个像素
-        /// </summary>
-        public void Erase(int x, int y)
-        {
-            Draw(x, y, new RenderUnit(Color.DefaultColor));
         }
         /// <summary>
         /// 控制暂停绘制

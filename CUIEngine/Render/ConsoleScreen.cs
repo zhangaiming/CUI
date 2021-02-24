@@ -33,13 +33,11 @@ namespace CUIEngine.Render
         
         protected override void DrawUnit(int x, int y, RenderUnit unit)
         {
-            if (!unit.IsEmpty)
-            {
-                Console.SetCursorPosition(x + 1, y + 1);
-                Console.ForegroundColor = unit.Color.ForegroundColor;
-                Console.BackgroundColor = unit.Color.BackgroundColor;
-                Console.Write(unit.Content);
-            }
+            char c = unit.IsEmpty ? ' ' : unit.Content;
+            Console.SetCursorPosition(x, y);
+            Console.ForegroundColor = unit.Color.ForegroundColor;
+            Console.BackgroundColor = unit.Color.BackgroundColor;
+            Console.Write(unit.Content);
         }
     }
 }
