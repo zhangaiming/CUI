@@ -9,10 +9,10 @@ namespace CUIEngine.Render
     {
         Vector2Int Size { get; }
         /// <summary>
-        /// 获取画布的渲染片段
+        /// 获取画布的渲染片段,当返回null,说明该画布为空
         /// </summary>
         /// <returns></returns>
-        RenderClip GetRenderClip();
+        RenderClip? GetRenderClip();
 
         /// <summary>
         /// 更新渲染片段

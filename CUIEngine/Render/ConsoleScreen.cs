@@ -22,7 +22,7 @@ namespace CUIEngine.Render
             Console.ResetColor();
             Console.Clear();
             int x = size.X, y = size.Y;
-            Console.SetWindowSize(x, y);
+            Console.SetWindowSize(x - 2, y - 1);
             Console.SetBufferSize(x, y);
             
             //等待控制台窗口设置
@@ -33,11 +33,19 @@ namespace CUIEngine.Render
         
         protected override void DrawUnit(int x, int y, RenderUnit unit)
         {
-            char c = unit.IsEmpty ? ' ' : unit.Content;
-            Console.SetCursorPosition(x, y);
-            Console.ForegroundColor = unit.Color.ForegroundColor;
-            Console.BackgroundColor = unit.Color.BackgroundColor;
-            Console.Write(unit.Content);
+            if (unit.IsEmpty)
+            {
+                Console.ResetColor();
+                Console.SetCursorPosition(x, y);
+                Console.Write(' ');
+            }
+            else
+            {
+                Console.ForegroundColor = unit.Color.ForegroundColor;
+                Console.BackgroundColor = unit.Color.BackgroundColor;
+                Console.SetCursorPosition(x, y);
+                Console.Write(unit.Content);
+            }
         }
     }
 }

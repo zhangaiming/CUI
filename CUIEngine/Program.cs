@@ -16,10 +16,10 @@ namespace CUIEngine
             Input.AttachHandler(Shutdown, ConsoleKey.Escape);
             
             Form form = Form.Create<TestForm>(new Vector2Int(5, 3), "Form");
-            
-            Thread.Sleep(2000);
-            
-            form.Size = new Vector2Int(10, 10);
+            Console.ReadKey(true);
+            form.Size += new Vector2Int(10, 10);
+            Console.ReadKey(true);
+            form.IsVisible = false;
 
             while (isRunning)
             {

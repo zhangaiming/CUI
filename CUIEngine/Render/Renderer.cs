@@ -130,12 +130,29 @@ namespace CUIEngine.Render
             if(isInitialized)
             {
                 Stopwatch sw = Stopwatch.StartNew();
-                RenderClip clip = canvas!.GetRenderClip();
-                bufferClip?.MergeWith(clip, MergeCallback, true, true);
+                RenderClip? clip = canvas!.GetRenderClip();
+                if(clip != null && bufferClip != null)
+                {
+                    //bufferClip.MergeWith(clip, MergeCallback, true);
+                    int sizeX = bufferClip.Size.X;
+                    int sizeY = bufferClip.Size.Y;
+                    for (int j = 0; j < sizeY; j++)
+                    {
+                        for (int i = 0; i < sizeX; i++)
+                        {
+                            RenderUnit newUnit = clip.GetUnit(i, j);
+                            RenderUnit oldUnit = bufferClip.GetUnit(i, j);
+                            if (!newUnit.Equals(oldUnit))
+                            {
+                                bufferClip.SetUnit(i, j, newUnit);
+                                screen?.Draw(i, j, newUnit);
+                            }
+                        }
+                    }
+                }
                 sw.Stop();
                 if(sw.ElapsedMilliseconds >= 5)
                     Logger.Log(string.Format("渲染新的一帧,用时:{0}", sw.Elapsed));
-                //bufferClip = canvas!.GetRenderClip();
             }
         }
 
@@ -153,10 +170,10 @@ namespace CUIEngine.Render
         {
             isPaused = false;
         }
-        static void MergeCallback(int x, int y, RenderUnit unit)
+        /*static void MergeCallback(int x, int y, RenderUnit unit)
         {
             screen?.Draw(x, y, unit);
-        }
+        }*/
         static void OnScreenSizeChanged(Vector2Int newSize)
         {
             PauseRender();

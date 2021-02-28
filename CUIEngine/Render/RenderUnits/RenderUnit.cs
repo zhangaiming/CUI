@@ -1,4 +1,6 @@
-﻿namespace CUIEngine.Render
+﻿using System;
+
+namespace CUIEngine.Render
 {
     public struct RenderUnit
     {
@@ -42,6 +44,16 @@
             this.content = content;
             this.color = color;
             this.isEmpty = isEmpty;
+        }
+
+        public bool Equals(RenderUnit other)
+        {
+            return color.Equals(other.color) && content == other.content && isEmpty == other.isEmpty;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(color, content, isEmpty);
         }
     }
 }

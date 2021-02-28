@@ -13,7 +13,6 @@ namespace CUIEngine.Widgets
         /// </summary>
         public event Action<Widget>? WidgetReadyToBeDestroyedEvent;
         
-        RenderClip? fullClip;   //当前的渲染片段,包含擦除片段
         protected RenderClip? CurrentClip;    //当前的渲染片段
         bool shouldUpdate = true;   //是否应该更新渲染片段
         IWidgetOwner parent = null!;
@@ -70,20 +69,20 @@ namespace CUIEngine.Widgets
             {
                 if(coord != value)
                 {
+                    //修改值
                     Vector2Int oldCoord = coord;
                     coord = value;
-                    Stopwatch sw = Stopwatch.StartNew();
                     CurrentClip?.Resize(size, value - oldCoord);
                     OnCoordChanged(oldCoord, coord);
-                    sw.Stop();
-                    Logger.Log(string.Format("改变坐标用时:{0}", sw.Elapsed));
+
+                    //更新渲染片段
                     UpdateRenderClip();
                 }
             }
         }
 
         /// <summary>
-        /// 控件的相对坐标,即相对于父控件的坐标
+        /// 控件的相对坐标,即相对于父控件的坐标(当父控件不是Sprite时此属性与Coord相同)
         /// </summary>
         public Vector2Int LocalCoord
         {
@@ -96,6 +95,17 @@ namespace CUIEngine.Widgets
                 else
                 {
                     return Coord;
+                }
+            }
+            set
+            {
+                if(parent is Sprite)
+                {
+                    Coord = ((Sprite) parent).Coord + value;
+                }
+                else
+                {
+                    Coord = value;
                 }
             }
         }
@@ -111,6 +121,7 @@ namespace CUIEngine.Widgets
                 if (isVisible != value)
                 {
                     isVisible = value;
+                    UpdateRenderClip();
                     OnVisibilityChanged();
                 }
             }
@@ -141,10 +152,10 @@ namespace CUIEngine.Widgets
         protected virtual void OnCoordChanged(Vector2Int oldCoord, Vector2Int newCoord){}
         
         /// <summary>
-        /// 当控件可视度发生改变时调用
+        /// 当控件可视性发生改变时调用
         /// </summary>
         protected virtual void OnVisibilityChanged(){}
-        
+
         /// <summary>
         /// 初始化控件
         /// </summary>
@@ -165,15 +176,14 @@ namespace CUIEngine.Widgets
             DestroySprite(this);
         }
         
-        public RenderClip GetRenderClip()
+        /// <summary>
+        /// 返回控件的渲染片段,当控件不可视时返回null
+        /// </summary>
+        /// <returns></returns>
+        public RenderClip? GetRenderClip()
         {
-            fullClip = new RenderClip(CurrentClip!.Size, CurrentClip!.Coord);
             if(isVisible)
             {
-                if (CurrentClip == null)
-                {
-                    CurrentClip = new RenderClip(size, coord);
-                }
 
                 if (shouldUpdate)
                 {
@@ -182,11 +192,14 @@ namespace CUIEngine.Widgets
                     sw.Stop();
                     Logger.Log(Name + "生成渲染片段所用时间: " + sw.Elapsed);
                     shouldUpdate = false;
-                    fullClip.MergeWith(CurrentClip, null, false, true);
                 }
-            }
 
-            return fullClip;
+                return CurrentClip;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>

@@ -102,15 +102,15 @@ namespace CUIEngine.Forms
         void InitializeForm()
         {
             //初始化边框
-            border = CreateWidget<Panel>(Size + new Vector2Int(2, 2), Coord + new Vector2Int(-1, -1),
+            border = CreateWidget<Panel>(Size, Coord,
                 Name + "Border", "FormBorder", this);
             border.DrawType = PanelDrawType.BorderOnly;
-            titleWidget = CreateWidget<CharMap>(new Vector2Int(Size.X - 2, 1), Coord + new Vector2Int(0, -1),
+            titleWidget = CreateWidget<CharMap>(new Vector2Int(Size.X - 2, 1), Coord + new Vector2Int(1, 0),
                 Name + "Title", "FormTitleWidget", this);
             titleWidget.Content = title;
             
             //初始化根控件
-            rootWidget = CreateWidget<WidgetContainer>(Size, Coord, Name + "Root", "RootWidget", this);
+            rootWidget = CreateWidget<WidgetContainer>(Size + new Vector2Int(-2, -2), Coord + new Vector2Int(1, 1), Name + "Root", "RootWidget", this);
             rootWidget.ClipChildren = true;
             
             OnInitializeForm();
@@ -158,12 +158,25 @@ namespace CUIEngine.Forms
         protected override void MakeRenderClip()
         {
             CurrentClip?.Clear();
+            RenderClip? clip;
             if(rootWidget != null)
-                CurrentClip?.MergeWith(rootWidget.GetRenderClip(), null, true);
+            {
+                clip = rootWidget.GetRenderClip();
+                if(clip != null)
+                    CurrentClip?.MergeWith(clip, null, true);
+            }
             if(border != null)
-                CurrentClip?.MergeWith(border.GetRenderClip(), null, false);
+            {
+                clip = border.GetRenderClip();
+                if(clip != null)
+                    CurrentClip?.MergeWith(clip, null, true);
+            }
             if(titleWidget != null)
-                CurrentClip?.MergeWith(titleWidget.GetRenderClip(), null, false);
+            {
+                clip = titleWidget.GetRenderClip();
+                if(clip != null)
+                    CurrentClip?.MergeWith(clip, null, true);
+            }
         }
 
         protected override void OnCoordChanged(Vector2Int oldCoord, Vector2Int newCoord)
@@ -191,7 +204,7 @@ namespace CUIEngine.Forms
             base.OnSizeChanged(oldSize, newSize);
             if (border != null)
             {
-                border.Size = newSize + new Vector2Int(2, 2);
+                border.Size = newSize;
             }
 
             if (titleWidget != null)
@@ -201,7 +214,7 @@ namespace CUIEngine.Forms
 
             if (rootWidget != null)
             {
-                rootWidget.Size = newSize;
+                rootWidget.Size = newSize + new Vector2Int(-2, -2);
             }
         }
     }
