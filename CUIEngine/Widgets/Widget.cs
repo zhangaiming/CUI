@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using CUIEngine.Inputs;
 using CUIEngine.Mathf;
 using CUIEngine.Render;
 using DevToolSet;
@@ -11,13 +12,15 @@ namespace CUIEngine.Widgets
         /// <summary>
         /// 将被销毁时调用
         /// </summary>
-        public event Action<Widget>? WidgetReadyToBeDestroyedEvent;
+        public event Action<Widget>? ToBeDestroyedHandler;
         
         protected RenderClip? CurrentClip;    //当前的渲染片段
         bool shouldUpdate = true;   //是否应该更新渲染片段
         IWidgetOwner parent = null!;
         Vector2Int coord;
         Vector2Int size;
+        
+        static IInteractive? selectingWidget = null;   //当前被选择的控件
 
         bool isVisible = true;    //是否可见
 
@@ -127,12 +130,18 @@ namespace CUIEngine.Widgets
             }
         }
 
+        static Widget()
+        {
+            //为控件交互注册按键
+            Input.AttachHandler(EnterActiveWidget, ConsoleKey.Enter);
+        }
+        
         /// <summary>
         /// 初始化时调用
         /// </summary>
         protected virtual void OnInitialize(){}
         /// <summary>
-        /// 销毁时调用(在WidgetReadyToBeDestroyedEvent之后被调用)
+        /// 销毁时调用(在ToBeDestroyedHandler之后被调用)
         /// </summary>
         protected virtual void OnDestroyed(){}
 
@@ -171,7 +180,7 @@ namespace CUIEngine.Widgets
         /// </summary>
         public void Destroy()
         {
-            WidgetReadyToBeDestroyedEvent?.Invoke(this);
+            ToBeDestroyedHandler?.Invoke(this);
             OnDestroyed();
             DestroySprite(this);
         }
@@ -208,13 +217,13 @@ namespace CUIEngine.Widgets
         /// <param name="owner"></param>
         public void SetParent(IWidgetOwner owner)
         {
-            if (parent is IMultiWidgetsOwner)
+            if (parent is IWidgetContainer)
             {
-                ((IMultiWidgetsOwner)parent).RemoveWidget(this);
+                ((IWidgetContainer)parent).RemoveWidget(this);
             }
-            if (owner is IMultiWidgetsOwner)
+            if (owner is IWidgetContainer)
             {
-                ((IMultiWidgetsOwner)owner).AddWidget(this);
+                ((IWidgetContainer)owner).AddWidget(this);
             }
             Parent = owner;
             
@@ -279,6 +288,34 @@ namespace CUIEngine.Widgets
             {
                 ((ICanvas) parent).UpdateRenderClip();
             }
+        }
+
+        /// <summary>
+        /// 设置交互对象
+        /// </summary>
+        /// <param name="target"></param>
+        public static void SetSelection(Widget? target)
+        {
+            if (target == null)
+            {
+                selectingWidget?.Select(false);
+                selectingWidget = null;
+            }
+            //判断目标是否可进行互动
+            else if (target is IInteractive)
+            {
+                selectingWidget?.Select(false);
+                selectingWidget = (IInteractive)target;
+                selectingWidget.Select(true);
+            }
+        }
+
+        /// <summary>
+        /// 与正被激活的控件进行互动
+        /// </summary>
+        static void EnterActiveWidget(ConsoleKeyInfo info)
+        {
+            selectingWidget?.Interact();
         }
     }
 }

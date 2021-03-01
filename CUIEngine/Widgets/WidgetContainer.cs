@@ -4,7 +4,7 @@ using CUIEngine.Render;
 
 namespace CUIEngine.Widgets
 {
-    public class WidgetContainer : Widget, IMultiWidgetsOwner
+    public class WidgetContainer : Widget, IWidgetContainer
     {
         List<Widget> children = new List<Widget>();   //越靠后优先级越高,越被渲染在上层
         bool clipChildren = false;
@@ -73,10 +73,6 @@ namespace CUIEngine.Widgets
         {
             return children.Contains(widget);
         }
-        /// <summary>
-        /// 将某个已存在与该容器中的控件置顶
-        /// </summary>
-        /// <param name="widget"></param>
         public void TopUpWidget(Widget widget)
         {
             int i = IndexOf(widget);

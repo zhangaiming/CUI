@@ -6,12 +6,15 @@ using CUIEngine.Widgets;
 
 namespace CUIEngine.Render
 {
-    public class RootCanvas : ICanvas, IMultiWidgetsOwner
+    /// <summary>
+    /// 根画布
+    /// </summary>
+    public class RootCanvas : ICanvas, IWidgetContainer
     {
         static RootCanvas? instance;
         RenderClip currentClip;
         bool shouldUpdate = true;
-        TestWidget background;
+        Panel background;
 
         /// <summary>
         /// 实例
@@ -39,10 +42,13 @@ namespace CUIEngine.Render
         {
             size = Settings.ScreenSize;
             currentClip = new RenderClip(size, Vector2Int.Zero);
+            
             //创建画布背景
-            background =
-                Widget.CreateWidget<TestWidget>(size, Vector2Int.Zero, "UIBackground", this);
-            background.BackColor = ConsoleColor.DarkBlue;
+            background = Widget.CreateWidget<Panel>(size, Vector2Int.Zero, "UIBackground", this);
+            background.FillColor = new Color(ConsoleColor.Black, ConsoleColor.Black);
+            background.DrawType = PanelDrawType.FillOnly;
+            
+            //关联屏幕尺寸调整事件
             Settings.OnScreenSizeChanged += Resize;
         }
 
@@ -62,10 +68,11 @@ namespace CUIEngine.Render
                 int cnt = canvasList.Count;
                 for (int i = 0; i < cnt; i++)
                 {
-                    RenderClip? clip = canvasList[i].GetRenderClip();
-                    
+                    ICanvas canvas = canvasList[i];
+                    RenderClip? clip = canvas.GetRenderClip();
+
                     //判断画布是否为空
-                    if(clip != null)
+                    if (clip != null)
                         currentClip.MergeWith(clip, null, true);
                 }
 
@@ -119,6 +126,17 @@ namespace CUIEngine.Render
                 }
             }
             return -1; 
+        }
+
+        public void TopUpWidget(Widget widget)
+        {
+            int i = IndexOf(widget);
+            if (i != -1)
+            {
+                canvasList.RemoveAt(i);
+                canvasList.Add(widget);
+                UpdateRenderClip();
+            }
         }
     }
 }

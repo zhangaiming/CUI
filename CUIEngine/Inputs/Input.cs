@@ -6,7 +6,8 @@ using DevToolSet;
 
 namespace CUIEngine.Inputs
 {
-    public delegate void InputHandler();
+    public delegate void InputHandler(ConsoleKeyInfo info);
+
     public static class Input
     {
         struct KeyInfo
@@ -20,9 +21,11 @@ namespace CUIEngine.Inputs
                 Modifiers = modifiers;
             }
         }
-        //处理方法
+        //针对性处理方法
         static Dictionary<KeyInfo, List<InputHandler>> handlersDic = new Dictionary<KeyInfo, List<InputHandler>>();
-
+        //任意键处理方法
+        static List<InputHandler> anyKeyHandlers = new List<InputHandler>();
+        
         static Thread? getInputThread;
 
         static bool isRunning = true;
@@ -51,7 +54,7 @@ namespace CUIEngine.Inputs
         }
         
         /// <summary>
-        /// 添加输入处理方法
+        /// 添加对指定按键组合输入的处理方法
         /// </summary>
         public static void AttachHandler(InputHandler handler, ConsoleKey key, bool shift = false, bool ctrl = false, bool alt = false)
         {
@@ -73,6 +76,18 @@ namespace CUIEngine.Inputs
             if (!list.Contains(handler))
             {
                 list.Add(handler);
+            }
+        }
+        
+        /// <summary>
+        /// 添加对输入的处理方法
+        /// </summary>
+        /// <param name="handler"></param>
+        public static void AttachHandler(InputHandler handler)
+        {
+            if (!anyKeyHandlers.Contains(handler))
+            {
+                anyKeyHandlers.Add(handler);
             }
         }
 
@@ -107,10 +122,26 @@ namespace CUIEngine.Inputs
             }
         }
 
+        /// <summary>
+        /// 移除输入处理方法
+        /// </summary>
+        /// <param name="handler"></param>
+        public static void DetachHandler(InputHandler handler)
+        {
+            if (anyKeyHandlers.Contains(handler))
+            {
+                anyKeyHandlers.Remove(handler);
+            }
+        }
+
         static void CallHandler(ConsoleKeyInfo info)
         {
             Stopwatch totalSw = Stopwatch.StartNew();
             KeyInfo keyInfo = new KeyInfo(info.Key, info.Modifiers); 
+            foreach (InputHandler anyKeyHandler in anyKeyHandlers)
+            {
+                anyKeyHandler?.Invoke(info);
+            }
             if (handlersDic.ContainsKey(keyInfo))
             {
                 Stopwatch localSw = new Stopwatch();
@@ -118,9 +149,9 @@ namespace CUIEngine.Inputs
                 foreach (InputHandler inputHandler in list)
                 {
                     localSw.Start();
-                    inputHandler.Invoke();
+                    inputHandler.Invoke(info);
                     localSw.Stop();
-                    Logger.Log(string.Format("调用输入处理方法{1},所用时间:{0}.", localSw.Elapsed, inputHandler.ToString()));
+                    Logger.Log(string.Format("调用输入处理方法{1},所用时间:{0}.", localSw.Elapsed, inputHandler));
                 }
             }
             totalSw.Stop();

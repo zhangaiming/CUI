@@ -48,10 +48,36 @@ namespace CUIEngine
                 OnScreenSizeChanged?.Invoke(screenSize);
             }
         }
-        
-        
+
+        /// <summary>
+        /// 被激活的控件的前景色
+        /// </summary>
+        public static ConsoleColor ActiveForegroundColor
+        {
+            get => activeForegroundColor;
+            set => activeForegroundColor = value;
+        }
+
+        /// <summary>
+        /// 被激活的控件的背景色
+        /// </summary>
+        public static ConsoleColor ActiveBackgroundColor
+        {
+            get => activeBackgroundColor;
+            set => activeBackgroundColor = value;
+        }
+
+        /// <summary>
+        /// 光标闪烁间隔
+        /// </summary>
+        public static int CursorBlinkingInterval => cursorBlinkingInterval;
+
+
         static Vector2Int screenSize = new Vector2Int(80, 50);
         static bool showCursor = false;
         static short consoleFontSize = 10;
+        static ConsoleColor activeForegroundColor = ConsoleColor.Black;
+        static ConsoleColor activeBackgroundColor = ConsoleColor.Gray;
+        static int cursorBlinkingInterval = 400;
     }
 }

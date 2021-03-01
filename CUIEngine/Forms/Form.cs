@@ -8,7 +8,7 @@ namespace CUIEngine.Forms
     /// <summary>
     /// 窗体抽象类,继承并实现这个类以创建一个新的窗体
     /// </summary>
-    public abstract class Form : Widget, IMultiWidgetsOwner
+    public abstract class Form : Widget, IWidgetContainer
     {
         bool showTitle = true;
         bool isBorderless = false;
@@ -18,7 +18,7 @@ namespace CUIEngine.Forms
 
         WidgetContainer? rootWidget = null!;
         Panel? border = null;
-        CharMap? titleWidget = null;
+        Label? titleWidget = null;
 
         /// <summary>
         /// 是否显示标题
@@ -105,7 +105,7 @@ namespace CUIEngine.Forms
             border = CreateWidget<Panel>(Size, Coord,
                 Name + "Border", "FormBorder", this);
             border.DrawType = PanelDrawType.BorderOnly;
-            titleWidget = CreateWidget<CharMap>(new Vector2Int(Size.X - 2, 1), Coord + new Vector2Int(1, 0),
+            titleWidget = CreateWidget<Label>(new Vector2Int(Size.X - 2, 1), Coord + new Vector2Int(1, 0),
                 Name + "Title", "FormTitleWidget", this);
             titleWidget.Content = title;
             
@@ -153,6 +153,11 @@ namespace CUIEngine.Forms
         public int IndexOf(Widget widget)
         {
             return rootWidget?.IndexOf(widget) ?? -1;
+        }
+
+        public void TopUpWidget(Widget widget)
+        {
+            rootWidget?.TopUpWidget(widget);
         }
 
         protected override void MakeRenderClip()

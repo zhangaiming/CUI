@@ -28,8 +28,8 @@ namespace CUIEngine.Mathf
         /// 长度为0的矢量
         /// </summary>
         public static Vector2Int Zero = new Vector2Int();
-        
-        public Vector2Int(int x = 0, int y = 0)
+
+        public Vector2Int(int x, int y)
         {
             this.x = x;
             this.y = y;

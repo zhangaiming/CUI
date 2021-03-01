@@ -24,6 +24,9 @@ namespace CUIEngine.WidgetLib
         BorderOnly
     }
     
+    /// <summary>
+    /// 可选择边框和填充绘制方式的面板
+    /// </summary>
     public class Panel : Widget
     {
         char borderChar = '#';
@@ -131,6 +134,8 @@ namespace CUIEngine.WidgetLib
                             //绘制边框
                             if (drawType == PanelDrawType.BorderOnly || drawType == PanelDrawType.FillAndBorder)
                                 CurrentClip.SetUnit(x, y, borderUnit);
+                            else
+                                CurrentClip.SetUnit(x, y, fillUnit);
                         }
                         else
                         {

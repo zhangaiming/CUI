@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using CUIEngine.Inputs;
 using CUIEngine.Render;
+using CUIEngine.Widgets;
 using DevToolSet;
 
 namespace CUIEngine
@@ -24,6 +25,9 @@ namespace CUIEngine
             Thread.Sleep(5);
             Renderer.StartRender();
             
+            //初始化光标
+            Cursor.Initialize();
+            
             //输入处理初始化
             Input.Initialize();
             Logger.Log("CUI启动成功!");
@@ -35,6 +39,8 @@ namespace CUIEngine
         public static void Shutdown()
         {
             Logger.Log("正在关闭CUI...");
+            Cursor.Shutdown();
+            
             Renderer.Shutdown();
             Input.Shutdown();
             Logger.Log("CUI关闭成功!");

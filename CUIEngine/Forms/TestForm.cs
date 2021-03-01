@@ -18,17 +18,17 @@ namespace CUIEngine.Forms
             base.OnInitializeForm();
             Title = "A Form";
             
-            TestWidget w1 =
-                Widget.CreateWidget<TestWidget>(new Vector2Int(5, 5), new Vector2Int(5, 5), "w1", this);
-            w1.BackColor = ConsoleColor.Blue;
-            Widget.CreateWidget<TestWidget>(new Vector2Int(5, 5), new Vector2Int(17, 11), "w2", this);
-            TestWidget? w2 = Widget.Find<TestWidget>("w2");
-            w2!.BackColor = ConsoleColor.Green;
+            ColorBlock w1 =
+                Widget.CreateWidget<ColorBlock>(new Vector2Int(5, 5), new Vector2Int(5, 5), "w1", this);
+            w1.Color = ConsoleColor.Blue;
+            Widget.CreateWidget<ColorBlock>(new Vector2Int(5, 5), new Vector2Int(17, 11), "w2", this);
+            ColorBlock? w2 = Widget.Find<ColorBlock>("w2");
+            w2!.Color = ConsoleColor.Green;
             
             Input.AttachHandler(MoveFormDown, ConsoleKey.S);
         }
 
-        void MoveFormDown()
+        void MoveFormDown(ConsoleKeyInfo info)
         {
             this.Coord += new Vector2Int(0, 1);
         }
