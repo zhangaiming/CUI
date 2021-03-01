@@ -4,13 +4,13 @@ using CUIEngine.Inputs;
 using CUIEngine.Mathf;
 using CUIEngine.Render;
 using CUIEngine.Widgets;
-
+//todo: 控件未完成
 namespace CUIEngine.WidgetLib
 {
     /// <summary>
-    /// 文本输入框
+    /// 文本编辑框
     /// </summary>
-    public class InputField : Widget, IWidgetOwner, IInteractive
+    public abstract class LabelEditField : Label, IInteractive
     {
         bool editing = false;
 
@@ -19,8 +19,6 @@ namespace CUIEngine.WidgetLib
         StringBuilder content = new StringBuilder();
         int currentIndex = 0;
         int curMinIndex = 0;
-
-        Label? textBox = null!;  //显示用文本框
 
         /// <summary>
         /// 文本输入框的内容
@@ -39,9 +37,6 @@ namespace CUIEngine.WidgetLib
         {
             base.OnInitialize();
             AttachKeys();
-            textBox = Widget.CreateWidget<Label>(Size, Coord, Name + "_TextBox", this);
-            textBox.AutoWarp = true;
-            textBox.TextColor = Color.DefaultColor;
         }
 
         protected override void OnDestroyed()
@@ -50,25 +45,16 @@ namespace CUIEngine.WidgetLib
             DetachKeys();
         }
 
-        protected override void MakeRenderClip()
-        {
-            CurrentClip?.Clear();
-            CurrentClip = textBox?.GetRenderClip();
-        }
-
         public void Select(bool state)
         {
-            if(textBox != null)
+            if (state)
             {
-                if (state)
-                {
-                    normalColor = textBox.TextColor;
-                    textBox.TextColor = new Color(Settings.ActiveForegroundColor, Settings.ActiveBackgroundColor);
-                }
-                else
-                {
-                    textBox.TextColor = normalColor;
-                }
+                normalColor = TextColor;
+                TextColor = new Color(Settings.ActiveForegroundColor, Settings.ActiveBackgroundColor);
+            }
+            else
+            {
+                TextColor = normalColor;
             }
         }
 
@@ -182,11 +168,8 @@ namespace CUIEngine.WidgetLib
             }
             Cursor.SetCursor(new Vector2Int(cursorX, cursorY));
             currentIndex = newIndex;
-            if(textBox != null)
-            {
-                textBox.Content = Content.Substring(curMinIndex, Math.Min(Content.Length - curMinIndex - 1, Size.X));
-                textBox.UpdateRenderClip();
-            }
+            Content = Content.Substring(curMinIndex, Math.Min(Content.Length - curMinIndex - 1, Size.X));
+            UpdateRenderClip();
         }
     }
 }

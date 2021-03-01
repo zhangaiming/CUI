@@ -56,5 +56,10 @@ namespace CUIEngine.Render
         {
             return HashCode.Combine((int) foreColor, (int) backColor);
         }
+        
+        public override bool Equals(object? obj)
+        {
+            return obj is Color other && Equals(other);
+        }
     }
 }

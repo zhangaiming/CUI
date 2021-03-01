@@ -24,7 +24,7 @@ namespace CUIEngine.Widgets
             //初始化光标
             cursor = Widget.CreateWidget<Label>(new Vector2Int(1, 1), Vector2Int.Zero, "Cursor", "Cursor",
                 RootCanvas.Instance);
-            cursor.Content = " ";
+            cursor.Text = " ";
             cursor.TextColor = new Color(ConsoleColor.DarkGray, ConsoleColor.DarkGray);
             //默认不可见
             cursor.IsVisible = false;

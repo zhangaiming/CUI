@@ -15,19 +15,11 @@ namespace CUIEngine
         public static void Main(string[] args)
         {
             CUIEngine.Initialize();
-
             Input.AttachHandler(Shutdown, ConsoleKey.Escape);
-            /*Form form = Form.Create<TestForm>(new Vector2Int(5, 3), "Form");
-            Console.ReadKey(true);
-            form.Size += new Vector2Int(10, 10);
-            Console.ReadKey(true);
-            form.IsVisible = false;*/
-            InputField i = Widget.CreateWidget<InputField>(new Vector2Int(5, 3), new Vector2Int(5, 3), "input",
-                RootCanvas.Instance);
-            i.Content = "absllw222";
 
-            Console.ReadKey(true);
-            Widget.SetSelection(i);
+            Label label = Widget.CreateWidget<Label>(new Vector2Int(10, 1), new Vector2Int(3, 3), "label",
+                RootCanvas.Instance);
+            label.Text = "What is that??";
 
             while (isRunning)
             {

@@ -69,7 +69,7 @@ namespace CUIEngine.Forms
                     title = value;
                     if(titleWidget != null)
                     {
-                        titleWidget.Content = title;
+                        titleWidget.Text = title;
                     }
                     UpdateRenderClip();
                 }
@@ -107,7 +107,7 @@ namespace CUIEngine.Forms
             border.DrawType = PanelDrawType.BorderOnly;
             titleWidget = CreateWidget<Label>(new Vector2Int(Size.X - 2, 1), Coord + new Vector2Int(1, 0),
                 Name + "Title", "FormTitleWidget", this);
-            titleWidget.Content = title;
+            titleWidget.Text = title;
             
             //初始化根控件
             rootWidget = CreateWidget<WidgetContainer>(Size + new Vector2Int(-2, -2), Coord + new Vector2Int(1, 1), Name + "Root", "RootWidget", this);
