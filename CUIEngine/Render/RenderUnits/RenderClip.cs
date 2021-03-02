@@ -196,6 +196,24 @@ namespace CUIEngine.Render
         {
             if (!unit.IsEmpty)
             {
+                RenderUnit oldUnit = units[y * Size.X + x];
+
+                Color color = unit.Color;
+                Color oldUnitColor = oldUnit.Color;
+                if (color.IsForegroundTransparent)
+                {
+                    color.ForegroundColor = oldUnitColor.ForegroundColor;
+                    color.IsForegroundTransparent = oldUnitColor.IsForegroundTransparent;
+                }
+
+                if (color.IsBackgroundTransparent)
+                {
+                    color.BackgroundColor = oldUnitColor.BackgroundColor;
+                    color.IsBackgroundTransparent = oldUnitColor.IsBackgroundTransparent;
+                }
+                unit.Color = color;
+                
+                
                 SetUnit(x, y, unit);
                 return true;
             }
