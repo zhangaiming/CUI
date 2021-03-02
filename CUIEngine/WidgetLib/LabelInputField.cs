@@ -14,7 +14,7 @@ namespace CUIEngine.WidgetLib
     {
         bool editing = false;
 
-        Color normalColor;
+        ColorPair normalColorPair;
 
         StringBuilder content = new StringBuilder();
         int currentIndex = 0;
@@ -49,12 +49,12 @@ namespace CUIEngine.WidgetLib
         {
             if (state)
             {
-                normalColor = TextColor;
-                TextColor = new Color(Settings.ActiveForegroundColor, Settings.ActiveBackgroundColor);
+                normalColorPair = TextColorPair;
+                TextColorPair = new ColorPair(Settings.ActiveForegroundCUIColor, Settings.ActiveBackgroundCUIColor);
             }
             else
             {
-                TextColor = normalColor;
+                TextColorPair = normalColorPair;
             }
         }
 

@@ -1,6 +1,4 @@
-﻿//todo: 权重或许可以去掉, 但是为了防止可能有考虑不周全的地方, 以后再确定要不要删掉
-
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using CUIEngine.Mathf;
 
@@ -186,7 +184,7 @@ namespace CUIEngine.Render
             }
         }
         /// <summary>
-        /// 尝试设置对应位置的单元,若要设置的单元为空单元,则设置失败
+        /// 设置对应位置的单元并将单元颜色进行相应的设置,若要设置的单元为空单元,则设置失败
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -198,21 +196,12 @@ namespace CUIEngine.Render
             {
                 RenderUnit oldUnit = units[y * Size.X + x];
 
-                Color color = unit.Color;
-                Color oldUnitColor = oldUnit.Color;
-                if (color.IsForegroundTransparent)
-                {
-                    color.ForegroundColor = oldUnitColor.ForegroundColor;
-                    color.IsForegroundTransparent = oldUnitColor.IsForegroundTransparent;
-                }
-
-                if (color.IsBackgroundTransparent)
-                {
-                    color.BackgroundColor = oldUnitColor.BackgroundColor;
-                    color.IsBackgroundTransparent = oldUnitColor.IsBackgroundTransparent;
-                }
-                unit.Color = color;
+                ColorPair colorPair = unit.ColorPair;
+                ColorPair oldUnitColorPair = oldUnit.ColorPair;
+                colorPair.ForegroundColor = ParseTransparentColor(colorPair.ForegroundColor, oldUnitColorPair);
+                colorPair.BackgroundColor = ParseTransparentColor(colorPair.BackgroundColor, oldUnitColorPair);
                 
+                unit.ColorPair = colorPair;
                 
                 SetUnit(x, y, unit);
                 return true;
@@ -220,6 +209,26 @@ namespace CUIEngine.Render
 
             return false;
         }
+        /// <summary>
+        /// 将透明颜色转变成对应的颜色
+        /// </summary>
+        /// <param name="rawColor"></param>
+        /// <param name="oldUnitColorPair"></param>
+        /// <returns></returns>
+        static CUIColor ParseTransparentColor(CUIColor rawColor, ColorPair oldUnitColorPair)
+        {
+            if (rawColor == CUIColor.NextForegroundColor)
+            {
+                return oldUnitColorPair.ForegroundColor;
+            }
+            else if (rawColor == CUIColor.NextBackgroundColor)
+            {
+                return oldUnitColorPair.BackgroundColor;
+            }
+
+            return rawColor;
+        }
+        
         /// <summary>
         /// 获得一个单元
         /// </summary>

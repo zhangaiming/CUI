@@ -25,7 +25,7 @@ namespace CUIEngine.Widgets
             cursor = Widget.CreateWidget<Label>(new Vector2Int(1, 1), Vector2Int.Zero, "Cursor", "Cursor",
                 RootCanvas.Instance);
             cursor.Text = " ";
-            cursor.TextColor = new Color(ConsoleColor.DarkGray, ConsoleColor.DarkGray);
+            cursor.TextColorPair = new ColorPair(CUIColor.DarkGray, CUIColor.DarkGray);
             //默认不可见
             cursor.IsVisible = false;
 

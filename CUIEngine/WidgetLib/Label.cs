@@ -11,7 +11,7 @@ namespace CUIEngine.WidgetLib
     public class Label : Widget
     {
         string text = "";    //内容
-        Color textColor = Color.DefaultColor;   //文本的颜色
+        ColorPair textColorPair = ColorPair.DefaultColorPair;   //文本的颜色
 
         /// <summary>
         /// 文本内容
@@ -32,14 +32,14 @@ namespace CUIEngine.WidgetLib
         /// <summary>
         /// 文本的颜色
         /// </summary>
-        public Color TextColor
+        public ColorPair TextColorPair
         {
-            get => textColor;
+            get => textColorPair;
             set
             {
-                if (textColor != value)
+                if (textColorPair != value)
                 {
-                    textColor = value;
+                    textColorPair = value;
                     UpdateRenderClip();
                 }
             }
@@ -51,7 +51,7 @@ namespace CUIEngine.WidgetLib
             {
                 CurrentClip.Clear();
                 
-                RenderUnit unit = new RenderUnit(textColor);
+                RenderUnit unit = new RenderUnit(textColorPair);
                 string temp = text;
                 for (var x = 0; x < Math.Min(temp.Length, Size.X); x++)
                 {

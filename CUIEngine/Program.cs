@@ -19,12 +19,12 @@ namespace CUIEngine
             Panel panel = Widget.CreateWidget<Panel>(new Vector2Int(12, 3), new Vector2Int(2, 2), "panel",
                 RootCanvas.Instance);
             panel.DrawType = PanelDrawType.FillAndBorder;
-            panel.FillColor = new Color(ConsoleColor.Cyan, ConsoleColor.Cyan);
+            panel.FillColorPair = new ColorPair(CUIColor.Blue, CUIColor.Cyan);
             
             Label label = Widget.CreateWidget<Label>(new Vector2Int(10, 1), new Vector2Int(3, 3), "label",
                 RootCanvas.Instance);
             label.Text = "What is that??";
-            label.TextColor = new Color(ConsoleColor.Black, ConsoleColor.Blue, false, true);
+            label.TextColorPair = new ColorPair(CUIColor.Black, CUIColor.NextForegroundColor);
 
             while (isRunning)
             {

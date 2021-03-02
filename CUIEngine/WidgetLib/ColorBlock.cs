@@ -10,8 +10,8 @@ namespace CUIEngine.WidgetLib
     [Obsolete("此控件将不再进行维护,若需实现色块绘制功能,应选择通用性更高的Panel控件.")]
     public class ColorBlock : Widget
     {
-        ConsoleColor color = ConsoleColor.Black;
-        public ConsoleColor Color
+        CUIColor color = CUIColor.Black;
+        public CUIColor Color
         {
             get => color;
             set
@@ -27,7 +27,7 @@ namespace CUIEngine.WidgetLib
             {
                 for (int j = 0; j < Size.Y; j++)
                 {
-                    CurrentClip?.SetUnit(i, j, new RenderUnit(new Color(ConsoleColor.DarkGray, Color)));
+                    CurrentClip?.SetUnit(i, j, new RenderUnit(new ColorPair(CUIColor.DarkGray, Color)));
                 }
             }
         }

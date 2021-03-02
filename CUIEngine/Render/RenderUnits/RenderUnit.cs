@@ -4,17 +4,17 @@ namespace CUIEngine.Render
 {
     public struct RenderUnit
     {
-        Color color;
+        ColorPair colorPair;
         char content;
         bool isEmpty;
 
         /// <summary>
         /// 单位的颜色
         /// </summary>
-        public Color Color
+        public ColorPair ColorPair
         {
-            get => color;
-            set => color = value;
+            get => colorPair;
+            set => colorPair = value;
         }
         /// <summary>
         /// 单位的内容, 即字符
@@ -34,26 +34,26 @@ namespace CUIEngine.Render
         }
 
         public RenderUnit(char content) 
-            : this(Color.DefaultColor, content){}
-        public RenderUnit(Color color, char content = ' ')
-            : this(false, color, content){}
+            : this(ColorPair.DefaultColorPair, content){}
+        public RenderUnit(ColorPair colorPair, char content = ' ')
+            : this(false, colorPair, content){}
         public RenderUnit(bool isEmpty, char content = ' ') 
-            : this(isEmpty, Color.DefaultColor, content){}
-        public RenderUnit(bool isEmpty, Color color, char content = ' ')
+            : this(isEmpty, ColorPair.DefaultColorPair, content){}
+        public RenderUnit(bool isEmpty, ColorPair colorPair, char content = ' ')
         {
             this.content = content;
-            this.color = color;
+            this.colorPair = colorPair;
             this.isEmpty = isEmpty;
         }
 
         public bool Equals(RenderUnit other)
         {
-            return color.Equals(other.color) && content == other.content && isEmpty == other.isEmpty;
+            return colorPair.Equals(other.colorPair) && content == other.content && isEmpty == other.isEmpty;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(color, content, isEmpty);
+            return HashCode.Combine(colorPair, content, isEmpty);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using CUIEngine.Consoles;
 using CUIEngine.Mathf;
+using CUIEngine.Render;
 
 namespace CUIEngine
 {
@@ -52,19 +53,19 @@ namespace CUIEngine
         /// <summary>
         /// 被激活的控件的前景色
         /// </summary>
-        public static ConsoleColor ActiveForegroundColor
+        public static CUIColor ActiveForegroundCUIColor
         {
-            get => activeForegroundColor;
-            set => activeForegroundColor = value;
+            get => selectedForegroundCUIColor;
+            set => selectedForegroundCUIColor = value;
         }
 
         /// <summary>
         /// 被激活的控件的背景色
         /// </summary>
-        public static ConsoleColor ActiveBackgroundColor
+        public static CUIColor ActiveBackgroundCUIColor
         {
-            get => activeBackgroundColor;
-            set => activeBackgroundColor = value;
+            get => selectedBackgroundCUIColor;
+            set => selectedBackgroundCUIColor = value;
         }
 
         /// <summary>
@@ -76,8 +77,8 @@ namespace CUIEngine
         static Vector2Int screenSize = new Vector2Int(80, 50);
         static bool showCursor = false;
         static short consoleFontSize = 10;
-        static ConsoleColor activeForegroundColor = ConsoleColor.Black;
-        static ConsoleColor activeBackgroundColor = ConsoleColor.Gray;
+        static CUIColor selectedForegroundCUIColor = CUIColor.Black;
+        static CUIColor selectedBackgroundCUIColor = CUIColor.Gray;
         static int cursorBlinkingInterval = 400;
     }
 }

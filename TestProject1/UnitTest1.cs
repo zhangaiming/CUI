@@ -42,7 +42,7 @@ namespace TestProject1
         public void Test_SetAndGetUnit(int coordX, int coordY)
         {
             //创建目标单元
-            RenderUnit unit = new RenderUnit(Color.DefaultColor);
+            RenderUnit unit = new RenderUnit(ColorPair.DefaultColorPair);
 
             //空渲染片段测试
             RenderClip clip = new RenderClip();

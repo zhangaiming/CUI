@@ -32,8 +32,8 @@ namespace CUIEngine.WidgetLib
         char borderChar = '#';
         char fillChar = ' ';
 
-        Color borderColor = Color.DefaultColor;
-        Color fillColor = Color.DefaultColor;
+        ColorPair borderColorPair = ColorPair.DefaultColorPair;
+        ColorPair fillColorPair = ColorPair.DefaultColorPair;
         
         PanelDrawType drawType = PanelDrawType.FillAndBorder;
 
@@ -88,14 +88,14 @@ namespace CUIEngine.WidgetLib
         /// <summary>
         /// 边框的颜色
         /// </summary>
-        public Color BorderColor
+        public ColorPair BorderColorPair
         {
-            get => borderColor;
+            get => borderColorPair;
             set
             {
-                if (borderColor != value)
+                if (borderColorPair != value)
                 {
-                    borderColor = value;
+                    borderColorPair = value;
                     UpdateRenderClip();
                 }
             }
@@ -104,14 +104,14 @@ namespace CUIEngine.WidgetLib
         /// <summary>
         /// 填充的颜色
         /// </summary>
-        public Color FillColor
+        public ColorPair FillColorPair
         {
-            get => fillColor;
+            get => fillColorPair;
             set
             {
-                if (fillColor != value)
+                if (fillColorPair != value)
                 {
-                    fillColor = value;
+                    fillColorPair = value;
                     UpdateRenderClip();
                 }
             }
@@ -123,8 +123,8 @@ namespace CUIEngine.WidgetLib
             {
                 CurrentClip.Clear();
                 
-                RenderUnit borderUnit = new RenderUnit(borderColor, borderChar);
-                RenderUnit fillUnit = new RenderUnit(fillColor, fillChar);
+                RenderUnit borderUnit = new RenderUnit(borderColorPair, borderChar);
+                RenderUnit fillUnit = new RenderUnit(fillColorPair, fillChar);
                 for (int y = 0; y < Size.Y; y++)
                 {
                     for (int x = 0; x < Size.X; x++)
