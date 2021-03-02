@@ -44,8 +44,8 @@ namespace CUIEngine.Render
             currentClip = new RenderClip(size, Vector2Int.Zero);
             
             //创建画布背景
-            background = Widget.CreateWidget<Panel>(size, Vector2Int.Zero, "UIBackground", this);
-            background.FillColorPair = new ColorPair(CUIColor.Black, CUIColor.Black);
+            background = new Panel(size, Vector2Int.Zero, this, "UIBackground");
+            background.FillColor = new ColorPair(CUIColor.Black, CUIColor.Black);
             background.DrawType = PanelDrawType.FillOnly;
             
             //关联屏幕尺寸调整事件

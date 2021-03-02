@@ -17,6 +17,8 @@ namespace CUIEngine.Widgets
             get => clipChildren;
             set => clipChildren = value;
         }
+        
+        public WidgetContainer(Vector2Int size, Vector2Int coord, IWidgetOwner parent, string name, string tag = "") : base(size, coord, parent, name, tag){}
 
         protected override void MakeRenderClip()
         {
@@ -33,9 +35,14 @@ namespace CUIEngine.Widgets
             RenderClip res = new RenderClip();
             Widget[] temp = new Widget[children.Count];
             children.CopyTo(temp);
+            RenderClip? clip;
             foreach (Widget widget in temp)
             {
-                res.MergeWith(widget.GetRenderClip(), null, false);
+                clip = widget.GetRenderClip();
+                if(clip != null)
+                {
+                    res.MergeWith(clip, null, false);
+                }
             }
 
             return res;

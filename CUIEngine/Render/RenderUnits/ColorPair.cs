@@ -30,10 +30,24 @@ namespace CUIEngine.Render
             set => backColor = value;
         }
 
+        /// <summary>
+        /// 创建颜色对
+        /// </summary>
+        /// <param name="foregroundColor"></param>
+        /// <param name="backgroundColor"></param>
         public ColorPair(CUIColor foregroundColor, CUIColor backgroundColor)
         {
             foreColor = foregroundColor;
             backColor = backgroundColor;
+        }
+
+        /// <summary>
+        /// 创建前后景颜色一样的颜色对
+        /// </summary>
+        /// <param name="color"></param>
+        public ColorPair(CUIColor color)
+        {
+            foreColor = backColor = color;
         }
 
         public bool Equals(ColorPair other)

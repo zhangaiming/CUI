@@ -16,15 +16,15 @@ namespace CUIEngine
             CUIEngine.Initialize();
             Input.AttachHandler(Shutdown, ConsoleKey.Escape);
 
-            Panel panel = Widget.CreateWidget<Panel>(new Vector2Int(12, 3), new Vector2Int(2, 2), "panel",
-                RootCanvas.Instance);
-            panel.DrawType = PanelDrawType.FillAndBorder;
-            panel.FillColorPair = new ColorPair(CUIColor.Blue, CUIColor.Cyan);
-            
-            Label label = Widget.CreateWidget<Label>(new Vector2Int(10, 1), new Vector2Int(3, 3), "label",
-                RootCanvas.Instance);
+            Panel panel = new Panel(new Vector2Int(12, 3), new Vector2Int(2, 2), RootCanvas.Instance, "panel")
+            {
+                DrawType = PanelDrawType.FillAndBorder,
+                FillColor = new ColorPair(CUIColor.Blue, CUIColor.Cyan)
+            };
+
+            Label label = new Label(new Vector2Int(10, 1), new Vector2Int(3, 3), RootCanvas.Instance, "label");
             label.Text = "What is that??";
-            label.TextColorPair = new ColorPair(CUIColor.Black, CUIColor.NextForegroundColor);
+            label.TextColor = new ColorPair(CUIColor.Black, CUIColor.NextForegroundColor);
 
             while (isRunning)
             {

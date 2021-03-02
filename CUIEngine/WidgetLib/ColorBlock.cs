@@ -1,4 +1,5 @@
 ﻿using System;
+using CUIEngine.Mathf;
 using CUIEngine.Render;
 using CUIEngine.Widgets;
 
@@ -30,6 +31,10 @@ namespace CUIEngine.WidgetLib
                     CurrentClip?.SetUnit(i, j, new RenderUnit(new ColorPair(CUIColor.DarkGray, Color)));
                 }
             }
+        }
+
+        public ColorBlock(Vector2Int size, Vector2Int coord, IWidgetOwner parent, string name, string tag = "") : base(size, coord, parent, name, tag)
+        {
         }
     }
 }

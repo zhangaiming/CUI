@@ -4,7 +4,6 @@ using CUIEngine.Inputs;
 using CUIEngine.Mathf;
 using CUIEngine.Render;
 using CUIEngine.Widgets;
-//todo: 控件未完成
 namespace CUIEngine.WidgetLib
 {
     /// <summary>
@@ -33,12 +32,6 @@ namespace CUIEngine.WidgetLib
             }
         }
 
-        protected override void OnInitialize()
-        {
-            base.OnInitialize();
-            AttachKeys();
-        }
-
         protected override void OnDestroyed()
         {
             base.OnDestroyed();
@@ -49,12 +42,12 @@ namespace CUIEngine.WidgetLib
         {
             if (state)
             {
-                normalColorPair = TextColorPair;
-                TextColorPair = new ColorPair(Settings.ActiveForegroundCUIColor, Settings.ActiveBackgroundCUIColor);
+                normalColorPair = TextColor;
+                TextColor = new ColorPair(Settings.ActiveForegroundCUIColor, Settings.ActiveBackgroundCUIColor);
             }
             else
             {
-                TextColorPair = normalColorPair;
+                TextColor = normalColorPair;
             }
         }
 
@@ -170,6 +163,11 @@ namespace CUIEngine.WidgetLib
             currentIndex = newIndex;
             Content = Content.Substring(curMinIndex, Math.Min(Content.Length - curMinIndex - 1, Size.X));
             UpdateRenderClip();
+        }
+
+        protected LabelEditField(Vector2Int size, Vector2Int coord, IWidgetOwner parent, string name, string tag = "") : base(size, coord, parent, name, tag)
+        {
+            AttachKeys();
         }
     }
 }

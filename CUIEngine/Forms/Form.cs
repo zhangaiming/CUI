@@ -85,12 +85,6 @@ namespace CUIEngine.Forms
             protected set => defaultSize = value;
         }
 
-        protected sealed override void OnInitialize()
-        {
-            base.OnInitialize();
-            RootCanvas.Instance.AddWidget(this);
-        }
-        
         /// <summary>
         /// 初始化窗体
         /// </summary>
@@ -102,34 +96,20 @@ namespace CUIEngine.Forms
         void InitializeForm()
         {
             //初始化边框
-            border = CreateWidget<Panel>(Size, Coord,
-                Name + "Border", "FormBorder", this);
-            border.DrawType = PanelDrawType.BorderOnly;
-            titleWidget = CreateWidget<Label>(new Vector2Int(Size.X - 2, 1), Coord + new Vector2Int(1, 0),
-                Name + "Title", "FormTitleWidget", this);
-            titleWidget.Text = title;
-            
+            border = new Panel(Size, Coord, this, Name + "Border", "FormBorder")
+            {
+                DrawType = PanelDrawType.BorderOnly
+            };
+            titleWidget = new Label(new Vector2Int(Size.X - 2, 1), Coord + new Vector2Int(1, 0), this, Name + "Title", "FormTitleWidget")
+            {
+                Text = title
+            };
+
             //初始化根控件
-            rootWidget = CreateWidget<WidgetContainer>(Size + new Vector2Int(-2, -2), Coord + new Vector2Int(1, 1), Name + "Root", "RootWidget", this);
+            rootWidget = new WidgetContainer(Size + new Vector2Int(-2, -2), Coord + new Vector2Int(1, 1), this, Name + "Root", "RootWidget");
             rootWidget.ClipChildren = true;
             
             OnInitializeForm();
-        }
-        
-        /// <summary>
-        /// 创建窗体
-        /// </summary>
-        /// <param name="coord"></param>
-        /// <param name="name"></param>
-        /// <param name="tag"></param>
-        /// <typeparam name="TForm"></typeparam>
-        /// <returns></returns>
-        public static TForm Create<TForm>(Vector2Int coord, string name, string tag = "") where TForm : Form, new()
-        {
-            TForm form = CreateWidget<TForm>(Vector2Int.Zero, coord, name, tag, RootCanvas.Instance);
-            form.Size = defaultSize;
-            form.InitializeForm();
-            return form;
         }
 
         public void AddWidget(Widget widget)
@@ -221,6 +201,11 @@ namespace CUIEngine.Forms
             {
                 rootWidget.Size = newSize + new Vector2Int(-2, -2);
             }
+        }
+
+        protected Form(Vector2Int coord, string name, string tag = "") : base(defaultSize, coord, RootCanvas.Instance, name, tag)
+        {
+            InitializeForm();
         }
     }
 }

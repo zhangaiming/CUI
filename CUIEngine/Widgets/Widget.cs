@@ -135,11 +135,20 @@ namespace CUIEngine.Widgets
             //为控件交互注册按键
             Input.AttachHandler(EnterActiveWidget, ConsoleKey.Enter);
         }
+
+        public Widget(Vector2Int size, Vector2Int coord, IWidgetOwner parent, string name, string tag = "")
+        {
+            Coord = coord;
+            Size = size;
+            Name = name;
+            Tag = tag;
+            SetParent(parent);
+
+            Sprite.Initialize(this);
+
+            CurrentClip = new RenderClip(size, coord);
+        }
         
-        /// <summary>
-        /// 初始化时调用
-        /// </summary>
-        protected virtual void OnInitialize(){}
         /// <summary>
         /// 销毁时调用(在ToBeDestroyedHandler之后被调用)
         /// </summary>
@@ -164,17 +173,7 @@ namespace CUIEngine.Widgets
         /// 当控件可视性发生改变时调用
         /// </summary>
         protected virtual void OnVisibilityChanged(){}
-
-        /// <summary>
-        /// 初始化控件
-        /// </summary>
-        public void Initialize()
-        {
-            //初始化渲染片段
-            CurrentClip = new RenderClip(size, coord);
-            
-            OnInitialize();
-        }
+        
         /// <summary>
         /// 销毁控件
         /// </summary>
@@ -229,47 +228,6 @@ namespace CUIEngine.Widgets
             
         }
 
-        /// <summary>
-        /// 创建指定类型的控件,创建完毕后会自动调用控件的Initialize方法
-        /// </summary>
-        /// <param name="coord"></param>
-        /// <param name="size"></param>
-        /// <param name="name"></param>
-        /// <param name="tag"></param>
-        /// <param name="parent"></param>
-        /// <typeparam name="TType">控件的类型</typeparam>
-        /// <returns></returns>
-        public static TType CreateWidget<TType>(Vector2Int size, Vector2Int coord, string name, string tag, IWidgetOwner parent) where TType : Widget, new()
-        {
-            TType widget = new TType();
-            widget.Coord = coord;
-            widget.Size = size;
-            widget.Name = name;
-            widget.Tag = tag;
-            widget.SetParent(parent);
-
-            Sprite.Initialize(widget);
-
-            widget.Initialize();
-
-            return widget;
-        }
-
-        /// <summary>
-        /// 创建指定类型的控件,创建完毕后会自动调用控件的Initialize方法
-        /// </summary>
-        /// <param name="coord"></param>
-        /// <param name="size"></param>
-        /// <param name="name"></param>
-        /// <param name="parent"></param>
-        /// <typeparam name="TType">控件的类型</typeparam>
-        /// <returns></returns>
-        public static TType CreateWidget<TType>(Vector2Int size, Vector2Int coord, string name, IWidgetOwner parent)
-            where TType : Widget, new()
-        {
-            return CreateWidget<TType>(size, coord, name, "", parent);
-        }
-        
         /// <summary>
         /// 通知控件进行渲染片段的更新,若此控件的拥有者也是一个控件,会同时更新拥有者的更新信息
         /// </summary>

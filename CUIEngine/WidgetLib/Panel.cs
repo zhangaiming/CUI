@@ -1,4 +1,5 @@
-﻿using CUIEngine.Render;
+﻿using CUIEngine.Mathf;
+using CUIEngine.Render;
 using CUIEngine.Widgets;
 
 namespace CUIEngine.WidgetLib
@@ -32,8 +33,8 @@ namespace CUIEngine.WidgetLib
         char borderChar = '#';
         char fillChar = ' ';
 
-        ColorPair borderColorPair = ColorPair.DefaultColorPair;
-        ColorPair fillColorPair = ColorPair.DefaultColorPair;
+        ColorPair borderColor = ColorPair.DefaultColorPair;
+        ColorPair fillColor = ColorPair.DefaultColorPair;
         
         PanelDrawType drawType = PanelDrawType.FillAndBorder;
 
@@ -88,14 +89,14 @@ namespace CUIEngine.WidgetLib
         /// <summary>
         /// 边框的颜色
         /// </summary>
-        public ColorPair BorderColorPair
+        public ColorPair BorderColor
         {
-            get => borderColorPair;
+            get => borderColor;
             set
             {
-                if (borderColorPair != value)
+                if (borderColor != value)
                 {
-                    borderColorPair = value;
+                    borderColor = value;
                     UpdateRenderClip();
                 }
             }
@@ -104,27 +105,32 @@ namespace CUIEngine.WidgetLib
         /// <summary>
         /// 填充的颜色
         /// </summary>
-        public ColorPair FillColorPair
+        public ColorPair FillColor
         {
-            get => fillColorPair;
+            get => fillColor;
             set
             {
-                if (fillColorPair != value)
+                if (fillColor != value)
                 {
-                    fillColorPair = value;
+                    fillColor = value;
                     UpdateRenderClip();
                 }
             }
         }
 
+        public Panel(Vector2Int size, Vector2Int coord, IWidgetOwner parent, string name, string tag = "") : base(size, coord, parent, name, tag)
+        {
+            
+        }
+        
         protected override void MakeRenderClip()
         {
             if (CurrentClip != null)
             {
                 CurrentClip.Clear();
                 
-                RenderUnit borderUnit = new RenderUnit(borderColorPair, borderChar);
-                RenderUnit fillUnit = new RenderUnit(fillColorPair, fillChar);
+                RenderUnit borderUnit = new RenderUnit(borderColor, borderChar);
+                RenderUnit fillUnit = new RenderUnit(fillColor, fillChar);
                 for (int y = 0; y < Size.Y; y++)
                 {
                     for (int x = 0; x < Size.X; x++)

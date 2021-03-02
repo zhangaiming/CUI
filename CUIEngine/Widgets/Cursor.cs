@@ -22,10 +22,9 @@ namespace CUIEngine.Widgets
         public static void Initialize()
         {
             //初始化光标
-            cursor = Widget.CreateWidget<Label>(new Vector2Int(1, 1), Vector2Int.Zero, "Cursor", "Cursor",
-                RootCanvas.Instance);
+            cursor = new Label(new Vector2Int(1, 1), Vector2Int.Zero, RootCanvas.Instance, "Cursor", "Cursor");
             cursor.Text = " ";
-            cursor.TextColorPair = new ColorPair(CUIColor.DarkGray, CUIColor.DarkGray);
+            cursor.TextColor = new ColorPair(CUIColor.DarkGray, CUIColor.DarkGray);
             //默认不可见
             cursor.IsVisible = false;
 

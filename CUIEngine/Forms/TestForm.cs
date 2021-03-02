@@ -19,19 +19,27 @@ namespace CUIEngine.Forms
             base.OnInitializeForm();
             Title = "A Form";
             
-            ColorBlock w1 =
-                Widget.CreateWidget<ColorBlock>(new Vector2Int(5, 5), new Vector2Int(5, 5), "w1", this);
-            w1.Color = CUIColor.Blue;
-            Widget.CreateWidget<ColorBlock>(new Vector2Int(5, 5), new Vector2Int(17, 11), "w2", this);
-            ColorBlock? w2 = Widget.Find<ColorBlock>("w2");
-            w2!.Color = CUIColor.Green;
-            
+            Panel w1 = new Panel(new Vector2Int(5, 5), new Vector2Int(5, 5), this, "w1")
+            {
+                FillColor = new ColorPair(CUIColor.Blue),
+                DrawType = PanelDrawType.FillOnly
+            };
+            Panel w2 = new Panel(new Vector2Int(5, 5), new Vector2Int(17, 11), this, "w2")
+            {
+                FillColor = new ColorPair(CUIColor.Green),
+                DrawType = PanelDrawType.FillOnly
+            };
+
             Input.AttachHandler(MoveFormDown, ConsoleKey.S);
         }
 
         void MoveFormDown(ConsoleKeyInfo info)
         {
             this.Coord += new Vector2Int(0, 1);
+        }
+
+        public TestForm(Vector2Int coord, string name, string tag = "") : base(coord, name, tag)
+        {
         }
     }
 }
