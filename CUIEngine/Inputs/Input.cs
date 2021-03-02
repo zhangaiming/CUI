@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
-using DevToolSet;
 
 namespace CUIEngine.Inputs
 {
@@ -10,19 +8,8 @@ namespace CUIEngine.Inputs
 
     public static class Input
     {
-        struct KeyInfo
-        {
-            public ConsoleKey Key;
-            public ConsoleModifiers Modifiers;
-
-            public KeyInfo(ConsoleKey key, ConsoleModifiers modifiers)
-            {
-                Key = key;
-                Modifiers = modifiers;
-            }
-        }
         //针对性处理方法
-        static Dictionary<KeyInfo, List<InputHandler>> handlersDic = new Dictionary<KeyInfo, List<InputHandler>>();
+        static Dictionary<int, List<InputHandler>> handlersDic = new Dictionary<int, List<InputHandler>>();
         //任意键处理方法
         static List<InputHandler> anyKeyHandlers = new List<InputHandler>();
         
@@ -58,19 +45,17 @@ namespace CUIEngine.Inputs
         /// </summary>
         public static void AttachHandler(InputHandler handler, ConsoleKey key, bool shift = false, bool ctrl = false, bool alt = false)
         {
-            ConsoleModifiers modifiers = (shift ? ConsoleModifiers.Shift : 0) | (ctrl ? ConsoleModifiers.Control : 0) |
-                                         (alt ? ConsoleModifiers.Alt : 0);
-            KeyInfo keyInfo = new KeyInfo(key, modifiers);
+            int keyInfoCode = GetKeyInfoHashCode(key, shift, ctrl, alt);
             
             List<InputHandler> list;
-            if (handlersDic.ContainsKey(keyInfo))
+            if (handlersDic.ContainsKey(keyInfoCode))
             {
-                list = handlersDic[keyInfo];
+                list = handlersDic[keyInfoCode];
             }
             else
             {
                 list = new List<InputHandler>();
-                handlersDic.Add(keyInfo, list);
+                handlersDic.Add(keyInfoCode, list);
             }
 
             if (!list.Contains(handler))
@@ -101,23 +86,21 @@ namespace CUIEngine.Inputs
         /// <param name="alt"></param>
         public static void DetachHandler(InputHandler handler, ConsoleKey key, bool shift = false, bool ctrl = false, bool alt = false)
         {
-            ConsoleModifiers modifiers = (shift ? ConsoleModifiers.Shift : 0) | (ctrl ? ConsoleModifiers.Control : 0) |
-                                         (alt ? ConsoleModifiers.Alt : 0);
-            KeyInfo keyInfo = new KeyInfo(key, modifiers);
+            int keyInfoCode = GetKeyInfoHashCode(key, shift, ctrl, alt);
             
-            if (handlersDic.ContainsKey(keyInfo))
+            if (handlersDic.ContainsKey(keyInfoCode))
             {
-                List<InputHandler> list = handlersDic[keyInfo];
+                List<InputHandler> list = handlersDic[keyInfoCode];
                 if (list == null)
                 {
-                    handlersDic.Remove(keyInfo);
+                    handlersDic.Remove(keyInfoCode);
                     return;
                 }
 
                 list.Remove(handler);
                 if (list.Count == 0)
                 {
-                    handlersDic.Remove(keyInfo);
+                    handlersDic.Remove(keyInfoCode);
                 }
             }
         }
@@ -136,26 +119,38 @@ namespace CUIEngine.Inputs
 
         static void CallHandler(ConsoleKeyInfo info)
         {
-            Stopwatch totalSw = Stopwatch.StartNew();
-            KeyInfo keyInfo = new KeyInfo(info.Key, info.Modifiers); 
+            int keyInfoCode = GetKeyInfoHashCode(info.Key, info.Modifiers);
             foreach (InputHandler anyKeyHandler in anyKeyHandlers)
             {
                 anyKeyHandler?.Invoke(info);
             }
-            if (handlersDic.ContainsKey(keyInfo))
+            if (handlersDic.ContainsKey(keyInfoCode))
             {
-                Stopwatch localSw = new Stopwatch();
-                List<InputHandler> list = handlersDic[keyInfo];
+                List<InputHandler> list = handlersDic[keyInfoCode];
                 foreach (InputHandler inputHandler in list)
                 {
-                    localSw.Start();
                     inputHandler.Invoke(info);
-                    localSw.Stop();
-                    Logger.Log(string.Format("调用输入处理方法{1},所用时间:{0}.", localSw.Elapsed, inputHandler));
                 }
             }
-            totalSw.Stop();
-            Logger.Log(string.Format("调用所有输入处理方法所用的总时间为:{0}.", totalSw.Elapsed));
+        }
+
+        /// <summary>
+        /// 获取按键信息的哈希码
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="shift"></param>
+        /// <param name="ctrl"></param>
+        /// <param name="alt"></param>
+        /// <returns></returns>
+        static int GetKeyInfoHashCode(ConsoleKey key, bool shift = false, bool ctrl = false, bool alt = false)
+        {
+            ConsoleModifiers modifiers = (shift ? ConsoleModifiers.Shift : 0) | (ctrl ? ConsoleModifiers.Control : 0) | (alt ? ConsoleModifiers.Alt : 0);
+            return GetKeyInfoHashCode(key, modifiers);
+        }
+
+        static int GetKeyInfoHashCode(ConsoleKey key, ConsoleModifiers modifiers)
+        {
+            return HashCode.Combine(key, modifiers);
         }
     }
 }

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using CUIEngine.Inputs;
 using CUIEngine.Mathf;
 using CUIEngine.Render;
-using DevToolSet;
 
 namespace CUIEngine.Widgets
 {
@@ -195,10 +193,7 @@ namespace CUIEngine.Widgets
 
                 if (shouldUpdate)
                 {
-                    Stopwatch sw = Stopwatch.StartNew();
                     MakeRenderClip();
-                    sw.Stop();
-                    Logger.Log(Name + "生成渲染片段所用时间: " + sw.Elapsed);
                     shouldUpdate = false;
                 }
 
