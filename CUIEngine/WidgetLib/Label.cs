@@ -47,17 +47,14 @@ namespace CUIEngine.WidgetLib
 
         protected override void MakeRenderClip()
         {
-            if(CurrentClip != null)
-            {
-                CurrentClip.Clear();
+            CurrentClip.Clear();
                 
-                RenderUnit unit = new RenderUnit(textColor);
-                string temp = text;
-                for (var x = 0; x < Math.Min(temp.Length, Size.X); x++)
-                {
-                    unit.Content = temp[x];
-                    CurrentClip.SetUnit(x, 0, unit);
-                }
+            RenderUnit unit = new RenderUnit(textColor);
+            string temp = text;
+            for (var x = 0; x < Math.Min(temp.Length, Size.X); x++)
+            {
+                unit.Content = temp[x];
+                CurrentClip.SetUnit(x, 0, unit);
             }
         }
 

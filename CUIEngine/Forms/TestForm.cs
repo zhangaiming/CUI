@@ -12,10 +12,14 @@ namespace CUIEngine.Forms
         {
             DefaultSize = new Vector2Int(20, 14);
         }
-        
-        protected override void OnInitializeForm()
+
+        void MoveFormDown(ConsoleKeyInfo info)
         {
-            base.OnInitializeForm();
+            this.Coord += new Vector2Int(0, 1);
+        }
+
+        public TestForm(Vector2Int coord, string name, string tag = "") : base(coord, name, tag)
+        {
             Title = "A Form";
             
             Panel w1 = new Panel(new Vector2Int(5, 5), new Vector2Int(5, 5), this, "w1")
@@ -30,15 +34,6 @@ namespace CUIEngine.Forms
             };
 
             Input.AttachHandler(MoveFormDown, ConsoleKey.S);
-        }
-
-        void MoveFormDown(ConsoleKeyInfo info)
-        {
-            this.Coord += new Vector2Int(0, 1);
-        }
-
-        public TestForm(Vector2Int coord, string name, string tag = "") : base(coord, name, tag)
-        {
         }
     }
 }

@@ -16,9 +16,11 @@ namespace CUIEngine.Forms
 
         static Vector2Int defaultSize = new Vector2Int(30, 30);
 
-        WidgetContainer? rootWidget = null!;
-        Panel? border = null;
-        Label? titleWidget = null;
+        WidgetContainer rootWidget;
+        Panel border;
+        Label titleWidget;
+
+        bool isInitialized = false;
 
         /// <summary>
         /// 是否显示标题
@@ -47,10 +49,7 @@ namespace CUIEngine.Forms
                 if(isBorderless != value)
                 {
                     isBorderless = value;
-                    if (border != null)
-                    {
-                        border.IsVisible = !isBorderless;
-                    }
+                    border.IsVisible = !isBorderless;
                     UpdateRenderClip();
                 }
             }
@@ -67,10 +66,7 @@ namespace CUIEngine.Forms
                 if(!title.Equals(value))
                 {
                     title = value;
-                    if(titleWidget != null)
-                    {
-                        titleWidget.Text = title;
-                    }
+                    titleWidget.Text = title;
                     UpdateRenderClip();
                 }
             }
@@ -85,16 +81,89 @@ namespace CUIEngine.Forms
             protected set => defaultSize = value;
         }
 
-        /// <summary>
-        /// 初始化窗体
-        /// </summary>
-        protected virtual void OnInitializeForm(){}
-
-        /// <summary>
-        /// 在这里初始化窗体的必要控件
-        /// </summary>
-        void InitializeForm()
+        public void AddWidget(Widget widget)
         {
+            if(isInitialized)
+                widget.SetParent(rootWidget);
+        }
+
+        public void RemoveWidget(Widget widget)
+        {
+            if(isInitialized)
+                rootWidget.RemoveWidget(widget);
+        }
+
+        public bool ContainWidget(Widget widget)
+        {
+            if(isInitialized)
+            {
+                return rootWidget.ContainWidget(widget);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public int IndexOf(Widget widget)
+        {
+            if(isInitialized)
+            {
+                return rootWidget.IndexOf(widget);
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
+        public void TopUpWidget(Widget widget)
+        {
+            if(isInitialized)
+                rootWidget.TopUpWidget(widget);
+        }
+
+        protected override void MakeRenderClip()
+        {
+            CurrentClip.Clear();
+            RenderClip? clip;
+            
+            clip = rootWidget.GetRenderClip();
+            if(clip != null)
+                CurrentClip.MergeWith(clip, null, true);
+            
+            clip = border.GetRenderClip();
+            if(clip != null)
+                CurrentClip.MergeWith(clip, null, true);
+            
+            clip = titleWidget.GetRenderClip();
+            if(clip != null)
+                CurrentClip.MergeWith(clip, null, true);
+            
+        }
+
+        protected override void OnCoordChanged(Vector2Int oldCoord, Vector2Int newCoord)
+        {
+            base.OnCoordChanged(oldCoord, newCoord);
+            Vector2Int offset = newCoord - oldCoord;
+            border.Coord += offset;
+            
+            titleWidget.Coord += offset;
+            
+            rootWidget.Coord += offset;
+        }
+
+        protected override void OnSizeChanged(Vector2Int oldSize, Vector2Int newSize)
+        {
+            base.OnSizeChanged(oldSize, newSize);
+            border.Size = newSize;
+            titleWidget.Size = new Vector2Int(newSize.X - 2, 1);
+            rootWidget.Size = newSize + new Vector2Int(-2, -2);
+        }
+
+        protected Form(Vector2Int coord, string name, string tag = "") : base(defaultSize, coord, RootCanvas.Instance, name, tag)
+        {
+            isInitialized = false;
             //初始化边框
             border = new Panel(Size, Coord, this, Name + "Border", "FormBorder")
             {
@@ -105,107 +174,11 @@ namespace CUIEngine.Forms
                 Text = title
             };
 
+            isInitialized = true;
+            
             //初始化根控件
             rootWidget = new WidgetContainer(Size + new Vector2Int(-2, -2), Coord + new Vector2Int(1, 1), this, Name + "Root", "RootWidget");
             rootWidget.ClipChildren = true;
-            
-            OnInitializeForm();
-        }
-
-        public void AddWidget(Widget widget)
-        {
-            if (rootWidget != null)
-            {
-                widget.SetParent(rootWidget);
-            }
-        }
-
-        public void RemoveWidget(Widget widget)
-        {
-            rootWidget?.RemoveWidget(widget);
-        }
-
-        public bool ContainWidget(Widget widget)
-        {
-            return rootWidget?.ContainWidget(widget) ?? false;
-        }
-
-        public int IndexOf(Widget widget)
-        {
-            return rootWidget?.IndexOf(widget) ?? -1;
-        }
-
-        public void TopUpWidget(Widget widget)
-        {
-            rootWidget?.TopUpWidget(widget);
-        }
-
-        protected override void MakeRenderClip()
-        {
-            CurrentClip?.Clear();
-            RenderClip? clip;
-            if(rootWidget != null)
-            {
-                clip = rootWidget.GetRenderClip();
-                if(clip != null)
-                    CurrentClip?.MergeWith(clip, null, true);
-            }
-            if(border != null)
-            {
-                clip = border.GetRenderClip();
-                if(clip != null)
-                    CurrentClip?.MergeWith(clip, null, true);
-            }
-            if(titleWidget != null)
-            {
-                clip = titleWidget.GetRenderClip();
-                if(clip != null)
-                    CurrentClip?.MergeWith(clip, null, true);
-            }
-        }
-
-        protected override void OnCoordChanged(Vector2Int oldCoord, Vector2Int newCoord)
-        {
-            base.OnCoordChanged(oldCoord, newCoord);
-            Vector2Int offset = newCoord - oldCoord;
-            if (border != null)
-            {
-                border.Coord += offset;
-            }
-
-            if (titleWidget != null)
-            {
-                titleWidget.Coord += offset;
-            }
-
-            if (rootWidget != null)
-            {
-                rootWidget.Coord += offset;
-            }
-        }
-
-        protected override void OnSizeChanged(Vector2Int oldSize, Vector2Int newSize)
-        {
-            base.OnSizeChanged(oldSize, newSize);
-            if (border != null)
-            {
-                border.Size = newSize;
-            }
-
-            if (titleWidget != null)
-            {
-                titleWidget.Size = new Vector2Int(newSize.X - 2, 1);
-            }
-
-            if (rootWidget != null)
-            {
-                rootWidget.Size = newSize + new Vector2Int(-2, -2);
-            }
-        }
-
-        protected Form(Vector2Int coord, string name, string tag = "") : base(defaultSize, coord, RootCanvas.Instance, name, tag)
-        {
-            InitializeForm();
         }
     }
 }

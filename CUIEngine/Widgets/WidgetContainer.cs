@@ -22,8 +22,8 @@ namespace CUIEngine.Widgets
 
         protected override void MakeRenderClip()
         {
-            CurrentClip?.Clear();
-            CurrentClip?.MergeWith(GetChildrenRenderClip(), null, ClipChildren);
+            CurrentClip.Clear();
+            CurrentClip.MergeWith(GetChildrenRenderClip(), null, ClipChildren);
         }
 
         /// <summary>

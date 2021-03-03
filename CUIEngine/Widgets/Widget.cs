@@ -12,7 +12,7 @@ namespace CUIEngine.Widgets
         /// </summary>
         public event Action<Widget>? ToBeDestroyedHandler;
         
-        protected RenderClip? CurrentClip;    //当前的渲染片段
+        protected RenderClip CurrentClip;    //当前的渲染片段
         bool shouldUpdate = true;   //是否应该更新渲染片段
         IWidgetOwner parent = null!;
         Vector2Int coord;
@@ -53,7 +53,7 @@ namespace CUIEngine.Widgets
                 {
                     Vector2Int oldSize = size;
                     size = value;
-                    CurrentClip?.Resize(value, Vector2Int.Zero);
+                    CurrentClip.Resize(value, Vector2Int.Zero);
                     OnSizeChanged(oldSize, size);
                     UpdateRenderClip();
                 }
@@ -73,7 +73,7 @@ namespace CUIEngine.Widgets
                     //修改值
                     Vector2Int oldCoord = coord;
                     coord = value;
-                    CurrentClip?.Resize(size, value - oldCoord);
+                    CurrentClip.Resize(size, value - oldCoord);
                     OnCoordChanged(oldCoord, coord);
 
                     //更新渲染片段

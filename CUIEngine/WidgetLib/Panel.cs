@@ -125,33 +125,31 @@ namespace CUIEngine.WidgetLib
         
         protected override void MakeRenderClip()
         {
-            if (CurrentClip != null)
-            {
-                CurrentClip.Clear();
+            CurrentClip.Clear();
                 
-                RenderUnit borderUnit = new RenderUnit(borderColor, borderChar);
-                RenderUnit fillUnit = new RenderUnit(fillColor, fillChar);
-                for (int y = 0; y < Size.Y; y++)
+            RenderUnit borderUnit = new RenderUnit(borderColor, borderChar);
+            RenderUnit fillUnit = new RenderUnit(fillColor, fillChar);
+            for (int y = 0; y < Size.Y; y++)
+            {
+                for (int x = 0; x < Size.X; x++)
                 {
-                    for (int x = 0; x < Size.X; x++)
+                    if (x == 0 || x == Size.X - 1 || y == 0 || y == Size.Y - 1)
                     {
-                        if (x == 0 || x == Size.X - 1 || y == 0 || y == Size.Y - 1)
-                        {
-                            //绘制边框
-                            if (drawType == PanelDrawType.BorderOnly || drawType == PanelDrawType.FillAndBorder)
-                                CurrentClip.SetUnit(x, y, borderUnit);
-                            else
-                                CurrentClip.SetUnit(x, y, fillUnit);
-                        }
+                        //绘制边框
+                        if (drawType == PanelDrawType.BorderOnly || drawType == PanelDrawType.FillAndBorder)
+                            CurrentClip.SetUnit(x, y, borderUnit);
                         else
-                        {
-                            //绘制填充
-                            if(drawType == PanelDrawType.FillOnly || drawType == PanelDrawType.FillAndBorder)
-                                CurrentClip.SetUnit(x, y, fillUnit);
-                        }
+                            CurrentClip.SetUnit(x, y, fillUnit);
+                    }
+                    else
+                    {
+                        //绘制填充
+                        if(drawType == PanelDrawType.FillOnly || drawType == PanelDrawType.FillAndBorder)
+                            CurrentClip.SetUnit(x, y, fillUnit);
                     }
                 }
             }
+            
         }
     }
 }
