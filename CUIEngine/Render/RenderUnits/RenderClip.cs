@@ -67,10 +67,10 @@ namespace CUIEngine.Render
         /// <param name="src"></param>
         public RenderClip(RenderClip src)
         {
-            size = src.size;
-            coord = src.coord;
+            Size = src.Size;
+            Coord = src.Coord;
 
-            int x = size.X, y = size.Y;
+            int x = Size.X, y = Size.Y;
 
             units = new RenderUnit[x * y];
             for (int k = 0; k < x * y; k++)
@@ -81,10 +81,10 @@ namespace CUIEngine.Render
             }
         }
         /// <summary>
-        /// 调整片段大小, 片段内容及内容坐标保持不变
+        /// 调整片段大小,并进行偏移,片段内容及内容的绝对坐标保持不变
         /// </summary>
         /// <param name="newSize"></param>
-        /// <param name="offset">片段坐标偏移, 以左上角为原点, x向下为右, y向下为正</param>
+        /// <param name="offset">片段坐标偏移量,以左上角为原点,x向下为右,y向下为正</param>
         public void Resize(Vector2Int newSize, Vector2Int offset)
         {
             int x = newSize.X, y = newSize.Y;
@@ -103,7 +103,7 @@ namespace CUIEngine.Render
                         int j = k / x;
                         int nx = i + offset.X;
                         int ny = j + offset.Y;
-                        if (nx >= 0 && nx < size.X && ny >= 0 && ny < size.Y)
+                        if (nx >= 0 && nx < Size.X && ny >= 0 && ny < Size.Y)
                         {
                             RenderUnit unit = GetUnit(nx, ny);
                             newUnits[j * newSize.X + i] = unit;
@@ -123,7 +123,7 @@ namespace CUIEngine.Render
                         int j = k / x;
                         int nx = i + offset.X;
                         int ny = j + offset.Y;
-                        if (nx >= 0 && nx < size.X && ny >= 0 && ny < size.Y)
+                        if (nx >= 0 && nx < Size.X && ny >= 0 && ny < Size.Y)
                         {
                             RenderUnit unit = GetUnit(nx, ny);
                             newUnits[j * newSize.X + i] = unit;
@@ -134,12 +134,82 @@ namespace CUIEngine.Render
                         }
                     }
                 }
-                size = newSize;
-                coord += offset;
+                Size = newSize;
+                Coord += offset;
                 units = newUnits;
             }
         }
 
+        /// <summary>
+        /// 改变渲染片段的大小以及坐标,其内容在屏幕上的绝对坐标不变
+        /// </summary>
+        /// <param name="newSize">新的渲染片段大小</param>
+        /// <param name="newCoord">新的渲染片段坐标</param>
+        public void Remap(Vector2Int newSize, Vector2Int newCoord)
+        {
+            int x = newSize.X, y = newSize.Y;
+            Vector2Int offset = newCoord - Coord;
+            if (x >= 0 && y >= 0)
+            {
+                RenderUnit[] newUnits = new RenderUnit[newSize.X * newSize.Y];
+                RenderUnit emptyUnit = new RenderUnit(true);
+                
+                //根据片段大小选择处理流程
+                if(x * y > 100)
+                    //并行处理
+                {
+                    Parallel.For(0, x * y, k =>
+                    {
+                        int i = k % x;
+                        int j = k / x;
+                        int nx = i + offset.X;
+                        int ny = j + offset.Y;
+                        if (nx >= 0 && nx < Size.X && ny >= 0 && ny < Size.Y)
+                        {
+                            RenderUnit unit = GetUnit(nx, ny);
+                            newUnits[j * newSize.X + i] = unit;
+                        }
+                        else
+                        {
+                            newUnits[j * newSize.X + i] = emptyUnit;
+                        }
+                    });
+                }
+                else
+                    //串行处理
+                {
+                    for (int k = 0; k < x * y; k++)
+                    {
+                        int i = k % x;
+                        int j = k / x;
+                        int nx = i + offset.X;
+                        int ny = j + offset.Y;
+                        if (nx >= 0 && nx < Size.X && ny >= 0 && ny < Size.Y)
+                        {
+                            RenderUnit unit = GetUnit(nx, ny);
+                            newUnits[j * newSize.X + i] = unit;
+                        }
+                        else
+                        {
+                            newUnits[j * newSize.X + i] = emptyUnit;
+                        }
+                    }
+                }
+                Size = newSize;
+                Coord += offset;
+                units = newUnits;
+            }
+        }
+
+        /// <summary>
+        /// 改变渲染片段的位置,其内容在屏幕上的绝对位置不变
+        /// </summary>
+        /// <param name="newSize">新的渲染片段大小</param>
+        public void Remap(Vector2Int newSize)
+        {
+            Remap(newSize, Coord);
+        }
+        
         /// <summary>
         /// 设置目标单元是否为空
         /// </summary>
@@ -149,6 +219,7 @@ namespace CUIEngine.Render
         {
             SetEmpty(coord.X, coord.Y, isEmpty);
         }
+        
         /// <summary>
         /// 设置目标单元是否为空
         /// </summary>
@@ -178,9 +249,9 @@ namespace CUIEngine.Render
         /// <param name="unit"></param>
         public void SetUnit(int x, int y, RenderUnit unit)
         {
-            if (x >= 0 && x < size.X && y >= 0 && y < size.Y)
+            if (x >= 0 && x < Size.X && y >= 0 && y < Size.Y)
             {
-                units[y * size.X + x] = unit;
+                units[y * Size.X + x] = unit;
             }
         }
         /// <summary>
@@ -194,17 +265,20 @@ namespace CUIEngine.Render
         {
             if (!unit.IsEmpty)
             {
-                RenderUnit oldUnit = units[y * Size.X + x];
+                if(x >= 0 && x < Size.X && y >= 0 && y < Size.Y)
+                {
+                    RenderUnit oldUnit = units[y * Size.X + x];
 
-                ColorPair colorPair = unit.ColorPair;
-                ColorPair oldUnitColorPair = oldUnit.ColorPair;
-                colorPair.ForegroundColor = ParseTransparentColor(colorPair.ForegroundColor, oldUnitColorPair);
-                colorPair.BackgroundColor = ParseTransparentColor(colorPair.BackgroundColor, oldUnitColorPair);
-                
-                unit.ColorPair = colorPair;
-                
-                SetUnit(x, y, unit);
-                return true;
+                    ColorPair colorPair = unit.ColorPair;
+                    ColorPair oldUnitColorPair = oldUnit.ColorPair;
+                    colorPair.ForegroundColor = ParseTransparentColor(colorPair.ForegroundColor, oldUnitColorPair);
+                    colorPair.BackgroundColor = ParseTransparentColor(colorPair.BackgroundColor, oldUnitColorPair);
+
+                    unit.ColorPair = colorPair;
+
+                    SetUnit(x, y, unit);
+                    return true;
+                }
             }
 
             return false;
@@ -248,7 +322,7 @@ namespace CUIEngine.Render
         {
             if (x >= 0 && x < Size.X && y >= 0 && y < Size.Y)
             {
-                return units[y * size.X + x];
+                return units[y * Size.X + x];
             }
 
             return new RenderUnit(true);
@@ -278,7 +352,7 @@ namespace CUIEngine.Render
         /// <param name="forceCover"></param>
         public void MergeWith(RenderClip other, Action<int, int, RenderUnit>? unitCoveredHandler, bool shouldClip, bool forceCover = false)
         {
-            Vector2Int offset = other.coord - this.coord;
+            Vector2Int offset = other.Coord - this.Coord;
             int x, y;
             if(!shouldClip)
             {
@@ -297,7 +371,7 @@ namespace CUIEngine.Render
                 {
                     for (int j = 0; j < by; j++)
                     {
-                        RenderUnit unit = other.units[j * other.size.X + i];
+                        RenderUnit unit = other.units[j * other.Size.X + i];
                         if (forceCover)
                         {
                             this.SetUnit(i + ox, j + oy, unit);
@@ -320,7 +394,7 @@ namespace CUIEngine.Render
         /// </summary>
         public void Clear()
         {
-            int x = size.X, y = size.Y;
+            int x = Size.X, y = Size.Y;
             RenderUnit emptyUnit = new RenderUnit(true);
             for (int k = 0; k < x * y; k++)
             {

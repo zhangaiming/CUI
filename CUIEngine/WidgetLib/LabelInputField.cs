@@ -9,7 +9,7 @@ namespace CUIEngine.WidgetLib
     /// <summary>
     /// 文本编辑框
     /// </summary>
-    public abstract class LabelEditField : Label, IInteractive
+    public class LabelEditField : Label, IInteractive
     {
         bool editing = false;
 
@@ -17,7 +17,7 @@ namespace CUIEngine.WidgetLib
 
         StringBuilder content = new StringBuilder();
         int currentIndex = 0;
-        int curMinIndex = 0;
+        int textBeginIndex = 0;
 
         /// <summary>
         /// 文本输入框的内容
@@ -28,7 +28,7 @@ namespace CUIEngine.WidgetLib
             set
             {
                 content = new StringBuilder(value);
-                SetCurrentIndex(content.Length - 1);
+                SetTextBeginIndex(content.Length - Size.X + 1);
             }
         }
 
@@ -56,7 +56,8 @@ namespace CUIEngine.WidgetLib
             editing = !editing;
             if (editing)
             {
-                SetCurrentIndex(content.Length);
+                SetTextBeginIndex(content.Length - Size.X + 1);
+                UpdateCursorCoord();
                 Cursor.Show();
             }else
             {
@@ -91,17 +92,48 @@ namespace CUIEngine.WidgetLib
                         if (currentIndex >= 1 && content.Length >= 1)
                         {
                             content.Remove(currentIndex - 1, 1);
-                            SetCurrentIndex(currentIndex - 1);
+                            SetTextBeginIndex(textBeginIndex - 1);
                         }
-
                         return;
                     }
                     content.Insert(currentIndex, c);
-                    SetCurrentIndex(currentIndex + 1);
+                    MoveCursor(true);
                 }
             }
         }
 
+        void MoveCursor(bool moveRight)
+        {
+            if (moveRight)
+            {
+                //右移光标
+                if (currentIndex < content.Length)
+                {
+                    currentIndex += 1;
+                    if (currentIndex > Size.X + textBeginIndex)
+                    {
+                        //从右边出格
+                        SetTextBeginIndex(textBeginIndex + 1);
+                    }
+                }
+            }
+            else
+            {
+                //左移光标
+                if (currentIndex > 0)
+                {
+                    currentIndex -= 1;
+                    if (currentIndex < textBeginIndex)
+                    {
+                        //从左边出格
+                        SetTextBeginIndex(textBeginIndex - 1);
+                    }
+                }
+            }
+            
+            UpdateCursorCoord();
+        }
+        
         /// <summary>
         /// 移动光标
         /// </summary>
@@ -110,64 +142,71 @@ namespace CUIEngine.WidgetLib
         {
             if (info.Key == ConsoleKey.RightArrow)
             {
-                SetCurrentIndex(currentIndex + 1);
+                MoveCursor(true);
             }
             else if (info.Key == ConsoleKey.LeftArrow)
             {
-                SetCurrentIndex(currentIndex - 1);
+                MoveCursor(false);
             }
         }
 
-        /// <summary>
+        void UpdateCursorCoord()
+        {
+            //设置光标
+            Cursor.SetCursor(new Vector2Int(currentIndex - textBeginIndex + Coord.X, Coord.Y));
+        }
+
+        /*/// <summary>
         /// 设置当前光标所在索引
         /// </summary>
-        /// <param name="target"></param>
-        void SetCurrentIndex(int target)
+        /// <param name="targetIndex"></param>
+        void SetCurrentIndex(int targetIndex)
         {
-            int newIndex = Math.Clamp(target, 0, content.Length);
-            int cursorX = 0;
-            int cursorY = 0;
+            int newIndex = Math.Clamp(targetIndex, 0, content.Length);
+            int cursorY = Coord.Y;
 
             //光标右移
             if (newIndex > currentIndex)
             {
-                if (newIndex > curMinIndex + Size.X)
+                if (newIndex > textBeginIndex + Size.X)
                 {
+                    //从右边出格
                     cursorX = Coord.X + Size.X;
-                    cursorY = Coord.Y;
-                    curMinIndex = newIndex - Size.X;
+                    textBeginIndex = newIndex - Size.X;
                 }
                 else
                 {
-                    cursorX = Coord.X + newIndex - curMinIndex;
-                    cursorY = Coord.Y;
+                    cursorX = Coord.X + newIndex - textBeginIndex;
                 }
             }
             //光标左移
             else if (newIndex < currentIndex)
             {
-                if (newIndex < curMinIndex)
+                if (newIndex < textBeginIndex)
                 {
                     //从左边出格
                     cursorX = Coord.X;
-                    cursorY = Coord.Y;
-                    curMinIndex = newIndex;
                 }
                 else
                 {
-                    cursorX = Coord.X + newIndex - curMinIndex;
-                    cursorY = Coord.Y;
+                    cursorX = Coord.X + newIndex - textBeginIndex;
                 }
             }
-            Cursor.SetCursor(new Vector2Int(cursorX, cursorY));
+            Cursor.SetCursor(new Vector2Int(newIndex - textBeginIndex, cursorY));
             currentIndex = newIndex;
-            Content = Content.Substring(curMinIndex, Math.Min(Content.Length - curMinIndex - 1, Size.X));
             UpdateRenderClip();
-        }
+        }*/
 
-        protected LabelEditField(Vector2Int size, Vector2Int coord, IWidgetOwner parent, string name, string tag = "") : base(size, coord, parent, name, tag)
+        public LabelEditField(Vector2Int size, Vector2Int coord, IWidgetOwner parent, string name, string tag = "") : base(size, coord, parent, name, tag)
         {
             AttachKeys();
+        }
+
+        void SetTextBeginIndex(int index)
+        {
+            index = Math.Clamp(index, 0, content.Length);
+            textBeginIndex = index;
+            Text = Content.Substring(index, Math.Min(content.Length - textBeginIndex, Size.X));
         }
     }
 }

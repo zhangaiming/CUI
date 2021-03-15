@@ -2,6 +2,7 @@
 using CUIEngine.Mathf;
 using CUIEngine.WidgetLib;
 using CUIEngine.Widgets;
+using DevToolSet;
 
 namespace CUIEngine.Render
 {
@@ -44,7 +45,7 @@ namespace CUIEngine.Render
             
             //创建画布背景
             background = new Panel(size, Vector2Int.Zero, this, "UIBackground");
-            background.FillColor = new ColorPair(CUIColor.Black, CUIColor.Black);
+            background.FillColor = new ColorPair(CUIColor.DarkGray, CUIColor.DarkGray);
             background.DrawType = PanelDrawType.FillOnly;
             
             //关联屏幕尺寸调整事件
@@ -72,7 +73,12 @@ namespace CUIEngine.Render
 
                     //判断画布是否为空
                     if (clip != null)
+                    {
                         currentClip.MergeWith(clip, null, true);
+                        Logger.Log(clip.Coord);
+                    }
+                    
+                    
                 }
 
                 shouldUpdate = false;

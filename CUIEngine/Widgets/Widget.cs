@@ -2,6 +2,7 @@
 using CUIEngine.Inputs;
 using CUIEngine.Mathf;
 using CUIEngine.Render;
+using DevToolSet;
 
 namespace CUIEngine.Widgets
 {
@@ -53,7 +54,8 @@ namespace CUIEngine.Widgets
                 {
                     Vector2Int oldSize = size;
                     size = value;
-                    CurrentClip.Resize(value, Vector2Int.Zero);
+                    
+                    CurrentClip.Remap(Size, Coord);
                     OnSizeChanged(oldSize, size);
                     UpdateRenderClip();
                 }
@@ -73,7 +75,7 @@ namespace CUIEngine.Widgets
                     //修改值
                     Vector2Int oldCoord = coord;
                     coord = value;
-                    CurrentClip.Resize(size, value - oldCoord);
+                    CurrentClip.Remap(Size, Coord);
                     OnCoordChanged(oldCoord, coord);
 
                     //更新渲染片段
@@ -136,6 +138,8 @@ namespace CUIEngine.Widgets
 
         public Widget(Vector2Int size, Vector2Int coord, IWidgetOwner parent, string name, string tag = "")
         {
+            CurrentClip = new RenderClip(size, coord);
+            //Logger.Log("新控件的渲染片段坐标为:" + CurrentClip.Coord);
             Coord = coord;
             Size = size;
             Name = name;
@@ -143,8 +147,6 @@ namespace CUIEngine.Widgets
             SetParent(parent);
 
             Sprite.Initialize(this);
-
-            CurrentClip = new RenderClip(size, coord);
         }
         
         /// <summary>
