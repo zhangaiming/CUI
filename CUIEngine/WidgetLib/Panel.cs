@@ -125,29 +125,17 @@ namespace CUIEngine.WidgetLib
         
         protected override void MakeRenderClip()
         {
-            CurrentClip.Clear();
-                
             RenderUnit borderUnit = new RenderUnit(borderColor, borderChar);
             RenderUnit fillUnit = new RenderUnit(fillColor, fillChar);
-            for (int y = 0; y < Size.Y; y++)
+            
+            if(drawType == PanelDrawType.FillOnly || drawType == PanelDrawType.FillAndBorder)
             {
-                for (int x = 0; x < Size.X; x++)
-                {
-                    if (x == 0 || x == Size.X - 1 || y == 0 || y == Size.Y - 1)
-                    {
-                        //绘制边框
-                        if (drawType == PanelDrawType.BorderOnly || drawType == PanelDrawType.FillAndBorder)
-                            CurrentClip.SetUnit(x, y, borderUnit);
-                        else
-                            CurrentClip.SetUnit(x, y, fillUnit);
-                    }
-                    else
-                    {
-                        //绘制填充
-                        if(drawType == PanelDrawType.FillOnly || drawType == PanelDrawType.FillAndBorder)
-                            CurrentClip.SetUnit(x, y, fillUnit);
-                    }
-                }
+                CurrentClip.DrawRectangle(Vector2Int.Zero, Size.Y, Size.X, fillUnit);
+            }
+
+            if (drawType == PanelDrawType.BorderOnly || drawType == PanelDrawType.FillAndBorder)
+            {
+                CurrentClip.DrawBorder(Vector2Int.Zero, Size.Y, Size.X, borderUnit);
             }
             
         }

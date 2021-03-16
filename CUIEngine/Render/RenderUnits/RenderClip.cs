@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Threading.Tasks;
 using CUIEngine.Mathf;
 
@@ -51,7 +52,7 @@ namespace CUIEngine.Render
         /// </summary>
         /// <param name="x">片段宽度</param>
         /// <param name="y">片段高度</param>
-        /// <param name="coord"></param>
+        /// <param name="coord">原点</param>
         public RenderClip(int x, int y, Vector2Int coord) : this(x, y, coord.X, coord.Y) { }
 
         /// <summary>
@@ -223,6 +224,7 @@ namespace CUIEngine.Render
             unit.IsEmpty = true;
             SetUnit(x, y, unit);
         }
+        
         /// <summary>
         /// 直接设置对应位置的单元, 只要在范围内就一定会对原单元进行覆盖
         /// </summary>
@@ -232,6 +234,7 @@ namespace CUIEngine.Render
         {
             SetUnit(coord.X, coord.Y, unit);
         }
+        
         /// <summary>
         /// 直接设置对应位置的单元, 只要在范围内就一定会对原单元进行覆盖
         /// </summary>
@@ -245,6 +248,7 @@ namespace CUIEngine.Render
                 units[y * Size.X + x] = unit;
             }
         }
+        
         /// <summary>
         /// 设置对应位置的单元并将单元颜色进行相应的设置,若要设置的单元为空单元,则设置失败
         /// </summary>
@@ -274,6 +278,7 @@ namespace CUIEngine.Render
 
             return false;
         }
+        
         /// <summary>
         /// 将透明颜色转变成对应的颜色
         /// </summary>
@@ -303,6 +308,7 @@ namespace CUIEngine.Render
         {
             return GetUnit(coord.X, coord.Y);
         }
+        
         /// <summary>
         /// 获得一个单元
         /// </summary>
@@ -401,5 +407,51 @@ namespace CUIEngine.Render
             else
                 return Math.Max(a - offset, b);
         }
+
+        /// <summary>
+        /// 在渲染片段中画一个矩形框
+        /// </summary>
+        /// <param name="origin">矩形左上方的顶点</param>
+        /// <param name="height">高</param>
+        /// <param name="width">宽</param>
+        /// <param name="style">矩形的样式</param>
+        public void DrawBorder(Vector2Int origin, int height, int width, RenderUnit style)
+        {
+            for (int x = 0; x <= width; x++)
+            {
+                PutUnit(origin.X + x, origin.Y, style);
+                PutUnit(origin.X + x, origin.Y + height - 1, style);
+            }
+
+            for (int y = 1; y <= height - 1; y++)
+            {
+                PutUnit(origin.X, origin.Y + y, style);
+                PutUnit(origin.X + width - 1, origin.Y + y, style);
+            }
+        }
+
+        /// <summary>
+        /// 在渲染片段中画一个矩形
+        /// </summary>
+        /// <param name="origin">矩形左上方的顶点</param>
+        /// <param name="height">高</param>
+        /// <param name="width">宽</param>
+        /// <param name="style">矩形的样式</param>
+        public void DrawRectangle(Vector2Int origin, int height, int width, RenderUnit style)
+        {
+            for (int i = 0; i <= width; i++)
+            {
+                for (int j = 0; j <= height; j++)
+                {
+                    PutUnit(origin.X + i, origin.Y + j, style);
+                }
+            }
+        }
+    }
+
+    public enum LineStyle
+    {
+        Horizontal,
+        Vertical
     }
 }

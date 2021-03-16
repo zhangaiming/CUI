@@ -19,7 +19,8 @@ namespace CUIEngine
             Panel panel = new Panel(new Vector2Int(12, 3), new Vector2Int(2, 2), RootCanvas.Instance, "panel")
             {
                 DrawType = PanelDrawType.FillAndBorder,
-                FillColor = new ColorPair(CUIColor.Blue, CUIColor.Cyan)
+                FillColor = new ColorPair(CUIColor.Blue, CUIColor.Cyan),
+                BorderColor = new ColorPair(CUIColor.DarkGray, CUIColor.NextBackgroundColor)
             };
 
             LabelEditField l = new LabelEditField(new Vector2Int(10, 1), new Vector2Int(3, 3), RootCanvas.Instance,
