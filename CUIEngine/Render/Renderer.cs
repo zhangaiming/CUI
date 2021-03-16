@@ -162,6 +162,7 @@ namespace CUIEngine.Render
         internal static void PauseRender()
         {
             isPaused = true;
+            screen?.SetPause(true);
         }
         /// <summary>
         /// 继续渲染
@@ -169,6 +170,7 @@ namespace CUIEngine.Render
         internal static void StartRender()
         {
             isPaused = false;
+            screen?.SetPause(false);
         }
         /*static void MergeCallback(int x, int y, RenderUnit unit)
         {

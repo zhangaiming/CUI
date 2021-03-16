@@ -144,6 +144,7 @@ namespace CUIEngine.Widgets
             Size = size;
             Name = name;
             Tag = tag;
+
             SetParent(parent);
 
             Sprite.Initialize(this);
@@ -195,6 +196,7 @@ namespace CUIEngine.Widgets
 
                 if (shouldUpdate)
                 {
+                    CurrentClip.Clear();
                     MakeRenderClip();
                     shouldUpdate = false;
                 }

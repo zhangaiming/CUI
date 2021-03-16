@@ -22,24 +22,24 @@ namespace CUIEngine
                 FillColor = new ColorPair(CUIColor.Blue, CUIColor.Cyan)
             };
 
-            /*LabelEditField l = new LabelEditField(new Vector2Int(10, 1), new Vector2Int(3, 3), RootCanvas.Instance,
+            LabelEditField l = new LabelEditField(new Vector2Int(10, 1), new Vector2Int(3, 3), RootCanvas.Instance,
                 "input")
             {
                 Content = "Hello World!"
-            };*/
+            };
+            l.Select(true);
 
-            Label l = new Label(new Vector2Int(10, 1), new Vector2Int(3, 3), RootCanvas.Instance, "label")
+            /*Label l = new Label(new Vector2Int(10, 1), new Vector2Int(3, 3), RootCanvas.Instance, "label")
             {
                 Text = "Hello World!",
                 FontColor = CUIColor.Green
-            };
+            };*/
 
             while (isRunning)
             {
                 Thread.Sleep(1);
             }
             
-            Logger.Log(l.Coord);
             
             CUIEngine.Shutdown();
         }

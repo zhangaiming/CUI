@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using CUIEngine.Inputs;
 using CUIEngine.Render;
 using CUIEngine.Widgets;
@@ -40,9 +41,19 @@ namespace CUIEngine
         {
             Logger.Log("正在关闭CUI...");
             Cursor.Shutdown();
+            Renderer.PauseRender();
             
+            Thread.Sleep(5);
+
+            Console.Clear();
+            Console.ResetColor();
+            Console.WriteLine("Shutting down...");
             Renderer.Shutdown();
+            Console.WriteLine("Renderer has been shutdown.");
             Input.Shutdown();
+            Console.WriteLine("Input has been shutdown.");
+            
+            Console.WriteLine("Done.");
             Logger.Log("CUI关闭成功!");
             
             

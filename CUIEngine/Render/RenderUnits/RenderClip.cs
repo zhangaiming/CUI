@@ -202,15 +202,6 @@ namespace CUIEngine.Render
         }
 
         /// <summary>
-        /// 改变渲染片段的位置,其内容在屏幕上的绝对位置不变
-        /// </summary>
-        /// <param name="newSize">新的渲染片段大小</param>
-        public void Remap(Vector2Int newSize)
-        {
-            Remap(newSize, Coord);
-        }
-        
-        /// <summary>
         /// 设置目标单元是否为空
         /// </summary>
         /// <param name="coord"></param>
