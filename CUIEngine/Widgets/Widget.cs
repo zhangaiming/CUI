@@ -2,20 +2,14 @@
 using CUIEngine.Inputs;
 using CUIEngine.Mathf;
 using CUIEngine.Render;
-using DevToolSet;
 
 namespace CUIEngine.Widgets
 {
     public abstract class Widget : Sprite, ICanvas
     {
-        /// <summary>
-        /// 将被销毁时调用
-        /// </summary>
-        public event Action<Widget>? ToBeDestroyedHandler;
-        
         protected RenderClip CurrentClip;    //当前的渲染片段
         bool shouldUpdate = true;   //是否应该更新渲染片段
-        IWidgetOwner parent = null!;
+        IWidgetOwner? parent = null!;
         Vector2Int coord;
         Vector2Int size;
         
@@ -26,7 +20,7 @@ namespace CUIEngine.Widgets
         /// <summary>
         /// 父控件,设为null代表无父控件
         /// </summary>
-        public IWidgetOwner Parent
+        public IWidgetOwner? Parent
         {
             get => parent!;
             private set
@@ -151,7 +145,7 @@ namespace CUIEngine.Widgets
         }
         
         /// <summary>
-        /// 销毁时调用(在ToBeDestroyedHandler之后被调用)
+        /// 销毁时调用
         /// </summary>
         protected virtual void OnDestroyed(){}
 
@@ -180,8 +174,11 @@ namespace CUIEngine.Widgets
         /// </summary>
         public void Destroy()
         {
-            ToBeDestroyedHandler?.Invoke(this);
             OnDestroyed();
+            
+            //断开与父控件的联系
+            ResetParent();
+            
             DestroySprite(this);
         }
         
@@ -210,21 +207,28 @@ namespace CUIEngine.Widgets
         }
 
         /// <summary>
-        /// 设置父控件,设为null则默认为根控件
+        /// 设置父控件
         /// </summary>
         /// <param name="owner"></param>
         public void SetParent(IWidgetOwner owner)
         {
-            if (parent is IWidgetContainer)
-            {
-                ((IWidgetContainer)parent).RemoveWidget(this);
-            }
+            parent?.RemoveWidget(this);
+            
             if (owner is IWidgetContainer)
             {
                 ((IWidgetContainer)owner).AddWidget(this);
             }
             Parent = owner;
             
+        }
+
+        /// <summary>
+        /// 解除与父控件的关系
+        /// </summary>
+        void ResetParent()
+        {
+            parent?.RemoveWidget(this);
+            Parent = null;
         }
 
         /// <summary>

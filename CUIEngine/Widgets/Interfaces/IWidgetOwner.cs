@@ -5,6 +5,10 @@
     /// </summary>
     public interface IWidgetOwner
     {
-        
+        /// <summary>
+        /// 移除控件
+        /// </summary>
+        /// <param name="widget"></param>
+        void RemoveWidget(Widget widget);
     }
 }
