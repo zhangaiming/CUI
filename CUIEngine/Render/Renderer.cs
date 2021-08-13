@@ -1,12 +1,15 @@
 ﻿using System.Diagnostics;
 using System.Threading;
 using CUIEngine.Mathf;
-using DevToolSet;
+using Log;
 
 namespace CUIEngine.Render
 {
     public delegate void OnRenderBegin();
     public delegate void OnRenderFinished();
+    /// <summary>
+    /// 渲染控制器
+    /// </summary>
     public static class Renderer
     {
         /// <summary>
@@ -133,20 +136,30 @@ namespace CUIEngine.Render
                 RenderClip? clip = canvas!.GetRenderClip();
                 if(clip != null && bufferClip != null)
                 {
-                    //bufferClip.MergeWith(clip, MergeCallback, true);
                     int sizeX = bufferClip.Size.X;
                     int sizeY = bufferClip.Size.Y;
+                    RenderUnit newUnit, oldUnit;
+                    RenderString renderString = new RenderString(ColorPair.DefaultColorPair, Vector2Int.Zero);
                     for (int j = 0; j < sizeY; j++)
                     {
                         for (int i = 0; i < sizeX; i++)
                         {
-                            RenderUnit newUnit = clip.GetUnit(i, j);
-                            RenderUnit oldUnit = bufferClip.GetUnit(i, j);
+                            newUnit = clip.GetUnit(i, j);
+                            oldUnit = bufferClip.GetUnit(i, j);
                             if (!newUnit.Equals(oldUnit))
                             {
+                                //单元需要更新
                                 bufferClip.SetUnit(i, j, newUnit);
-                                screen?.Draw(i, j, newUnit);
+                                if (renderString.Color == newUnit.ColorPair)
+                                {
+                                    //颜色相同，附加到渲染串中
+                                    renderString.Append(newUnit);
+                                    continue;
+                                }
                             }
+                            //渲染串结束，发送绘制请求并重置渲染串
+                            screen?.DrawCall(renderString);
+                            renderString = new RenderString(newUnit, new Vector2Int(i, j));
                         }
                     }
                 }
@@ -179,10 +192,34 @@ namespace CUIEngine.Render
         static void OnScreenSizeChanged(Vector2Int newSize)
         {
             PauseRender();
-            bufferClip?.Resize(newSize, Vector2Int.Zero);
             screen?.SetScreenSize(newSize);
-            if(bufferClip != null)
-                screen?.Draw(bufferClip);
+            
+            //重新渲染画面
+            if (bufferClip != null)
+            {
+                bufferClip.Resize(newSize, Vector2Int.Zero);
+                int sizeX = bufferClip.Size.X;
+                int sizeY = bufferClip.Size.Y;
+                RenderUnit unit;
+                RenderString renderString = new RenderString(ColorPair.DefaultColorPair, Vector2Int.Zero);
+                for (int j = 0; j < sizeY; j++)
+                {
+                    for (int i = 0; i < sizeX; i++)
+                    {
+                        unit = bufferClip.GetUnit(i, j);
+                        bufferClip.SetUnit(i, j, unit);
+                        if (renderString.Color == unit.ColorPair)
+                        {
+                            //颜色相同，附加到渲染串中
+                            renderString.Append(unit);
+                            continue;
+                        }
+                        //渲染串结束，发送绘制请求并重置渲染串
+                        screen?.DrawCall(renderString);
+                        renderString = new RenderString(unit, new Vector2Int(i, j));
+                    }
+                }
+            }
             StartRender();
         }
     }

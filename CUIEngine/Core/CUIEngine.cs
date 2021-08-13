@@ -3,7 +3,7 @@ using System.Threading;
 using CUIEngine.Inputs;
 using CUIEngine.Render;
 using CUIEngine.Widgets;
-using DevToolSet;
+using Log;
 
 namespace CUIEngine
 {
@@ -39,26 +39,9 @@ namespace CUIEngine
         /// </summary>
         public static void Shutdown()
         {
-            Logger.Log("正在关闭CUI...");
-            Cursor.Shutdown();
-            Renderer.PauseRender();
-            
-            Thread.Sleep(5);
-
-            Console.Clear();
-            Console.ResetColor();
-            Console.WriteLine("Shutting down...");
-            Renderer.Shutdown();
-            Console.WriteLine("Renderer has been shutdown.");
-            Input.Shutdown();
-            Console.WriteLine("Input has been shutdown.");
-            
-            Console.WriteLine("Done.");
-            Logger.Log("CUI关闭成功!");
-            
-            
+            //关闭日志
             Logger.Shutdown();
-            
+            Environment.Exit(Environment.ExitCode);
         }
 
         internal static void SetRootCanvas(RootCanvas canvas)

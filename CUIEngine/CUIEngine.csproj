@@ -5,6 +5,8 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Nullable>enable</Nullable>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <StartupObject>CUIEngine.Program</StartupObject>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,7 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DevToolSet\DevToolSet.csproj" />
+      <ProjectReference Include="..\Log\Log.csproj" />
     </ItemGroup>
 
 </Project>

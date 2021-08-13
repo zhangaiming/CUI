@@ -7,8 +7,8 @@
         <ProjectGuid>{90BCCA7C-3807-4947-9B81-B6278ACAF05D}</ProjectGuid>
         <OutputType>Library</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>DevToolSet</RootNamespace>
-        <AssemblyName>DevToolSet</AssemblyName>
+        <RootNamespace>Log</RootNamespace>
+        <AssemblyName>Log</AssemblyName>
         <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
         <LangVersion>8</LangVersion>

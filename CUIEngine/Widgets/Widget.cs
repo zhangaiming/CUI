@@ -85,9 +85,9 @@ namespace CUIEngine.Widgets
         {
             get
             {
-                if (parent is Sprite)
+                if (parent is Sprite sprite)
                 {
-                    return Coord - ((Sprite) parent).Coord;
+                    return Coord - sprite.Coord;
                 }
                 else
                 {
@@ -96,9 +96,9 @@ namespace CUIEngine.Widgets
             }
             set
             {
-                if(parent is Sprite)
+                if(parent is Sprite sprite)
                 {
-                    Coord = ((Sprite) parent).Coord + value;
+                    Coord = sprite.Coord + value;
                 }
                 else
                 {
@@ -133,7 +133,7 @@ namespace CUIEngine.Widgets
         public Widget(Vector2Int size, Vector2Int coord, IWidgetOwner parent, string name, string tag = "")
         {
             CurrentClip = new RenderClip(size, coord);
-            //Logger.Log("新控件的渲染片段坐标为:" + CurrentClip.Coord);
+            //Log.Log("新控件的渲染片段坐标为:" + CurrentClip.Coord);
             Coord = coord;
             Size = size;
             Name = name;
@@ -214,9 +214,9 @@ namespace CUIEngine.Widgets
         {
             parent?.RemoveWidget(this);
             
-            if (owner is IWidgetContainer)
+            if (owner is IWidgetContainer container)
             {
-                ((IWidgetContainer)owner).AddWidget(this);
+                container.AddWidget(this);
             }
             Parent = owner;
             
@@ -245,9 +245,9 @@ namespace CUIEngine.Widgets
         /// </summary>
         void UpdateParentRenderClip()
         {
-            if (parent is ICanvas)
+            if (parent is ICanvas canvas)
             {
-                ((ICanvas) parent).UpdateRenderClip();
+                canvas.UpdateRenderClip();
             }
         }
 
@@ -263,10 +263,10 @@ namespace CUIEngine.Widgets
                 selectingWidget = null;
             }
             //判断目标是否可进行互动
-            else if (target is IInteractive)
+            else if (target is IInteractive t)
             {
                 selectingWidget?.Select(false);
-                selectingWidget = (IInteractive)target;
+                selectingWidget = t;
                 selectingWidget.Select(true);
             }
         }

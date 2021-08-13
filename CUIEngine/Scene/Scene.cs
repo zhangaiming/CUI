@@ -1,38 +1,27 @@
-﻿namespace CUIEngine.Scene
+﻿using System;
+using System.IO;
+using System.Reflection;
+using System.Xml;
+
+namespace CUIEngine.Scene
 {
     /// <summary>
-    /// 包含控件树等信息的场景.
+    /// 场景类,实现此类并添加场景控件的回调函数
     /// </summary>
     public abstract class Scene
     {
         /// <summary>
-        /// 加载此场景,在重写此方法时,必须调用基方法以初始化控件树
+        /// 在加载此场景时调用
         /// </summary>
-        public virtual void Load()
-        {
-            InitializeComponent();
-        }
-
-        /// <summary>
-        /// 卸载此场景,在重写此方法时,必须调用基方法以卸载控件树
-        /// </summary>
-        public virtual void Unload()
-        {
-            UnloadComponent();
-        }
-        
-        /// <summary>
-        /// 初始化控件树
-        /// </summary>
-        void InitializeComponent()
+        public virtual void OnLoad()
         {
             
         }
 
         /// <summary>
-        /// 卸载控件树
+        /// 在卸载此场景时调用
         /// </summary>
-        void UnloadComponent()
+        public virtual void OnUnload()
         {
             
         }

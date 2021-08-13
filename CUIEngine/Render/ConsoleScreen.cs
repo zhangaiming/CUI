@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Threading;
 using CUIEngine.Consoles;
 using CUIEngine.Mathf;
@@ -7,6 +8,7 @@ namespace CUIEngine.Render
 {
     public class ConsoleScreen : Screen
     {
+        ConcurrentQueue<RenderString> renderQueue = new ConcurrentQueue<RenderString>();
         protected override void OnInitialize()
         {
             Console.CancelKeyPress += (obj, e) => e.Cancel = true;
@@ -14,7 +16,32 @@ namespace CUIEngine.Render
             Console.CursorVisible = Settings.ShowCursor;
             ConsoleMouseManager.SetConsoleQuickEditMode(false);
         }
-        
+
+        public override void DrawCall(int x, int y, RenderUnit unit)
+        {
+            if (!unit.IsEmpty)
+            {
+                renderQueue.Enqueue(new RenderString(unit, new Vector2Int(x, y)));
+            }
+        }
+
+        public override void DrawCall(RenderString renderString)
+        {
+            renderQueue.Enqueue(renderString);
+        }
+
+        protected override void DrawProcess()
+        {
+            if (!IsPaused && !renderQueue.IsEmpty)
+            {
+                RenderString str;
+                if (renderQueue.TryDequeue(out str))
+                {
+                    Draw(str);
+                }
+            }
+        }
+
         public override void SetScreenSize(Vector2Int size)
         {
             SetPause(true);
@@ -31,9 +58,9 @@ namespace CUIEngine.Render
             SetPause(false);
         }
         
-        protected override void DrawUnit(int x, int y, RenderUnit unit)
+        protected void Draw(RenderString str)
         {
-            if (unit.IsEmpty)
+            /*if (unit.IsEmpty)
             {
                 Console.ResetColor();
                 Console.SetCursorPosition(x, y);
@@ -45,7 +72,12 @@ namespace CUIEngine.Render
                 Console.BackgroundColor = ParseColor(unit.ColorPair.BackgroundColor);
                 Console.SetCursorPosition(x, y);
                 Console.Write(unit.Content);
-            }
+            }*/
+
+            Console.ForegroundColor = ParseColor(str.Color.ForegroundColor);
+            Console.BackgroundColor = ParseColor(str.Color.BackgroundColor);
+            Console.SetCursorPosition(str.Origin.X, str.Origin.Y);
+            Console.Write(str.Content);
         }
 
         /// <summary>

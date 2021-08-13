@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 
-namespace DevToolSet
+namespace Log
 {
     public enum LogType
     {

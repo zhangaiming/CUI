@@ -13,24 +13,26 @@ namespace CUIEngine.Inputs
         //任意键处理方法
         static List<InputHandler> anyKeyHandlers = new List<InputHandler>();
         
-        static Thread? getInputThread;
+        static Thread getInputThread;
 
         static bool isRunning = true;
 
-        public static void Initialize()
+        static Input()
         {
-            isRunning = true;
             getInputThread = new Thread(() =>
             {
                 while (isRunning)
                 {
-                    if(Console.KeyAvailable)
-                    {
-                        ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-                        CallHandler(keyInfo);
-                    }
+                    ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+                    CallHandler(keyInfo);
                 }
             });
+            getInputThread.IsBackground = true;
+        }
+        
+        public static void Initialize()
+        {
+            isRunning = true;
             getInputThread.Start();
         }
 
