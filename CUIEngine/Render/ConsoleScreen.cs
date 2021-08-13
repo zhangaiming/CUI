@@ -49,8 +49,8 @@ namespace CUIEngine.Render
             Console.ResetColor();
             Console.Clear();
             int x = size.X, y = size.Y;
-            Console.SetWindowSize(x, y);
-            Console.SetBufferSize(x + 2, y + 2);
+            Console.SetWindowSize(x, y + 1);
+            Console.SetBufferSize(x, y + 1);
             
             //等待控制台窗口设置
             Thread.Sleep(10);

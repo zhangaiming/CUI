@@ -139,7 +139,7 @@ namespace CUIEngine.Render
                     int sizeX = bufferClip.Size.X;
                     int sizeY = bufferClip.Size.Y;
                     RenderUnit newUnit, oldUnit;
-                    RenderString renderString = new RenderString(ColorPair.DefaultColorPair, Vector2Int.Zero);
+                    RenderString? renderString = null;
                     for (int j = 0; j < sizeY; j++)
                     {
                         for (int i = 0; i < sizeX; i++)
@@ -150,17 +150,37 @@ namespace CUIEngine.Render
                             {
                                 //单元需要更新
                                 bufferClip.SetUnit(i, j, newUnit);
-                                if (renderString.Color == newUnit.ColorPair)
+                                
+                                //若无串，则创建一个新的
+                                if (renderString == null)
                                 {
-                                    //颜色相同，附加到渲染串中
-                                    renderString.Append(newUnit);
-                                    continue;
+                                    renderString = new RenderString(newUnit.ColorPair, new Vector2Int(i, j));
+                                }
+                                
+                                //若颜色不相同，则结束当前渲染串并发送绘制请求
+                                if (renderString?.Color != newUnit.ColorPair)
+                                {
+                                    screen?.DrawCall((RenderString)renderString!);
+                                    renderString = new RenderString(newUnit.ColorPair, new Vector2Int(i, j));
+                                }
+                                renderString?.Append(newUnit);
+                            }
+                            else
+                            {
+                                if (renderString != null)
+                                {
+                                    //渲染串结束，发送绘制请求并重置渲染串
+                                    screen?.DrawCall((RenderString)renderString);
+                                    renderString = null;
                                 }
                             }
-                            //渲染串结束，发送绘制请求并重置渲染串
-                            screen?.DrawCall(renderString);
-                            renderString = new RenderString(newUnit, new Vector2Int(i, j));
                         }
+                    }
+
+                    if (renderString != null)
+                    {
+                        //发送最后一段绘制请求
+                        screen?.DrawCall((RenderString)renderString);
                     }
                 }
                 sw.Stop();

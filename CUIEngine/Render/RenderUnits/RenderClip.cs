@@ -359,9 +359,9 @@ namespace CUIEngine.Render
                 int j = Math.Min(offset.Y, 0);
                 this.Resize(new Vector2Int(x,y), new Vector2Int(i, j));
             }
-
-            int ox = Math.Max(offset.X, 0);
-            int oy = Math.Max(offset.Y, 0);
+            
+            int ox = offset.X;
+            int oy = offset.Y;
             int bx = other.Size.X, by = other.Size.Y;
             {
                 for (int i = 0; i < bx; i++)

@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using CUIEngine.Inputs;
 using CUIEngine.Mathf;
 using CUIEngine.Render;
+using CUIEngine.Scripts;
 
 namespace CUIEngine.Widgets
 {
-    public abstract class Widget : Sprite, ICanvas
+    public abstract class Widget : Sprite, ICanvas, IScriptOwner
     {
         protected RenderClip CurrentClip;    //当前的渲染片段
         bool shouldUpdate = true;   //是否应该更新渲染片段
@@ -69,7 +72,8 @@ namespace CUIEngine.Widgets
                     //修改值
                     Vector2Int oldCoord = coord;
                     coord = value;
-                    CurrentClip.Remap(Size, Coord);
+                    //CurrentClip.Remap(Size, Coord);
+                    CurrentClip.Coord = value;
                     OnCoordChanged(oldCoord, coord);
 
                     //更新渲染片段
@@ -277,6 +281,29 @@ namespace CUIEngine.Widgets
         static void EnterActiveWidget(ConsoleKeyInfo info)
         {
             selectingWidget?.Interact();
+        }
+
+        List<Script> bindScripts = new List<Script>();
+        
+        public void AddScript<TScript>() where TScript : Script, new()
+        {
+            Script script = new TScript();
+            typeof(Script).GetMethod("AwakeThis", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.Invoke(script, new object?[]{this});
+            bindScripts.Add(script);
+        }
+
+        public TScript? GetScript<TScript>() where TScript : Script, new()
+        {
+            foreach (Script bindScript in bindScripts)
+            {
+                if (bindScript.GetType() == typeof(TScript))
+                {
+                    return (TScript)bindScript;
+                }
+            }
+
+            return null;
         }
     }
 }

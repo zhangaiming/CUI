@@ -97,6 +97,7 @@ namespace CUIEngine.Render
             if(instance != null)
                 instance.background.Size = newSize;
             currentClip.Resize(size, Vector2Int.Zero);
+            UpdateRenderClip();
         }
 
         public void AddWidget(Widget widget)
