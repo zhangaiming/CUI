@@ -130,12 +130,12 @@ namespace CUIEngine.WidgetLib
             
             if(drawType == PanelDrawType.FillOnly || drawType == PanelDrawType.FillAndBorder)
             {
-                CurrentClip.DrawRectangle(Vector2Int.Zero, Size.Y, Size.X, fillUnit);
+                Drawer.DrawRectangle(CurrentClip, Vector2Int.Zero, Size.Y, Size.X, fillUnit);
             }
 
             if (drawType == PanelDrawType.BorderOnly || drawType == PanelDrawType.FillAndBorder)
             {
-                CurrentClip.DrawBorder(Vector2Int.Zero, Size.Y, Size.X, borderUnit);
+                Drawer.DrawBorder(CurrentClip, Vector2Int.Zero, Size.Y, Size.X, borderUnit);
             }
             
         }

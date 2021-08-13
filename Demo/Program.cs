@@ -15,7 +15,7 @@ namespace CUITest
         public static void Main(string[] args)
         {
             CUIEngine.CUIEngine.Initialize();
-            Settings.ScreenSize = new Vector2Int(20, 20);
+            //Settings.ScreenSize = new Vector2Int(20, 20);
             Input.AttachHandler(Shutdown, ConsoleKey.Escape);
 
             Panel panel = new Panel(new Vector2Int(6, 3), new Vector2Int(2, 2), RootCanvas.Instance, "panel")

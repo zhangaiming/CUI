@@ -25,10 +25,7 @@ namespace CUIEngine
             //因为如果立即开始渲染会导致出现奇怪的错误,所以在这里等5毫秒
             Thread.Sleep(5);
             Renderer.StartRender();
-            
-            //初始化光标
-            Cursor.Initialize();
-            
+
             //输入处理初始化
             Input.Initialize();
             Logger.Log("CUI启动成功!");

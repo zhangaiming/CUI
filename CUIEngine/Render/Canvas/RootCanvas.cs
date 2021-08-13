@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using CUIEngine.Mathf;
-using CUIEngine.WidgetLib;
 using CUIEngine.Widgets;
 using Log;
 
@@ -14,7 +13,8 @@ namespace CUIEngine.Render
         static RootCanvas? instance;
         RenderClip currentClip;
         bool shouldUpdate = true;
-        Panel background;
+
+        RenderUnit fillStyle = new RenderUnit(new ColorPair(CUIColor.DarkGray, CUIColor.DarkGray));
 
         /// <summary>
         /// 实例
@@ -42,12 +42,7 @@ namespace CUIEngine.Render
         {
             size = Settings.ScreenSize;
             currentClip = new RenderClip(size, Vector2Int.Zero);
-            
-            //创建画布背景
-            background = new Panel(size, Vector2Int.Zero, this, "UIBackground");
-            background.FillColor = new ColorPair(CUIColor.DarkGray, CUIColor.DarkGray);
-            background.DrawType = PanelDrawType.FillOnly;
-            
+
             //关联屏幕尺寸调整事件
             Settings.OnScreenSizeChanged += Resize;
         }
@@ -65,6 +60,7 @@ namespace CUIEngine.Render
             if(shouldUpdate)
             {
                 currentClip.Clear();
+                Drawer.Fill(currentClip, fillStyle);
                 int cnt = canvasList.Count;
                 for (int i = 0; i < cnt; i++)
                 {
@@ -94,8 +90,6 @@ namespace CUIEngine.Render
         void Resize(Vector2Int newSize)
         {
             size = newSize;
-            if(instance != null)
-                instance.background.Size = newSize;
             currentClip.Resize(size, Vector2Int.Zero);
             UpdateRenderClip();
         }

@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CUIEngine", "CUIEngine\CUIE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\Demo.csproj", "{968AE8A8-911B-46BE-931B-71A02C17367B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicWidgetLib", "BasicWidgetLib\BasicWidgetLib.csproj", "{F505538F-3563-4876-A2E4-B4594EAC229D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{968AE8A8-911B-46BE-931B-71A02C17367B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{968AE8A8-911B-46BE-931B-71A02C17367B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{968AE8A8-911B-46BE-931B-71A02C17367B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F505538F-3563-4876-A2E4-B4594EAC229D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F505538F-3563-4876-A2E4-B4594EAC229D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F505538F-3563-4876-A2E4-B4594EAC229D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F505538F-3563-4876-A2E4-B4594EAC229D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

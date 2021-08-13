@@ -351,6 +351,8 @@ namespace CUIEngine.Render
         {
             Vector2Int offset = other.Coord - this.Coord;
             int x, y;
+            
+            //若不进行裁剪，则对此片段进行扩大
             if(!shouldClip)
             {
                 x = GetMergeResultEdgeLength(this.Size.X, other.Size.X, offset.X);
@@ -360,6 +362,7 @@ namespace CUIEngine.Render
                 this.Resize(new Vector2Int(x,y), new Vector2Int(i, j));
             }
             
+            //映射
             int ox = offset.X;
             int oy = offset.Y;
             int bx = other.Size.X, by = other.Size.Y;
@@ -407,51 +410,5 @@ namespace CUIEngine.Render
             else
                 return Math.Max(a - offset, b);
         }
-
-        /// <summary>
-        /// 在渲染片段中画一个矩形框
-        /// </summary>
-        /// <param name="origin">矩形左上方的顶点</param>
-        /// <param name="height">高</param>
-        /// <param name="width">宽</param>
-        /// <param name="style">矩形的样式</param>
-        public void DrawBorder(Vector2Int origin, int height, int width, RenderUnit style)
-        {
-            for (int x = 0; x <= width; x++)
-            {
-                PutUnit(origin.X + x, origin.Y, style);
-                PutUnit(origin.X + x, origin.Y + height - 1, style);
-            }
-
-            for (int y = 1; y <= height - 1; y++)
-            {
-                PutUnit(origin.X, origin.Y + y, style);
-                PutUnit(origin.X + width - 1, origin.Y + y, style);
-            }
-        }
-
-        /// <summary>
-        /// 在渲染片段中画一个矩形
-        /// </summary>
-        /// <param name="origin">矩形左上方的顶点</param>
-        /// <param name="height">高</param>
-        /// <param name="width">宽</param>
-        /// <param name="style">矩形的样式</param>
-        public void DrawRectangle(Vector2Int origin, int height, int width, RenderUnit style)
-        {
-            for (int i = 0; i <= width; i++)
-            {
-                for (int j = 0; j <= height; j++)
-                {
-                    PutUnit(origin.X + i, origin.Y + j, style);
-                }
-            }
-        }
-    }
-
-    public enum LineStyle
-    {
-        Horizontal,
-        Vertical
     }
 }

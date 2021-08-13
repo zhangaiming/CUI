@@ -1,14 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputType>Exe</OutputType>
         <TargetFramework>netcoreapp3.1</TargetFramework>
-        <Nullable>enable</Nullable>
-        <RootNamespace>CUITest</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BasicWidgetLib\BasicWidgetLib.csproj" />
       <ProjectReference Include="..\CUIEngine\CUIEngine.csproj" />
     </ItemGroup>
 
