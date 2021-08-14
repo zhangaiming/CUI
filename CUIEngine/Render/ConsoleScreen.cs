@@ -51,28 +51,19 @@ namespace CUIEngine.Render
             int x = size.X, y = size.Y;
             Console.SetWindowSize(x, y + 1);
             Console.SetBufferSize(x, y + 1);
-            
+
             //等待控制台窗口设置
             Thread.Sleep(10);
             
             SetPause(false);
         }
         
+        /// <summary>
+        /// 打印一个渲染串
+        /// </summary>
+        /// <param name="str"></param>
         protected void Draw(RenderString str)
         {
-            /*if (unit.IsEmpty)
-            {
-                Console.ResetColor();
-                Console.SetCursorPosition(x, y);
-                Console.Write(' ');
-            }
-            else
-            {
-                Console.ForegroundColor = ParseColor(unit.ColorPair.ForegroundColor);
-                Console.BackgroundColor = ParseColor(unit.ColorPair.BackgroundColor);
-                Console.SetCursorPosition(x, y);
-                Console.Write(unit.Content);
-            }*/
 
             Console.ForegroundColor = ParseColor(str.Color.ForegroundColor);
             Console.BackgroundColor = ParseColor(str.Color.BackgroundColor);

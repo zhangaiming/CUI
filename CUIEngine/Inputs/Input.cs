@@ -9,9 +9,9 @@ namespace CUIEngine.Inputs
     public static class Input
     {
         //针对性处理方法
-        static Dictionary<int, List<InputHandler>> handlersDic = new Dictionary<int, List<InputHandler>>();
+        static Dictionary<int, InputHandler?> handlersDic = new Dictionary<int, InputHandler?>();
         //任意键处理方法
-        static List<InputHandler> anyKeyHandlers = new List<InputHandler>();
+        static InputHandler? anyKeyHandlers = null;
         
         static Thread getInputThread;
 
@@ -39,7 +39,7 @@ namespace CUIEngine.Inputs
         public static void Shutdown()
         {
             isRunning = false;
-            getInputThread?.Join();
+            getInputThread.Join();
         }
         
         /// <summary>
@@ -49,20 +49,13 @@ namespace CUIEngine.Inputs
         {
             int keyInfoCode = GetKeyInfoHashCode(key, shift, ctrl, alt);
             
-            List<InputHandler> list;
             if (handlersDic.ContainsKey(keyInfoCode))
             {
-                list = handlersDic[keyInfoCode];
+                handlersDic[keyInfoCode] += handler;
             }
             else
             {
-                list = new List<InputHandler>();
-                handlersDic.Add(keyInfoCode, list);
-            }
-
-            if (!list.Contains(handler))
-            {
-                list.Add(handler);
+                handlersDic.Add(keyInfoCode, handler);
             }
         }
         
@@ -72,10 +65,7 @@ namespace CUIEngine.Inputs
         /// <param name="handler"></param>
         public static void AttachHandler(InputHandler handler)
         {
-            if (!anyKeyHandlers.Contains(handler))
-            {
-                anyKeyHandlers.Add(handler);
-            }
+            anyKeyHandlers += handler;
         }
 
         /// <summary>
@@ -89,21 +79,10 @@ namespace CUIEngine.Inputs
         public static void DetachHandler(InputHandler handler, ConsoleKey key, bool shift = false, bool ctrl = false, bool alt = false)
         {
             int keyInfoCode = GetKeyInfoHashCode(key, shift, ctrl, alt);
-            
+
             if (handlersDic.ContainsKey(keyInfoCode))
             {
-                List<InputHandler> list = handlersDic[keyInfoCode];
-                if (list == null)
-                {
-                    handlersDic.Remove(keyInfoCode);
-                    return;
-                }
-
-                list.Remove(handler);
-                if (list.Count == 0)
-                {
-                    handlersDic.Remove(keyInfoCode);
-                }
+                handlersDic[keyInfoCode] -= handler;
             }
         }
 
@@ -113,26 +92,18 @@ namespace CUIEngine.Inputs
         /// <param name="handler"></param>
         public static void DetachHandler(InputHandler handler)
         {
-            if (anyKeyHandlers.Contains(handler))
-            {
-                anyKeyHandlers.Remove(handler);
-            }
+            anyKeyHandlers -= handler;
         }
 
         static void CallHandler(ConsoleKeyInfo info)
         {
             int keyInfoCode = GetKeyInfoHashCode(info.Key, info.Modifiers);
-            foreach (InputHandler anyKeyHandler in anyKeyHandlers)
+            
+            anyKeyHandlers?.Invoke(info);
+            
+            if(handlersDic.ContainsKey(keyInfoCode))
             {
-                anyKeyHandler?.Invoke(info);
-            }
-            if (handlersDic.ContainsKey(keyInfoCode))
-            {
-                List<InputHandler> list = handlersDic[keyInfoCode];
-                foreach (InputHandler inputHandler in list)
-                {
-                    inputHandler.Invoke(info);
-                }
+                handlersDic[keyInfoCode]?.Invoke(info);
             }
         }
 

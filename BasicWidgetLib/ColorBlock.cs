@@ -1,5 +1,4 @@
 ﻿using System;
-using CUIEngine.Mathf;
 using CUIEngine.Render;
 using CUIEngine.Widgets;
 
@@ -28,7 +27,7 @@ namespace CUIEngine.BasicWidgetLib
             {
                 for (int j = 0; j < Size.Y; j++)
                 {
-                    CurrentClip?.SetUnit(i, j, new RenderUnit(new ColorPair(CUIColor.DarkGray, Color)));
+                    CurrentClip.SetUnit(i, j, new RenderUnit(new ColorPair(CUIColor.DarkGray, Color)));
                 }
             }
         }

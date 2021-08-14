@@ -2,7 +2,7 @@
 using CUIEngine.Render;
 using CUIEngine.Widgets;
 
-namespace CUIEngine.WidgetLib
+namespace CUIEngine.BasicWidgetLib
 {
     /// <summary>
     /// 用于描述面板绘制的类型

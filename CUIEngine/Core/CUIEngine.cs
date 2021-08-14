@@ -2,7 +2,6 @@
 using System.Threading;
 using CUIEngine.Inputs;
 using CUIEngine.Render;
-using CUIEngine.Widgets;
 using Log;
 
 namespace CUIEngine
