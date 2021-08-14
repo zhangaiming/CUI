@@ -118,11 +118,6 @@ namespace CUIEngine.WidgetLib
             }
         }
 
-        public Panel(Vector2Int size, Vector2Int coord, IWidgetOwner parent, string name, string tag = "") : base(size, coord, parent, name, tag)
-        {
-            
-        }
-        
         protected override void MakeRenderClip()
         {
             RenderUnit borderUnit = new RenderUnit(borderColor, borderChar);

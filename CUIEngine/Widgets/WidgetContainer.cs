@@ -17,8 +17,6 @@ namespace CUIEngine.Widgets
             get => clipChildren;
             set => clipChildren = value;
         }
-        
-        public WidgetContainer(Vector2Int size, Vector2Int coord, IWidgetOwner parent, string name, string tag = "") : base(size, coord, parent, name, tag){}
 
         protected override void MakeRenderClip()
         {

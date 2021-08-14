@@ -8,9 +8,9 @@ namespace CUIEngine.Render
     /// <summary>
     /// 根画布
     /// </summary>
-    public class RootCanvas : ICanvas, IWidgetContainer
+    public class Root : ICanvas, IWidgetContainer
     {
-        static RootCanvas? instance;
+        static Root? instance;
         RenderClip currentClip;
         bool shouldUpdate = true;
 
@@ -19,7 +19,7 @@ namespace CUIEngine.Render
         /// <summary>
         /// 实例
         /// </summary>
-        public static RootCanvas Instance
+        public static Root Instance
         {
             get
             {
@@ -38,7 +38,7 @@ namespace CUIEngine.Render
 
         public Vector2Int Size => size;
 
-        RootCanvas()
+        Root()
         {
             size = Settings.ScreenSize;
             currentClip = new RenderClip(size, Vector2Int.Zero);
@@ -51,7 +51,7 @@ namespace CUIEngine.Render
         {
             if (instance == null)
             {
-                instance = new RootCanvas();
+                instance = new Root();
             }
         }
         

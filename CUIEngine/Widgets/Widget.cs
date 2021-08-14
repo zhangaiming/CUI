@@ -10,15 +10,15 @@ namespace CUIEngine.Widgets
 {
     public abstract class Widget : Sprite, ICanvas, IScriptOwner
     {
-        protected RenderClip CurrentClip;    //当前的渲染片段
+        protected RenderClip CurrentClip = null!;    //当前的渲染片段
         bool shouldUpdate = true;   //是否应该更新渲染片段
         IWidgetOwner? parent = null!;
         Vector2Int coord;
         Vector2Int size;
-        
-        static IInteractive? selectingWidget = null;   //当前被选择的控件
 
         bool isVisible = true;    //是否可见
+
+        #region 基本属性
 
         /// <summary>
         /// 父控件,设为null代表无父控件
@@ -128,25 +128,14 @@ namespace CUIEngine.Widgets
             }
         }
 
-        static Widget()
-        {
-            //为控件交互注册按键
-            Input.AttachHandler(EnterActiveWidget, ConsoleKey.Enter);
-        }
+        #endregion
 
-        public Widget(Vector2Int size, Vector2Int coord, IWidgetOwner parent, string name, string tag = "")
-        {
-            CurrentClip = new RenderClip(size, coord);
-            //Log.Log("新控件的渲染片段坐标为:" + CurrentClip.Coord);
-            Coord = coord;
-            Size = size;
-            Name = name;
-            Tag = tag;
+        #region 虚方法
 
-            SetParent(parent);
-
-            Sprite.Initialize(this);
-        }
+        /// <summary>
+        /// 控件被创建时调用
+        /// </summary>
+        protected virtual void OnCreated(){}
         
         /// <summary>
         /// 销毁时调用
@@ -172,7 +161,38 @@ namespace CUIEngine.Widgets
         /// 当控件可视性发生改变时调用
         /// </summary>
         protected virtual void OnVisibilityChanged(){}
-        
+
+        #endregion
+
+        #region 控件的创建与销毁方法
+
+        /// <summary>
+        /// 创建指定类型的控件控件
+        /// </summary>
+        /// <param name="size">控件的大小</param>
+        /// <param name="coord">控件的坐标</param>
+        /// <param name="name">控件的名称</param>
+        /// <param name="parent">父控件，若为空则设置父控件为Root</param>
+        /// <typeparam name="TWidget">控件类型</typeparam>
+        /// <returns>控件实例</returns>
+        public static TWidget Create<TWidget>(Vector2Int size, Vector2Int coord, string name, IWidgetOwner? parent = null)
+            where TWidget : Widget, new()
+        {
+            TWidget widget = new TWidget();
+            
+            widget.CurrentClip = new RenderClip(size, coord);
+            widget.Coord = coord;
+            widget.Size = size;
+            widget.Name = name;
+            widget.Tag = "";
+            
+            widget.SetParent(parent ?? Root.Instance);
+
+            Sprite.Initialize(widget);
+
+            return widget;
+        }
+
         /// <summary>
         /// 销毁控件
         /// </summary>
@@ -185,7 +205,11 @@ namespace CUIEngine.Widgets
             
             DestroySprite(this);
         }
-        
+
+        #endregion
+
+        #region 渲染相关方法
+
         /// <summary>
         /// 返回控件的渲染片段,当控件不可视时返回null
         /// </summary>
@@ -209,6 +233,30 @@ namespace CUIEngine.Widgets
                 return null;
             }
         }
+        
+        /// <summary>
+        /// 通知控件进行渲染片段的更新,若此控件的拥有者也是一个控件,会同时更新拥有者的更新信息
+        /// </summary>
+        public void UpdateRenderClip()
+        {
+            shouldUpdate = true;
+            UpdateParentRenderClip();
+        }
+
+        /// <summary>
+        /// 通知父控件更新渲染片段
+        /// </summary>
+        void UpdateParentRenderClip()
+        {
+            if (parent is ICanvas canvas)
+            {
+                canvas.UpdateRenderClip();
+            }
+        }
+
+        #endregion
+
+        #region 控件关系操作方法
 
         /// <summary>
         /// 设置父控件
@@ -235,53 +283,9 @@ namespace CUIEngine.Widgets
             Parent = null;
         }
 
-        /// <summary>
-        /// 通知控件进行渲染片段的更新,若此控件的拥有者也是一个控件,会同时更新拥有者的更新信息
-        /// </summary>
-        public void UpdateRenderClip()
-        {
-            shouldUpdate = true;
-            UpdateParentRenderClip();
-        }
+        #endregion
 
-        /// <summary>
-        /// 通知父控件更新渲染片段
-        /// </summary>
-        void UpdateParentRenderClip()
-        {
-            if (parent is ICanvas canvas)
-            {
-                canvas.UpdateRenderClip();
-            }
-        }
-
-        /// <summary>
-        /// 设置交互对象
-        /// </summary>
-        /// <param name="target"></param>
-        public static void SetSelection(Widget? target)
-        {
-            if (target == null)
-            {
-                selectingWidget?.Select(false);
-                selectingWidget = null;
-            }
-            //判断目标是否可进行互动
-            else if (target is IInteractive t)
-            {
-                selectingWidget?.Select(false);
-                selectingWidget = t;
-                selectingWidget.Select(true);
-            }
-        }
-
-        /// <summary>
-        /// 与正被激活的控件进行互动
-        /// </summary>
-        static void EnterActiveWidget(ConsoleKeyInfo info)
-        {
-            selectingWidget?.Interact();
-        }
+        #region 脚本功能字段及函数
 
         List<Script> bindScripts = new List<Script>();
         
@@ -305,5 +309,7 @@ namespace CUIEngine.Widgets
 
             return null;
         }
+
+            #endregion
     }
 }

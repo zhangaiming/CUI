@@ -96,9 +96,5 @@ namespace CUIEngine.WidgetLib
             base.OnSizeChanged(oldSize, newSize);
             CurrentClip.Resize(new Vector2Int(newSize.X, 1), Vector2Int.Zero);
         }
-
-        public Label(Vector2Int size, Vector2Int coord, IWidgetOwner parent, string name, string tag = "") : base(size, coord, parent, name, tag)
-        {
-        }
     }
 }
