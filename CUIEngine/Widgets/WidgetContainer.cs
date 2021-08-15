@@ -42,7 +42,7 @@ namespace CUIEngine.Widgets
                     res.MergeWith(clip, null, false);
                 }
             }
-
+            res.Coord += Coord;  //相对坐标转为绝对坐标
             return res;
         }
         /// <summary>

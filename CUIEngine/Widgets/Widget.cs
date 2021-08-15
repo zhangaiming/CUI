@@ -39,17 +39,22 @@ namespace CUIEngine.Widgets
         }
 
         /// <summary>
-        /// 父控件,设为null代表无父控件
+        /// 父控件,赋值null则设根画布为parent
         /// </summary>
         public IWidgetOwner? Parent
         {
             get => parent!;
-            private set
+            set
             {
-                if (parent != value)
+                IWidgetOwner newOwner = value ?? Root.Instance;
+                if (parent != newOwner)
                 {
+                    Vector2Int oldLocalCoord = LocalCoord;
+                    parent?.RemoveWidget(this);
+                    newOwner.AddWidget(this);
                     UpdateParentRenderClip();
-                    parent = value;
+                    parent = newOwner;
+                    LocalCoord = oldLocalCoord;
                     UpdateParentRenderClip();
                 }
             }
@@ -161,7 +166,7 @@ namespace CUIEngine.Widgets
         protected virtual void OnDestroyed(){}
 
         /// <summary>
-        /// 更新渲染片段
+        /// 重新绘制渲染片段
         /// </summary>
         protected abstract void MakeRenderClip();
         
@@ -281,12 +286,6 @@ namespace CUIEngine.Widgets
         /// <param name="owner"></param>
         public void SetParent(IWidgetOwner owner)
         {
-            parent?.RemoveWidget(this);
-            
-            if (owner is IWidgetContainer container)
-            {
-                container.AddWidget(this);
-            }
             Parent = owner;
             
         }
@@ -297,7 +296,7 @@ namespace CUIEngine.Widgets
         void ResetParent()
         {
             parent?.RemoveWidget(this);
-            Parent = null;
+            Parent = Root.Instance;
         }
 
         #endregion

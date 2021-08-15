@@ -150,7 +150,8 @@ namespace CUIEngine.Render
         {
             int x = newSize.X, y = newSize.Y;
             Vector2Int offset = newCoord - Coord;
-            if (x >= 0 && y >= 0)
+            Resize(newSize, offset);
+            /*if (x >= 0 && y >= 0)
             {
                 RenderUnit[] newUnits = new RenderUnit[newSize.X * newSize.Y];
                 RenderUnit emptyUnit = new RenderUnit(true);
@@ -199,7 +200,7 @@ namespace CUIEngine.Render
                 Size = newSize;
                 Coord += offset;
                 units = newUnits;
-            }
+            }*/
         }
 
         /// <summary>
