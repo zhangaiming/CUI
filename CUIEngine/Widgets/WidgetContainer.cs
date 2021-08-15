@@ -32,6 +32,7 @@ namespace CUIEngine.Widgets
         {
             RenderClip res = new RenderClip();
             Widget[] temp = new Widget[children.Count];
+            res.Coord = Coord;//相对坐标转为绝对坐标
             children.CopyTo(temp);
             RenderClip? clip;
             foreach (Widget widget in temp)
@@ -42,7 +43,6 @@ namespace CUIEngine.Widgets
                     res.MergeWith(clip, null, false);
                 }
             }
-            res.Coord += Coord;  //相对坐标转为绝对坐标
             return res;
         }
         /// <summary>
