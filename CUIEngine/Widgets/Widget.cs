@@ -44,16 +44,20 @@ namespace CUIEngine.Widgets
         public IWidgetOwner? Parent
         {
             get => parent!;
-            set
+            private set
             {
-                IWidgetOwner newOwner = value ?? Root.Instance;
-                if (parent != newOwner)
+                if (value == null)
+                {
+                    parent = value;
+                    return;
+                }
+                if (parent != value)
                 {
                     Vector2Int oldLocalCoord = LocalCoord;
                     parent?.RemoveWidget(this);
-                    newOwner.AddWidget(this);
+                    value.AddWidget(this);
                     UpdateParentRenderClip();
-                    parent = newOwner;
+                    parent = value;
                     LocalCoord = oldLocalCoord;
                     UpdateParentRenderClip();
                 }
@@ -224,6 +228,8 @@ namespace CUIEngine.Widgets
             
             //断开与父控件的联系
             ResetParent();
+
+            IsVisible = false;
             
             DestroySprite(this);
         }
@@ -296,7 +302,7 @@ namespace CUIEngine.Widgets
         void ResetParent()
         {
             parent?.RemoveWidget(this);
-            Parent = Root.Instance;
+            Parent = null;
         }
 
         #endregion

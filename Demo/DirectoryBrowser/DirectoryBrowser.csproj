@@ -6,4 +6,9 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\BasicWidgetLib\BasicWidgetLib.csproj" />
+      <ProjectReference Include="..\..\CUIEngine\CUIEngine.csproj" />
+    </ItemGroup>
+
 </Project>
