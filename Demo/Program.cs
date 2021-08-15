@@ -21,6 +21,11 @@ namespace CUITest
             panel.BorderColor = panel.FillColor = new ColorPair(CUIColor.DarkGray, CUIColor.DarkCyan);
             panel.DrawType = PanelDrawType.FillAndBorder;
             panel.AddScript<PanelScript>();
+
+            TextBox textBox = Widget.Create<TextBox>(new Vector2Int(5, 1), new Vector2Int(2, 8), "text");
+            textBox.Text = "text\n23338562";
+            textBox.AutoSize = AutoSizeType.AutoHeight;
+            textBox.AddScript<SelectableText>();
         }
 
         static void Shutdown(ConsoleKeyInfo info)

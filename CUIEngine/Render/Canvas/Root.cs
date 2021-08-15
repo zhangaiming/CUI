@@ -14,7 +14,7 @@ namespace CUIEngine.Render
         RenderClip currentClip;
         bool shouldUpdate = true;
 
-        RenderUnit fillStyle = new RenderUnit(new ColorPair(CUIColor.DarkGray, CUIColor.DarkGray));
+        RenderUnit fillStyle = new RenderUnit(new ColorPair(CUIColor.DarkGray, CUIColor.Black));
 
         /// <summary>
         /// 实例

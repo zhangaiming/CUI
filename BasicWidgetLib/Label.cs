@@ -8,6 +8,7 @@ namespace CUIEngine.BasicWidgetLib
     /// <summary>
     /// 标签,一种用于显示单行文本的控件
     /// </summary>
+    [Obsolete("请使用TextBox作为此旧控件的代替")]
     public class Label : Widget
     {
         string text = "";    //内容

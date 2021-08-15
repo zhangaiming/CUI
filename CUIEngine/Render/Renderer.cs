@@ -205,10 +205,7 @@ namespace CUIEngine.Render
             isPaused = false;
             screen?.SetPause(false);
         }
-        /*static void MergeCallback(int x, int y, RenderUnit unit)
-        {
-            screen?.Draw(x, y, unit);
-        }*/
+
         static void OnScreenSizeChanged(Vector2Int newSize)
         {
             PauseRender();

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using CUIEngine.Inputs;
 using CUIEngine.Mathf;
 using CUIEngine.Render;
 using CUIEngine.Scripts;
+using CUIEngine.Scripts.ScriptAttribute;
 
 namespace CUIEngine.Widgets
 {
@@ -291,6 +293,22 @@ namespace CUIEngine.Widgets
         
         public void AddScript<TScript>() where TScript : Script, new()
         {
+            RequiredWidgetTypeAttribute[] required = (RequiredWidgetTypeAttribute[])Attribute.GetCustomAttributes(typeof(TScript).Assembly, typeof(RequiredWidgetTypeAttribute));
+            if (required.Length != 0)
+            {
+                bool mismatch = true;
+                foreach (RequiredWidgetTypeAttribute attribute in required)
+                {
+                    if (attribute.WidgetType == this.GetType())
+                    {
+                        mismatch = false;
+                        break;
+                    }
+                }
+
+                if (mismatch) throw new Exception("不是目标控件类型，绑定脚本失败。");
+            }
+
             Script script = new TScript();
             typeof(Script).GetMethod("AwakeThis", BindingFlags.NonPublic | BindingFlags.Instance)
                 ?.Invoke(script, new object?[]{this});
