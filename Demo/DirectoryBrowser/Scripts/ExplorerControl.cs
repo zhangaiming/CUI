@@ -6,24 +6,24 @@ namespace DirectoryBrowser.Scripts
 {
     public class ExplorerControl : Script
     {
-        ItemContainerControl itemContainer;
+        ItemContainerControl? itemContainer = null;
 
         /// <summary>
         /// 项目容器
         /// </summary>
-        public ItemContainerControl ItemContainer
+        public ItemContainerControl? ItemContainer
         {
             get => itemContainer;
             set
             {
                 itemContainer = value; 
-                itemContainer.SetDirectory("");
+                itemContainer?.SetDirectory("");
             }
         }
 
         /// <summary>
         /// 当前目录
         /// </summary>
-        public string CurrentPath { get; set; }
+        public string CurrentPath { get; set; } = "";
     }
 }

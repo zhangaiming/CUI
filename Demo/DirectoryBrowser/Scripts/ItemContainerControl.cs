@@ -63,7 +63,10 @@ namespace DirectoryBrowser.Scripts
             if (items.Count == 0) return;
             int trueIndex = Math.Min(items.Count - 1, Math.Max(0, index));
             
-            items[selectedItem].Owner.GetScript<SelectableText>()?.SetSelect(false);
+            if(selectedItem >= 0 && selectedItem < items.Count)
+            {
+                items[selectedItem].Owner.GetScript<SelectableText>()?.SetSelect(false);
+            }
             selectedItem = trueIndex;
             Widget itemOwner = items[selectedItem].Owner;
             itemOwner.GetScript<SelectableText>()?.SetSelect(true);
@@ -116,6 +119,19 @@ namespace DirectoryBrowser.Scripts
                 //获取磁盘分区
                 directories = Directory.GetLogicalDrives();
             }
+            else if (path == "..")
+            {
+                //返回上一级
+                if (curDirectory.EndsWith(":\\"))
+                {
+                    SetDirectory("");
+                }
+                else
+                {
+                    SetDirectory(Directory.GetParent(curDirectory).FullName);
+                }
+                return;
+            }
             else if (!Directory.Exists(path))
             {
                 throw new Exception("Path not exist.");
@@ -128,9 +144,17 @@ namespace DirectoryBrowser.Scripts
 
             Clear();
             curDirectory = path;
+            
+            //设置当前路径文本
             if (pathBox != null)
             {
                 pathBox.Text = path == "" ? "This Computer" : path;
+            }
+
+            //添加返回上级项
+            if (path != "")
+            {
+                AddItem("..", true);
             }
 
             //添加目录项
@@ -178,8 +202,8 @@ namespace DirectoryBrowser.Scripts
                     selectableText.NormalColor = new ColorPair(CUIColor.White, CUIColor.NextBackgroundColor);
                     selectableText.SelectedColor = new ColorPair(CUIColor.Black, CUIColor.Blue);
                 }
-                script.Path = path;
                 script.IsDirectory = isDirectory;
+                script.Path = path;
                 items.Add(script);
             }
         }

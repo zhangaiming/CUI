@@ -22,7 +22,18 @@ namespace CUIEngine.Render
         public char Content
         {
             get => content;
-            set => content = value;
+            set
+            {
+                if (value >= 32 && value <= 126)
+                {
+                    //可显示的英文字符
+                    content = value;
+                }
+                else
+                {
+                    content = '?';
+                }
+            }
         }
         /// <summary>
         /// 单位是否为空

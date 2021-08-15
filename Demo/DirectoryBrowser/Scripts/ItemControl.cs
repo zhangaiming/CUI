@@ -22,7 +22,18 @@ namespace DirectoryBrowser.Scripts
             set
             {
                 path = value;
-                ((TextBox)Owner).Text = new DirectoryInfo(path).Name + "\\";
+                string name;
+                if (path == "..")
+                {
+                    name = path;
+                }
+                else
+                {
+                    name = new DirectoryInfo(path).Name;
+                    if (!name.EndsWith('\\') && isDirectory) name += '\\';
+                }
+                
+                ((TextBox)Owner).Text = name;
             }
         }
         
