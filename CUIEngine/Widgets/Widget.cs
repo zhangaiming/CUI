@@ -305,7 +305,7 @@ namespace CUIEngine.Widgets
 
         List<Script> bindScripts = new List<Script>();
         
-        public void AddScript<TScript>() where TScript : Script, new()
+        public TScript? AddScript<TScript>() where TScript : Script, new()
         {
             TargetWidgetAttribute[] required = (TargetWidgetAttribute[])Attribute.GetCustomAttributes(typeof(TScript).Assembly, typeof(TargetWidgetAttribute));
             if (required.Length != 0)
@@ -323,10 +323,11 @@ namespace CUIEngine.Widgets
                 if (mismatch) throw new Exception("不是目标控件类型，绑定脚本失败。");
             }
 
-            Script script = new TScript();
+            TScript script = new TScript();
             bindScripts.Add(script);
             typeof(Script).GetMethod("AwakeThis", BindingFlags.NonPublic | BindingFlags.Instance)
                 ?.Invoke(script, new object?[]{this});
+            return script;
         }
 
         public TScript? GetScript<TScript>() where TScript : Script, new()

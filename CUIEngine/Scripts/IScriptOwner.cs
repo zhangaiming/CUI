@@ -6,7 +6,7 @@
         /// 添加脚本
         /// </summary>
         /// <typeparam name="TScript">目标脚本类型</typeparam>
-        void AddScript<TScript>() where TScript : Script, new();
+        TScript? AddScript<TScript>() where TScript : Script, new();
 
         /// <summary>
         /// 从已绑定的脚本中获取指定类型的脚本
