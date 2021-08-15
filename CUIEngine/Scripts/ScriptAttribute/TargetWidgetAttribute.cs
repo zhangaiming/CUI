@@ -3,14 +3,14 @@
 namespace CUIEngine.Scripts.ScriptAttribute
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class RequiredWidgetTypeAttribute : Attribute
+    public class TargetWidgetAttribute : Attribute
     {
         /// <summary>
         /// 可以绑定此脚本的控件类型
         /// </summary>
-        public Type? WidgetType { get; set; } = null;
+        public Type WidgetType { get; set; }
 
-        public RequiredWidgetTypeAttribute(Type? type = null)
+        public TargetWidgetAttribute(Type type)
         {
             WidgetType = type;
         }

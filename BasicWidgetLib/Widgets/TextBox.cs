@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using CUIEngine.Mathf;
 using CUIEngine.Render;
 using CUIEngine.Widgets;
 
-namespace CUIEngine.BasicWidgetLib
+namespace BasicWidgetLib.Widgets
 {
     
     /// <summary>

@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\ConsoleFontManager\ConsoleFontManager.csproj" />
       <ProjectReference Include="..\Log\Log.csproj" />
     </ItemGroup>
 

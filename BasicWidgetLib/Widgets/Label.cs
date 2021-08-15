@@ -3,7 +3,7 @@ using CUIEngine.Mathf;
 using CUIEngine.Render;
 using CUIEngine.Widgets;
 
-namespace CUIEngine.BasicWidgetLib
+namespace BasicWidgetLib.Widgets
 {
     /// <summary>
     /// 标签,一种用于显示单行文本的控件

@@ -12,7 +12,8 @@ namespace CUIEngine.Render
         protected override void OnInitialize()
         {
             Console.CancelKeyPress += (obj, e) => e.Cancel = true;
-            FontManager.SetConsoleFontSize(Settings.ConsoleFontSize);
+            //FontManager.SetConsoleFontSize(Settings.ConsoleFontSize);
+            ConsoleFontManager.ConsoleFontManager.SetConsoleFont(16, 16, "Terminal");
             Console.CursorVisible = Settings.ShowCursor;
             ConsoleMouseManager.SetConsoleQuickEditMode(false);
         }

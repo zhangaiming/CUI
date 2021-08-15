@@ -62,6 +62,19 @@ namespace CUIEngine.Widgets
                 UpdateRenderClip();
             }
         }
+
+        public void UpdateChildrenRenderClip()
+        {
+            foreach (Widget widget in children)
+            {
+                widget.UpdateRenderClip();
+                if (widget is IWidgetOwner widgetOwner)
+                {
+                    widgetOwner.UpdateChildrenRenderClip();
+                }
+            }
+        }
+
         /// <summary>
         /// 根据索引移除控件
         /// </summary>

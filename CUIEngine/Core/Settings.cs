@@ -34,7 +34,7 @@ namespace CUIEngine
             set
             {
                 consoleFontSize = value;
-                FontManager.SetConsoleFontSize(consoleFontSize);
+                ConsoleFontManager.ConsoleFontManager.SetConsoleFont(consoleFontSize, consoleFontSize, "Terminal");
             }
         }
         /// <summary>

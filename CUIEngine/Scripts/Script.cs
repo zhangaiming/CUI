@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using CUIEngine.Render;
 using CUIEngine.Widgets;
 
 namespace CUIEngine.Scripts
@@ -34,6 +35,12 @@ namespace CUIEngine.Scripts
             }
         }
 
+        void CallUpdate()
+        {
+            if(isEnabled)
+                InvokeMethod("Update");
+        }
+
         /// <summary>
         /// 通过反射调用实例成员方法
         /// </summary>
@@ -51,6 +58,7 @@ namespace CUIEngine.Scripts
         void AwakeThis(Widget owner)
         {
             Owner = owner;
+            Renderer.OnRenderFinishedHandlers += CallUpdate;
             InvokeMethod("Awake");
             IsEnabled = true;
         }

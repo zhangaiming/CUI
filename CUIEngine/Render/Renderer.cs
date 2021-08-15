@@ -132,7 +132,7 @@ namespace CUIEngine.Render
         {
             if(isInitialized)
             {
-                Stopwatch sw = Stopwatch.StartNew();
+                OnRenderBeginHandlers?.Invoke();
                 RenderClip? clip = canvas!.GetRenderClip();
                 if(clip != null && bufferClip != null)
                 {
@@ -183,9 +183,7 @@ namespace CUIEngine.Render
                         screen?.DrawCall((RenderString)renderString);
                     }
                 }
-                sw.Stop();
-                if(sw.ElapsedMilliseconds >= 5)
-                    Logger.Log(string.Format("渲染新的一帧,用时:{0}", sw.Elapsed));
+                OnRenderFinishedHandlers?.Invoke();
             }
         }
 

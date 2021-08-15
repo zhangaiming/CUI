@@ -31,6 +31,14 @@ namespace CUIEngine
         }
 
         /// <summary>
+        /// 刷新画面
+        /// </summary>
+        public static void Refresh()
+        {
+            Root.Instance.UpdateChildrenRenderClip();
+        }
+        
+        /// <summary>
         /// 关闭CUI引擎
         /// </summary>
         public static void Shutdown()

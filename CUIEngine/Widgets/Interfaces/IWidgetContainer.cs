@@ -3,11 +3,6 @@
     public interface IWidgetContainer : IWidgetOwner
     {
         /// <summary>
-        /// 添加控件
-        /// </summary>
-        /// <param name="widget"></param>
-        void AddWidget(Widget widget);
-        /// <summary>
         /// 判断是否包含某控件
         /// </summary>
         /// <param name="widget"></param>

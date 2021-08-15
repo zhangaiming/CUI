@@ -1,15 +1,15 @@
-﻿using CUIEngine.BasicWidgetLib;
+﻿using BasicWidgetLib.Widgets;
 using CUIEngine.Render;
 using CUIEngine.Scripts;
 using CUIEngine.Scripts.ScriptAttribute;
 
-namespace CUITest.Scripts
+namespace BasicWidgetLib.Scripts
 {
-    [RequiredWidgetType(typeof(TextBox))]
+    [TargetWidget(typeof(TextBox))]
     public class SelectableText : Script
     {
         ColorPair normalColor = new ColorPair(CUIColor.DarkGray, CUIColor.Black);
-        ColorPair highlightedColor = new ColorPair(CUIColor.Black, CUIColor.DarkGray);
+        ColorPair highlightedColor = new ColorPair(CUIColor.Black, CUIColor.DarkCyan);
 
         bool selected = false;
 

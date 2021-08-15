@@ -2,7 +2,7 @@
 using CUIEngine.Render;
 using CUIEngine.Widgets;
 
-namespace CUIEngine.BasicWidgetLib
+namespace BasicWidgetLib.Widgets
 {
     /// <summary>
     /// 色块

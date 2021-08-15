@@ -110,6 +110,18 @@ namespace CUIEngine.Render
             }
         }
 
+        public void UpdateChildrenRenderClip()
+        {
+            foreach (ICanvas canvas in canvasList)
+            {
+                canvas.UpdateRenderClip();
+                if (canvas is IWidgetOwner widgetOwner)
+                {
+                    widgetOwner.UpdateChildrenRenderClip();
+                }
+            }
+        }
+
         public bool ContainWidget(Widget widget)
         {
             return canvasList.Contains(widget);

@@ -12,7 +12,7 @@ namespace CUIEngine.Widgets
 {
     public abstract class Widget : Sprite, ICanvas, IScriptOwner
     {
-        protected RenderClip CurrentClip = null!;    //当前的渲染片段
+        RenderClip? currentClip = null;    //当前的渲染片段
         bool shouldUpdate = true;   //是否应该更新渲染片段
         IWidgetOwner? parent = null!;
         Vector2Int coord;
@@ -21,6 +21,22 @@ namespace CUIEngine.Widgets
         bool isVisible = true;    //是否可见
 
         #region 基本属性
+
+        /// <summary>
+        /// 当前的渲染片段
+        /// </summary>
+        public RenderClip CurrentClip
+        {
+            get
+            {
+                if (currentClip == null)
+                {
+                    currentClip = new RenderClip(Size, Coord);
+                }
+
+                return currentClip;
+            }
+        }
 
         /// <summary>
         /// 父控件,设为null代表无父控件
@@ -172,18 +188,17 @@ namespace CUIEngine.Widgets
         /// 创建指定类型的控件控件
         /// </summary>
         /// <param name="size">控件的大小</param>
-        /// <param name="coord">控件的坐标</param>
+        /// <param name="localCoord">控件的相对坐标</param>
         /// <param name="name">控件的名称</param>
         /// <param name="parent">父控件，若为空则设置父控件为Root</param>
         /// <typeparam name="TWidget">控件类型</typeparam>
         /// <returns>控件实例</returns>
-        public static TWidget Create<TWidget>(Vector2Int size, Vector2Int coord, string name, IWidgetOwner? parent = null)
+        public static TWidget Create<TWidget>(Vector2Int size, Vector2Int localCoord, string name, IWidgetOwner? parent = null)
             where TWidget : Widget, new()
         {
             TWidget widget = new TWidget();
             
-            widget.CurrentClip = new RenderClip(size, coord);
-            widget.Coord = coord;
+            widget.LocalCoord = localCoord;
             widget.Size = size;
             widget.Name = name;
             widget.Tag = "";
@@ -293,11 +308,11 @@ namespace CUIEngine.Widgets
         
         public void AddScript<TScript>() where TScript : Script, new()
         {
-            RequiredWidgetTypeAttribute[] required = (RequiredWidgetTypeAttribute[])Attribute.GetCustomAttributes(typeof(TScript).Assembly, typeof(RequiredWidgetTypeAttribute));
+            TargetWidgetAttribute[] required = (TargetWidgetAttribute[])Attribute.GetCustomAttributes(typeof(TScript).Assembly, typeof(TargetWidgetAttribute));
             if (required.Length != 0)
             {
                 bool mismatch = true;
-                foreach (RequiredWidgetTypeAttribute attribute in required)
+                foreach (TargetWidgetAttribute attribute in required)
                 {
                     if (attribute.WidgetType == this.GetType())
                     {
@@ -310,9 +325,9 @@ namespace CUIEngine.Widgets
             }
 
             Script script = new TScript();
+            bindScripts.Add(script);
             typeof(Script).GetMethod("AwakeThis", BindingFlags.NonPublic | BindingFlags.Instance)
                 ?.Invoke(script, new object?[]{this});
-            bindScripts.Add(script);
         }
 
         public TScript? GetScript<TScript>() where TScript : Script, new()
