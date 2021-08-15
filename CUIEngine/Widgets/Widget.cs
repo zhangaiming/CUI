@@ -304,23 +304,44 @@ namespace CUIEngine.Widgets
         #region 脚本功能字段及函数
 
         List<Script> bindScripts = new List<Script>();
-        
-        public TScript? AddScript<TScript>() where TScript : Script, new()
+
+        bool CheckScriptAttribute<TScript>() where TScript : Script
         {
-            TargetWidgetAttribute[] required = (TargetWidgetAttribute[])Attribute.GetCustomAttributes(typeof(TScript).Assembly, typeof(TargetWidgetAttribute));
-            if (required.Length != 0)
+            //Check TargetWidgetAttribute
+            TargetWidgetAttribute[] targetWidgetAttributes = (TargetWidgetAttribute[])Attribute.GetCustomAttributes(typeof(TScript).Assembly, typeof(TargetWidgetAttribute));
+            if (targetWidgetAttributes.Length != 0)
             {
-                bool mismatch = true;
-                foreach (TargetWidgetAttribute attribute in required)
+                foreach (TargetWidgetAttribute attribute in targetWidgetAttributes)
                 {
                     if (attribute.WidgetType == this.GetType())
                     {
-                        mismatch = false;
-                        break;
+                        return false;
                     }
                 }
-
-                if (mismatch) throw new Exception("不是目标控件类型，绑定脚本失败。");
+            }
+            
+            //Check RequiredScriptAttribute
+            RequiredScriptAttribute[] requiredScriptAttributes = (RequiredScriptAttribute[])Attribute.GetCustomAttributes(typeof(TScript).Assembly, typeof(RequiredScriptAttribute));
+            if (requiredScriptAttributes.Length != 0)
+            {
+                foreach (RequiredScriptAttribute requiredScriptAttribute in requiredScriptAttributes)
+                {
+                    Type? type = requiredScriptAttribute.Script;
+                    if (!HasScript(type))
+                    {
+                        return false;
+                    }
+                }
+            }
+            
+            return true;
+        }
+        
+        public TScript? AddScript<TScript>() where TScript : Script, new()
+        {
+            if (!CheckScriptAttribute<TScript>())
+            {
+                throw new Exception("绑定脚本失败。");
             }
 
             TScript script = new TScript();
@@ -343,6 +364,28 @@ namespace CUIEngine.Widgets
             return null;
         }
 
-            #endregion
+        /// <summary>
+        /// 控件有没有目标类型的脚本
+        /// </summary>
+        /// <param name="scriptType">脚本类型</param>
+        /// <returns></returns>
+        public bool HasScript(Type scriptType)
+        {
+            if (!scriptType.IsSubclassOf(typeof(Script)))
+            {
+                return false;
+            }
+            foreach (Script bindScript in bindScripts)
+            {
+                if (bindScript.GetType() == scriptType)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        #endregion
     }
 }

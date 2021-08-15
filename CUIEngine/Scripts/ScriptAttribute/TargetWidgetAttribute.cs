@@ -2,6 +2,9 @@
 
 namespace CUIEngine.Scripts.ScriptAttribute
 {
+    /// <summary>
+    /// 要求添加此脚本的控件必须是目标类型
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class TargetWidgetAttribute : Attribute
     {
